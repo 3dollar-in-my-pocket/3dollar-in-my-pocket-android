@@ -6,6 +6,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -21,14 +23,10 @@ import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.storeDetail.user.adapter.MoreImageAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
 import com.zion830.threedollars.utils.FileUtils
-import com.zion830.threedollars.utils.goToPermissionSetting
 import dagger.hilt.android.AndroidEntryPoint
-import gun0912.tedimagepicker.builder.TedImagePicker
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
@@ -56,6 +54,10 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         }
     }
 
+    private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
+        uploadPickedImages(uris)
+    }
+
     override fun initView() {
         setLightSystemBars()
         this.onBackPressedDispatcher.addCallback(this, backPressedCallback)
@@ -79,30 +81,16 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
             finish()
         }
         binding.submitPhotoTextView.onSingleClick {
-            TedImagePicker.with(this).zoomIndicator(false).errorListener {
-                if (it.message?.startsWith("permission") == true) {
-                    AlertDialog.Builder(this)
-                        .setPositiveButton(CommonR.string.request_permission_ok) { _, _ ->
-                            goToPermissionSetting()
-                        }
-                        .setNegativeButton(android.R.string.cancel) { _, _ -> }
-                        .setTitle(getString(CommonR.string.request_permission))
-                        .setMessage(getString(CommonR.string.request_permission_msg))
-                        .create()
-                        .show()
-                }
-            }.startMultiImage { uriData ->
-                lifecycleScope.launch {
-                    val images = getImageFiles(uriData)
-                    if (images != null) {
-                        val bundle = Bundle().apply {
-                            putString("screen", "upload_photo")
-                            putString("store_id", storeId.toString())
-                            putString("count", images.size.toString())
-                        }
-                        viewModel.saveImages(images, storeId)
-                    }
-                }
+            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        }
+    }
+
+    private fun uploadPickedImages(uris: List<Uri>) {
+        if (uris.isEmpty()) return
+        lifecycleScope.launch {
+            val images = getImageFiles(uris)
+            if (images != null) {
+                viewModel.saveImages(images, storeId)
             }
         }
     }
@@ -138,21 +126,11 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
         }
     }
 
-    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part>? {
-        val imageList = ArrayList<MultipartBody.Part>()
-        data.forEach {
-            if (!FileUtils.isAvailable(it)) {
-                binding.root.showSnack(CommonR.string.error_file_size)
-                return null
-            }
-
-            FileUtils.uriToFile(it)?.run {
-                val requestFile = asRequestBody("image/*".toMediaType())
-                imageList.add(MultipartBody.Part.createFormData("images", name, requestFile))
-            }
+    private fun getImageFiles(data: List<Uri?>): List<MultipartBody.Part>? =
+        FileUtils.toImageParts(data) ?: run {
+            binding.root.showSnack(CommonR.string.error_file_size)
+            null
         }
-        return imageList.toList()
-    }
 
 
     companion object {

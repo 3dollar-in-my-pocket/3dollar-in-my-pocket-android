@@ -1,0 +1,12 @@
+# 동결된 의존 방향 위반. 한 줄에 "From -> To".
+# scripts/check-module-deps.sh 의 랭크 위반과 금지쌍 위반 모두 이 목록으로 예외를 둔다.
+# 새 항목을 추가할 때는 사유를 주석으로 함께 남기고, PR 본문 "설명이 필요한 결정"에 적는다.
+# 이 목록은 줄어들기만 해야 한다.
+#
+# 현재 동결 항목: 0건.
+#
+# 이력
+#   TH-1354  :core:network -> :common 제거 (죽은 선언이었다)
+#   TH-1355  :domain -> :core:network, :core:network -> :core:ui, :core:network -> :core:designsystem 제거
+#            (SDUI 모델·렌더러를 :core:common·:core:ui 로 이동, LoginRepository 의 DTO·Response 노출 제거)
+#            같은 간선이 다시 생기지 않도록 check-module-deps.sh 에 금지쌍으로 등록했다.

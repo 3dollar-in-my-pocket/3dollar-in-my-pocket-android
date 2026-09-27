@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import androidx.core.content.IntentCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,7 +26,6 @@ import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.utils.Constants
 import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.data.store.ContentModel
-import com.threedollar.domain.home.data.store.UserStoreModel
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.FragmentHomeListViewBinding
@@ -35,8 +33,7 @@ import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreListViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.ui.compose.HomeFilterChipsRow
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
-import com.zion830.threedollars.ui.storeDetail.boss.ui.BossStoreDetailActivity
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
@@ -181,11 +178,7 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
     private fun getStoreItemClickListener() = object : OnItemClickListener<ContentModel> {
         override fun onClick(item: ContentModel) {
             viewModel.sendClickStoreInList(item.storeModel.storeId, item.storeModel.storeType)
-            val intent = if (item.storeModel.storeType == Constants.BOSS_STORE) {
-                BossStoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId)
-            } else {
-                StoreDetailActivity.getIntent(requireContext(), item.storeModel.storeId.toInt(), false)
-            }
+            val intent = StoreDetailSduiActivity.getIntent(requireContext(), item.storeModel.storeId)
             startActivityForResult(intent, Constants.SHOW_STORE_BY_CATEGORY)
         }
     }
@@ -215,13 +208,6 @@ class HomeListViewFragment : BaseFragment<FragmentHomeListViewBinding, HomeViewM
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == Constants.SHOW_STORE_BY_CATEGORY) {
-            if (resultCode == android.app.Activity.RESULT_OK) {
-                val resultData = data
-                if (resultData?.getBooleanExtra(StoreDetailActivity.EXTRA_IS_UPDATED, false) == true) {
-                    val userStore = IntentCompat.getSerializableExtra(resultData, StoreDetailActivity.EXTRA_USER_STORE, UserStoreModel::class.java)
-                    userStore?.let { viewModel.updateStoreItem(it) }
-                }
-            }
             viewModel.refreshHomeListSectionAfterStoreUpdate()
         }
     }

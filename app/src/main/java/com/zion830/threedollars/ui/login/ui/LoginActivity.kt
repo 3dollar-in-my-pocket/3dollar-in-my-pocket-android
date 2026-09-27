@@ -21,7 +21,6 @@ import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.base.ResultWrapper
 import com.threedollar.common.utils.Constants.GOOGLE_SIGN_IN
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.databinding.ActivityLoginBinding
@@ -181,7 +180,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                                 LegacySharedPrefUtils.saveAccessToken(it.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
-                                        viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
+                                        viewModel.putPushInformation(pushToken = firebaseToken.result)
                                     }
                                 }
                                 startActivity(MainActivity.getIntent(this@LoginActivity))

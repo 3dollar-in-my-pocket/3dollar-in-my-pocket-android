@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.threedollar.domain.login.model.SignUserModel
 import com.threedollar.domain.login.repository.LoginRepository
 import com.threedollar.common.analytics.ClickEvent
 import com.threedollar.common.analytics.LogManager
@@ -12,8 +13,6 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
-import com.threedollar.network.data.auth.SignUpRequest
-import com.threedollar.network.data.auth.SignUser
 import com.zion830.threedollars.datasource.UserDataSource
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
@@ -49,8 +48,8 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
     private val _isMarketing: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isMarketing: StateFlow<Boolean> get() = _isMarketing
 
-    private val _signUpResult: MutableSharedFlow<ResultWrapper<SignUser?>> = MutableSharedFlow()
-    val signUpResult: SharedFlow<ResultWrapper<SignUser?>> get() = _signUpResult
+    private val _signUpResult: MutableSharedFlow<ResultWrapper<SignUserModel?>> = MutableSharedFlow()
+    val signUpResult: SharedFlow<ResultWrapper<SignUserModel?>> get() = _signUpResult
 
     fun trySignUp(token: String) {
         if (userName.value.isNullOrBlank()) {
@@ -64,13 +63,11 @@ class InputNameViewModel @Inject constructor(private val loginRepository: LoginR
         }
 
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val request = SignUpRequest(
-                userName.value!!,
-                latestSocialType.value!!.socialName,
-                token
+            val result = loginRepository.signUp(
+                name = userName.value!!,
+                socialType = latestSocialType.value!!.socialName,
+                token = token
             )
-            val response = loginRepository.signUp(request)
-            val result = safeApiCall(response)
             _signUpResult.emit(result)
         }
     }

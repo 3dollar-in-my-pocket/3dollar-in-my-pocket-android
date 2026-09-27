@@ -9,8 +9,6 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.ResultWrapper
-import com.threedollar.network.data.auth.LoginRequest
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.datasource.model.LoginType
 import com.zion830.threedollars.ui.login.model.LoginResultModel
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
@@ -41,8 +39,7 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         latestSocialType.value = socialType
         LegacySharedPrefUtils.saveLoginType(socialType)
         viewModelScope.launch(Dispatchers.IO + coroutineExceptionHandler) {
-            val response = loginRepository.login(LoginRequest(socialType.socialName, accessToken))
-            val ret = when (val result = safeApiCall(response)) {
+            val ret = when (val result = loginRepository.login(socialType = socialType.socialName, token = accessToken)) {
                 is ResultWrapper.Success -> {
                     LoginResultModel.Success(
                         userId = result.value?.userId ?: 0,
@@ -75,9 +72,9 @@ class LoginViewModel @Inject constructor(private val loginRepository: LoginRepos
         }
     }
 
-    fun putPushInformation(informationRequest: PushInformationRequest) {
+    fun putPushInformation(pushToken: String) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            loginRepository.putPushInformation(informationRequest)
+            loginRepository.registerPushToken(pushToken)
         }
     }
 

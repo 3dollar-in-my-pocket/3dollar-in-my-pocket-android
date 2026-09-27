@@ -11,6 +11,7 @@
    - 의존성: `docs/context/module-dependencies-current.md`
    - 리소스: `docs/context/resource-rules-current.md`
    - 검증: `docs/context/verification-matrix.md`, `docs/harness/README.md`
+   - PR/테스트 프로세스: `docs/process/pr-process.md`, `docs/process/testing.md`
 4. Jira나 feature 작업이면 `docs/features/` 아래에 작업 문서를 만들거나 기존 문서를 갱신한다.
 
 ## Directory Map
@@ -20,6 +21,7 @@
 - `decisions/`: ADR과 장기 설계 결정
 - `harness/`: Gradle, adb, 디자인 검증 하네스
 - `agents/`: 에이전트 작업 흐름, skill 인덱스, 문서 업데이트 규칙
+- `process/`: AI 개발 프로세스 — 테크스펙, 테스트 세 계층, 자동화·수동 체크리스트, 검증 장치 변경, PR 프로세스
 
 ## Documentation Rules
 

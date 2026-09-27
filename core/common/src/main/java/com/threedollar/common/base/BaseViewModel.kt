@@ -1,11 +1,9 @@
 package com.threedollar.common.base
 
-import androidx.core.text.isDigitsOnly
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.google.gson.Gson
 import com.threedollar.common.BuildConfig
 import com.threedollar.common.R
 import com.threedollar.common.analytics.ScreenName
@@ -14,7 +12,6 @@ import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 open class BaseViewModel : ViewModel() {
@@ -50,42 +47,5 @@ open class BaseViewModel : ViewModel() {
     protected suspend fun <T> safeApiCall(
         apiCall: Response<BaseResponse<T>>,
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
-    ): ResultWrapper<T?> {
-        return withContext(dispatcher) {
-            try {
-                if (apiCall.isSuccessful) {
-                    handleSuccessEvent(apiCall)
-                } else {
-                    val errorMessage = try {
-                        val errorBodyString = apiCall.errorBody()?.string()
-                        if (!errorBodyString.isNullOrEmpty()) {
-                            val errorResponse = Gson().fromJson(errorBodyString, BaseResponse::class.java)
-                            errorResponse.message ?: apiCall.message()
-                        } else {
-                            apiCall.message()
-                        }
-                    } catch (e: Exception) {
-                        apiCall.message()
-                    }
-                    ResultWrapper.GenericError(apiCall.code(), errorMessage)
-                }
-            } catch (throwable: Throwable) {
-                ResultWrapper.NetworkError
-            }
-        }
-    }
-
-    private fun <T> handleSuccessEvent(result: Response<BaseResponse<T>>) = when {
-        result.body()?.resultCode.isNullOrEmpty() -> {
-            ResultWrapper.Success(result.body()?.data)
-        }
-
-        result.body()?.resultCode?.isDigitsOnly() == true -> {
-            ResultWrapper.GenericError(result.body()?.resultCode?.toInt(), result.body()?.message)
-        }
-
-        else -> {
-            ResultWrapper.GenericError(null, result.body()?.message)
-        }
-    }
+    ): ResultWrapper<T?> = apiCall.toResultWrapper(dispatcher)
 }

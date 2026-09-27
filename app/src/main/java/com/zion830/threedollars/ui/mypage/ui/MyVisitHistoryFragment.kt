@@ -25,7 +25,7 @@ import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel
-import com.zion830.threedollars.ui.storeDetail.user.ui.StoreDetailActivity
+import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -59,7 +59,8 @@ class MyVisitHistoryFragment :
         adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<MyVisitHistoryV2> {
             override fun onClick(item: MyVisitHistoryV2) {
                 sendClickStore(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
-                val intent = StoreDetailActivity.getIntent(requireContext(), item.store.storeId?.toIntOrNull())
+                val storeId = item.store.storeId?.takeIf { it.isNotBlank() } ?: return
+                val intent = StoreDetailSduiActivity.getIntent(requireContext(), storeId)
                 startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
             }
         })

@@ -1,0 +1,170 @@
+{
+  "ok": true,
+  "data": {
+    "storeId": "120009",
+    "storeType": "BOSS_STORE",
+    "name": "뽀미네 두쫀쿠 붕어빵",
+    "rating": 4.6,
+    "isOwner": false,
+    "location": {
+      "latitude": 37.36954969792162,
+      "longitude": 126.9314217684027
+    },
+    "address": {
+      "fullAddress": "경기도 군포시 산본동 1065-4"
+    },
+    "distanceM": 16607,
+    "menus": [
+      {
+        "name": "ㅠ",
+        "price": 15000,
+        "description": "15000원",
+        "image": {
+          "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store-menu/v1/v1-6c7d4e18-fd08-4a93-9c2a-27ad0f76ff10.jpeg"
+        }
+      },
+      {
+        "name": "졸려",
+        "price": 5460,
+        "description": "5460원",
+        "image": {
+          "imageUrl": "https://storage.dev.threedollars.co.kr/boss/store-menu/v1/v1-d3e8930f-1f7b-4ef8-a68c-5535629bf115.jpeg"
+        }
+      }
+    ],
+    "appearanceDays": [
+      {
+        "dayOfTheWeek": "WEDNESDAY",
+        "openingHours": {
+          "startTime": "11:00",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      },
+      {
+        "dayOfTheWeek": "TUESDAY",
+        "openingHours": {
+          "startTime": "11:00",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      },
+      {
+        "dayOfTheWeek": "SUNDAY",
+        "openingHours": {
+          "startTime": "11:01",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      },
+      {
+        "dayOfTheWeek": "FRIDAY",
+        "openingHours": {
+          "startTime": "11:00",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      },
+      {
+        "dayOfTheWeek": "SATURDAY",
+        "openingHours": {
+          "startTime": "11:00",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      },
+      {
+        "dayOfTheWeek": "THURSDAY",
+        "openingHours": {
+          "startTime": "11:00",
+          "endTime": "21:00"
+        },
+        "locationDescription": ""
+      }
+    ],
+    "categories": [
+      {
+        "category": "WAKBBU_SALT_BREAD",
+        "categoryId": "WAKBBU_SALT_BREAD",
+        "name": "왁뿌 소금빵",
+        "imageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "disableImageUrl": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "description": "왁뿌 소금빵",
+        "classification": {
+          "type": "TREND_SNACKS",
+          "description": "✨트렌드 간식",
+          "priority": 1
+        },
+        "isNew": true
+      },
+      {
+        "category": "SALT_BREAD",
+        "categoryId": "SALT_BREAD",
+        "name": "소금빵",
+        "imageUrl": "https://storage.threedollars.co.kr/menu/v1-saltbread.png",
+        "disableImageUrl": "https://storage.threedollars.co.kr/menu/icon_menu_24pt%3Dsaltbread.png",
+        "description": "소금빵",
+        "classification": {
+          "type": "SNACKS",
+          "description": "간식",
+          "priority": 2
+        },
+        "isNew": false
+      },
+      {
+        "category": "TAKOYAKI",
+        "categoryId": "TAKOYAKI",
+        "name": "문어빵",
+        "imageUrl": "https://storage.threedollars.co.kr/menu/v1_takoyaki.png?version=1",
+        "disableImageUrl": "https://storage.threedollars.co.kr/menu/v4/disable_takoyaki_3x.png?version=1",
+        "description": "문어빵 다 내꺼야",
+        "classification": {
+          "type": "SNACKS",
+          "description": "간식",
+          "priority": 2
+        },
+        "isNew": false
+      }
+    ],
+    "activitiesStatus": "RECENT_ACTIVITY",
+    "representativeImages": [
+      {
+        "url": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-bd8f9756-c3a2-4333-be66-f6cfc39054bb.jpeg"
+      },
+      {
+        "url": "https://storage.dev.threedollars.co.kr/boss/store/v1/v1-d5c3cb0c-a7d3-4d4a-8d25-3d1853f2bb48.jpeg"
+      },
+      {
+        "url": "https://storage.dev.threedollars.co.kr/boss/store-certification/v1/v1-4217b84f-00ee-407f-979d-28c2f1a803c7.jpeg"
+      }
+    ],
+    "accountNumbers": [
+      {
+        "bank": {
+          "key": "KB_KOOKMIN_BANK",
+          "description": "KB국민"
+        },
+        "accountHolder": "강승허",
+        "accountNumber": "93800200216144"
+      }
+    ],
+    "contactsNumbers": [
+      {
+        "number": "010-7126-7013"
+      }
+    ],
+    "introduction": "몰라몰러ㄹㄹ\n길\n기\n써\n버\n자\n길\n게",
+    "sns": [
+      {
+        "snsType": "ETC",
+        "url": "https://console.firebase.google.com/u/0/project/dollar-in-my-pocket/overview?hl=ko"
+      }
+    ],
+    "labels": [
+      "VERIFIED"
+    ],
+    "paymentMethods": [],
+    "createdAt": "2024-11-29T22:28:48",
+    "updatedAt": "2026-09-18T12:27:48"
+  }
+}

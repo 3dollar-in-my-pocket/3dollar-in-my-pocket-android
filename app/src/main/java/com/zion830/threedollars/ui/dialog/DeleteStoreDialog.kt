@@ -29,6 +29,14 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     override val screenName: ScreenName = ScreenName.REPORT_STORE
 
     private lateinit var deleteType: DeleteType
+    private var onSubmit: ((DeleteType) -> Unit)? = null
+
+    /**
+     * 신고 제출을 호출부가 처리하게 한다. 설정하면 레거시 [StoreDetailViewModel]을 쓰지 않고 화면도 닫지 않는다.
+     */
+    fun setOnSubmitListener(listener: (DeleteType) -> Unit) {
+        onSubmit = listener
+    }
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): DialogDeleteBinding =
         DialogDeleteBinding.inflate(inflater, container, false)
 
@@ -48,6 +56,7 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
     }
 
     private fun initFlow() {
+        if (onSubmit != null) return
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 launch {
@@ -66,6 +75,11 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
             dismiss()
         }
         binding.btnFinish.onSingleClick {
+            onSubmit?.let { submit ->
+                submit(deleteType)
+                dismiss()
+                return@onSingleClick
+            }
             viewModel.sendClickReportStore(deleteType.key)
             viewModel.deleteStore(deleteType)
             dismiss()

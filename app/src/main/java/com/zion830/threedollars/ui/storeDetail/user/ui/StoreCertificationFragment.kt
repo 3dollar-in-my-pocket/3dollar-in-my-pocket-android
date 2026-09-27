@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.zion830.threedollars.ui.storeDetail.user.model.StoreCertificationProgress
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.ext.addNewFragment
@@ -23,7 +24,6 @@ import com.zion830.threedollars.utils.SizeUtils
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import zion830.com.common.ext.isNotNullOrEmpty
-import kotlin.math.abs
 import kotlin.math.min
 import com.threedollar.common.R as CommonR
 
@@ -95,8 +95,8 @@ class StoreCertificationFragment : BaseFragment<LayoutCertificationBinding, Stor
         if (distance <= MIN_DISTANCE) {
             startCertification()
         }
-        binding.tvDistance.text = getString(CommonR.string.certification_distance, (distance - MIN_DISTANCE).toInt())
-        progress = 100 - abs((distance - MIN_DISTANCE) / MIN_DISTANCE * 100).toInt()
+        binding.tvDistance.text = getString(CommonR.string.certification_distance, distance.toInt())
+        progress = StoreCertificationProgress.percent(distance)
         binding.progressIndicator.progress = progress
         return distance
     }

@@ -29,6 +29,7 @@ enum class ApiError(
     TOO_MAY_REQUESTS("TM000"),
     SERVER_INTERNAL("IS000"),
     ALREADY_EXISTS_NICKNAME("CF001"),
+    NOT_EXISTS_STORE("NF002"),
     UNKNOWN(null);
 
     companion object {

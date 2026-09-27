@@ -67,7 +67,6 @@ lottie = "6.7.1"
 flexbox = "3.0.0"
 simple-rating-bar = "1.5.1"
 hashtag-view = "1.3.1"
-tedimagepicker = "1.6.1"
 
 # Map & Social Login
 naver-map = "3.21.0"
@@ -154,7 +153,6 @@ desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", ver
 multidex = { group = "com.android.support", name = "multidex", version.ref = "multidex" }
 simple-rating-bar = { group = "com.github.ome450901", name = "SimpleRatingBar", version.ref = "simple-rating-bar" }
 hashtag-view = { group = "com.github.greenfrvr", name = "hashtag-view", version.ref = "hashtag-view" }
-tedimagepicker = { group = "io.github.ParkSangGwon", name = "tedimagepicker", version.ref = "tedimagepicker" }
 
 # --- Map & Social Login ---
 naver-map = { group = "com.naver.maps", name = "map-sdk", version.ref = "naver-map" }

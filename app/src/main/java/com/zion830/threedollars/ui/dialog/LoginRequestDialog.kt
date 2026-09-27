@@ -20,7 +20,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
 import com.threedollar.common.utils.Constants
-import com.threedollar.network.request.PushInformationRequest
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.databinding.DialogBottomLoginRequestBinding
 import com.zion830.threedollars.datasource.model.LoginType
@@ -146,7 +145,7 @@ class LoginRequestDialog : BottomSheetDialogFragment() {
                                 LegacySharedPrefUtils.saveAccessToken(it.token)
                                 FirebaseMessaging.getInstance().token.addOnCompleteListener { firebaseToken ->
                                     if (firebaseToken.isSuccessful) {
-                                        viewModel.putPushInformation(PushInformationRequest(pushToken = firebaseToken.result))
+                                        viewModel.putPushInformation(pushToken = firebaseToken.result)
                                     }
                                 }
                                 callBack.invoke(true)

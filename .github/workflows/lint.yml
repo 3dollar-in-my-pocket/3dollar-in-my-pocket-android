@@ -1,0 +1,18 @@
+name: Lint
+
+# 모든 PR에서 실행 (스택 PR처럼 base가 feature 브랜치여도)
+# 스타일 린트(ktlint/detekt)는 아직 도입하지 않았다 — 의존성 추가라 별도 승인이 필요하다.
+# 현재는 문서로만 강제되던 모듈 경계 규칙을 스크립트로 잡는다. 기준: docs/process/pr-process.md
+on:
+  pull_request:
+
+jobs:
+  module-deps:
+    name: 모듈 의존성 규칙
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 모듈 의존 방향 검사
+        run: scripts/check-module-deps.sh
