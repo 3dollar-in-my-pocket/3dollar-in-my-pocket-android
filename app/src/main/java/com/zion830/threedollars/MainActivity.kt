@@ -170,6 +170,11 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         )
     }
 
+    /** 탭바 클릭 로그 없이 가게 제보 탭으로 이동한다. 홈 [+ 가게 제보] 버튼처럼 화면이 따로 로그를 남길 때 쓴다. */
+    fun selectWriteTab() {
+        selectTabWithoutClickLog(R.id.navigation_write)
+    }
+
     private fun selectTabWithoutClickLog(itemId: Int) {
         isTabChangingByDeepLink = true
         try {
