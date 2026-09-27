@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.coupon.viewModel
 
 import com.threedollar.common.base.UdfViewModel
+import com.threedollar.common.coroutines.CoroutineTagElement
 import com.threedollar.domain.store.model.IssuedCouponStatus
 import com.threedollar.domain.store.repository.StoreRepository
 import com.threedollar.network.result.ApiException
@@ -28,6 +29,9 @@ class MyCouponsViewModel @Inject constructor(
 
     private var initialized = false
     private val failedCursors = mutableMapOf<CouponTab, String?>()
+
+    /** 두 탭을 동시에 조회하다 함께 실패해도 얼럿은 한 번만 띄운다. 조회가 성공하면 다시 띄울 수 있다. */
+    private var isLoadErrorShown = false
 
     private val stateStore = MutableStateFlow(MyCouponsUiState())
     override val state: StateFlow<MyCouponsUiState> = stateStore.asStateFlow()
@@ -62,8 +66,11 @@ class MyCouponsViewModel @Inject constructor(
 
     override fun onException(exception: Throwable, tag: Any?) {
         super.onException(exception, tag)
-        if (tag is CouponTab) {
-            stateStore.update { state -> state.updateTab(tag) { it.copy(isLoading = false, hasLoaded = true) } }
+        val requestTag = (tag as? CoroutineTagElement)?.tag ?: tag
+        if (requestTag is CouponTab) {
+            stateStore.update { state -> state.updateTab(requestTag) { it.copy(isLoading = false) } }
+            if (isLoadErrorShown) return
+            isLoadErrorShown = true
         }
         _effect.trySend(MyCouponsUiEffect.ShowErrorAlert((exception as? ApiException)?.message))
     }
@@ -86,6 +93,7 @@ class MyCouponsViewModel @Inject constructor(
             val page = storeRepository.getMyIssuedCoupons(tab.statuses, cursor, MY_COUPON_PAGE_SIZE)
                 .onFailure { failedCursors[tab] = cursor }
                 .getOrThrow()
+            isLoadErrorShown = false
             stateStore.update { state -> state.updateTab(tab) { it.appendPage(page) } }
         }
     }
