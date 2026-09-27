@@ -627,6 +627,15 @@
     <string name="store_detail_coupon_use">사용하기</string>
     <string name="store_detail_review_delete_confirm">리뷰를 삭제할까요?</string>
     <string name="store_detail_text_copied">복사했어요</string>
+    <string name="feed_list_title">우리 동네 소식</string>
+    <string name="feed_list_empty_title">아직 동네 가게 소식이 없어요.</string>
+    <string name="feed_list_empty_description">가게 등록, 리뷰 작성으로 가게 소식을 직접 등록해보세요!</string>
+    <string name="community_feed_button">이 동네 가게 소식</string>
+    <string name="feed_time_just_now">방금 전</string>
+    <string name="feed_time_minutes">%d분 전</string>
+    <string name="feed_time_hours">%d시간 전</string>
+    <string name="feed_time_days">%d일 전</string>
+    <string name="feed_time_date_format" translatable="false">yyyy년MM월dd일</string>
     <string name="store_detail_error_default">일시적인 문제가 발생했어요.\n잠시 후 다시 시도해주세요.</string>
     <string name="store_post_list_title">%s 가게 소식</string>
     <string name="store_post_just_now">방금</string>

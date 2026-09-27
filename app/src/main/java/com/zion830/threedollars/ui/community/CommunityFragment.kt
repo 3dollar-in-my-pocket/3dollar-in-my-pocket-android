@@ -14,10 +14,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import base.compose.AppTheme
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -34,6 +37,9 @@ import com.zion830.threedollars.ui.community.dialog.NeighborHoodsChoiceDialog
 import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.ui.community.polls.PollListActivity
 import com.zion830.threedollars.ui.community.utils.selectedPoll
+import com.zion830.threedollars.ui.feed.model.FeedLocation
+import com.zion830.threedollars.ui.feed.ui.FeedListActivity
+import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -43,6 +49,7 @@ import com.threedollar.common.R as CommonR
 @AndroidEntryPoint
 class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewModel>() {
     override val viewModel: CommunityViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by activityViewModels()
 
     @Inject
     lateinit var activityStarter: ActivityStarter
@@ -120,6 +127,27 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
         initButton()
         initFlow()
         initAdmob()
+        initFeedButton()
+    }
+
+    private fun initFeedButton() {
+        binding.feedButtonComposeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                AppTheme {
+                    CommunityFeedButton(onClick = ::openFeedList)
+                }
+            }
+        }
+    }
+
+    private fun openFeedList() {
+        viewModel.sendClickFeedButton()
+        val mapPosition = homeViewModel.getSavedMapPosition()?.let { it.latitude to it.longitude }
+        val location = FeedLocation.of(map = mapPosition, device = sharedPrefUtils.getUserLastLocation())
+        startActivity(FeedListActivity.getIntent(requireContext(), location))
+        @Suppress("DEPRECATION")
+        requireActivity().overridePendingTransition(CommonR.anim.slide_in_up, 0)
     }
 
     private fun initAdvertisements() {

@@ -4,6 +4,7 @@ import android.os.Build
 import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
+import com.threedollar.network.api.FeedApi
 import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
@@ -156,4 +157,13 @@ object NetworkModule {
         .client(okHttpClient)
         .build()
         .create(StoreApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFeedApi(@OkhttpClient okHttpClient: OkHttpClient) = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClient)
+        .build()
+        .create(FeedApi::class.java)
 }
