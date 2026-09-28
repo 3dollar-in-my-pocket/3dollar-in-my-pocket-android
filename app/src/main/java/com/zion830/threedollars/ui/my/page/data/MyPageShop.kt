@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.my.page.data
 
 import com.threedollar.domain.my.model.FavoriteStoresModel
 import com.threedollar.domain.my.model.VisitHistoryModel
+import com.threedollar.domain.store.model.IssuedCouponModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -69,6 +70,16 @@ fun VisitHistoryModel.toMyPageShops(): List<MyPageShop> {
         )
     }
 }
+
+/** 쿠폰을 낸 가게를 마이페이지 가게 정보 뷰로 그리기 위한 변환. */
+fun IssuedCouponModel.toMyPageShop(): MyPageShop = MyPageShop(
+    title = storeName,
+    imageUrl = storeCategoryImageUrl.orEmpty(),
+    tags = listOfNotNull(storeCategoryName.takeIf { it.isNotBlank() }?.let { "#$it" }),
+    storeType = "",
+    storeId = storeId,
+    visitedData = MyPageShop.ShopVisitedData(isExists = false, date = ""),
+)
 
 fun formatDateString(originalDateString: String): String {
     // 여러 날짜 포맷 지원

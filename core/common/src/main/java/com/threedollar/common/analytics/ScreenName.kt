@@ -39,7 +39,8 @@ enum class ScreenName(val value: String) {
     QNA("qna"),
     FAQ("faq"),
     TEAM_INFO("team_info"),
-    MARKER_POPUP("marker_popup");
+    MARKER_POPUP("marker_popup"),
+    FEED_LIST("feed_list");
 
     override fun toString(): String = value
 }

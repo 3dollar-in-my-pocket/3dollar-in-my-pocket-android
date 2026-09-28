@@ -140,6 +140,16 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     }
 
     // GA Events - Community
+    fun sendClickFeedButton() {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FEED,
+            )
+        )
+    }
+
     fun sendClickPoll(pollId: String) {
         LogManager.sendEvent(
             ClickEvent(

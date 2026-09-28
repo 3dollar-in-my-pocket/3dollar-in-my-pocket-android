@@ -8,6 +8,8 @@ data class MyPageSectionTitleData(
     @DrawableRes val topIcon: Int,
     val bottomTitle: String,
     val count:Int? = null,
+    /** 개수 문구를 직접 지정할 때(예: `N+개`). 있으면 [count] 대신 쓴다. */
+    val countText: String? = null,
     val onClick: () -> Unit,
 )
 

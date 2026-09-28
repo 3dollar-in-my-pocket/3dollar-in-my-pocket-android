@@ -1,6 +1,9 @@
 package com.threedollar.network.api
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.store.ContentsWithCursorWithTotalCountResponse
+import com.threedollar.network.data.store.IssuedCouponResponse
+import com.threedollar.network.data.store.NewsPost
 import com.threedollar.network.data.store.StoreDisplayItemsResponse
 import com.threedollar.network.data.store.StoreV5Response
 import com.threedollar.network.request.StoreDisplayItemsRequest
@@ -68,10 +71,24 @@ interface StoreApi {
         @Path("couponId") couponId: String,
     ): Response<BaseResponse<Any>>
 
+    @GET("/api/v1/my/issued-coupons")
+    suspend fun getMyIssuedCoupons(
+        @Query("statuses") statuses: List<String>,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int,
+    ): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<IssuedCouponResponse>>>
+
     @PUT("/api/v1/issued-coupon/{issuedKey}/use")
     suspend fun useIssuedCoupon(
         @Path("issuedKey") issuedKey: String,
     ): Response<BaseResponse<String>>
+
+    @GET("/api/v1/store/{storeId}/news-posts")
+    suspend fun getStoreNewsPosts(
+        @Path("storeId") storeId: String,
+        @Query("cursor") cursor: String?,
+        @Query("size") size: Int,
+    ): Response<BaseResponse<ContentsWithCursorWithTotalCountResponse<NewsPost>>>
 
     @PUT("/api/v1/store/{storeId}/news-post/{postId}/stickers")
     suspend fun putStorePostStickers(

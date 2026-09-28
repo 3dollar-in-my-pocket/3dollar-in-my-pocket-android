@@ -11,4 +11,5 @@ enum class AdvertisementsPosition {
     POLL_CARD,
     LOADING,
     MENU_CATEGORY_ICON,
+    LOCAL_NEWS_FEED,
 }

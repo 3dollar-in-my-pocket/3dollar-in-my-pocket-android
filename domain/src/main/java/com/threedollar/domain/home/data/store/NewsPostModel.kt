@@ -7,7 +7,9 @@ data class NewsPostModel(
     val isOwner: Boolean,
     val stickers: List<StickerModel>,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val storeName: String = "",
+    val storeCategoryImageUrl: String? = null,
 )
 
 enum class SectionTypeModel {

@@ -18,6 +18,9 @@ data class NewsPost(
     @SerializedName("stickers")
     val stickers: List<Sticker>,
 
+    @SerializedName("store")
+    val store: NewsPostStore? = null,
+
     @SerializedName("createdAt")
     val createdAt: String,
 
@@ -25,9 +28,22 @@ data class NewsPost(
     val updatedAt: String
 )
 
+/** 가게 소식 목록(`news-posts`)에서만 내려오는 작성 가게 정보. */
+data class NewsPostStore(
+    @SerializedName("storeId")
+    val storeId: String? = null,
+
+    @SerializedName("storeName")
+    val storeName: String? = null,
+
+    @SerializedName("categories")
+    val categories: List<Category>? = null,
+)
+
 data class Section(
+    /** 알 수 없는 타입이면 Gson 이 null 을 넣는다. */
     @SerializedName("sectionType")
-    val sectionType: SectionType,
+    val sectionType: SectionType?,
 
     @SerializedName("url")
     val url: String,
