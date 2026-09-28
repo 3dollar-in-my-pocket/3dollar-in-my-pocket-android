@@ -132,7 +132,12 @@ jobs:
           echo "release notes (${NOTES_LEN} chars, Play limit 500):"
           cat distribution/whatsnew/whatsnew-ko-KR
 
+      # Play 는 앱 상태에 따라 changesNotSentForReview 를 요구하거나(심사 거절 등으로 자동 심사 제출이 막힌 상태)
+      # 거부한다("Changes are sent for review automatically"). 옵션 없이 먼저 올리고, 실패하면 옵션을 켜서 한 번 더 올린다.
+      # Edit 커밋이 실패하면 업로드한 AAB 도 반영되지 않으므로 재시도해도 중복 업로드가 되지 않는다. 심사 제출은 콘솔에서 한다.
       - name: Upload to Google Play production (draft)
+        id: upload
+        continue-on-error: true
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
@@ -142,5 +147,16 @@ jobs:
           status: draft
           releaseName: ${{ steps.version.outputs.tag_name }}
           whatsNewDirectory: distribution/whatsnew
-          # 심사 거절 등으로 Play 가 자동 심사 제출을 막는 상태에서도 Edit 커밋이 되도록 한다. 심사 제출은 콘솔에서 한다.
+
+      - name: Upload to Google Play production (draft, changes not sent for review)
+        if: steps.upload.outcome == 'failure'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.zion830.threedollars
+          releaseFiles: ${{ steps.artifacts.outputs.release_aab }}
+          tracks: production
+          status: draft
+          releaseName: ${{ steps.version.outputs.tag_name }}
+          whatsNewDirectory: distribution/whatsnew
           changesNotSentForReview: true
