@@ -3,15 +3,21 @@ package com.zion830.threedollars.ui.community
 import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.graphics.Color
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.AdSize
+import com.google.android.gms.ads.AdView
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.domain.community.data.AdvertisementModelV2
 import com.threedollar.domain.community.data.PollItem
 import com.zion830.threedollars.databinding.ItemPollAdBinding
+import com.zion830.threedollars.databinding.ItemPollAdmobBinding
 import com.zion830.threedollars.databinding.ItemPollBinding
 import com.zion830.threedollars.ui.community.data.PollListData
 import com.zion830.threedollars.ui.community.utils.calculatePercentages
@@ -29,9 +35,15 @@ class CommunityPollAdapter(
     private val adClick: OnItemClickListener<AdvertisementModelV2>
 ) :
     ListAdapter<PollListData, ViewHolder>(BaseDiffUtilCallback()) {
+    private val adMobViewHolders = mutableSetOf<CommunityPollAdMobViewHolder>()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return if (viewType == 0) CommunityPollAdViewHolder(ItemPollAdBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        else CommunityPollViewHolder(ItemPollBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        val inflater = LayoutInflater.from(parent.context)
+        return when (viewType) {
+            VIEW_TYPE_AD -> CommunityPollAdViewHolder(ItemPollAdBinding.inflate(inflater, parent, false))
+            VIEW_TYPE_ADMOB -> CommunityPollAdMobViewHolder(ItemPollAdmobBinding.inflate(inflater, parent, false)).also { adMobViewHolders.add(it) }
+            else -> CommunityPollViewHolder(ItemPollBinding.inflate(inflater, parent, false))
+        }
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -43,15 +55,63 @@ class CommunityPollAdapter(
             is PollListData.Poll -> {
                 (holder as CommunityPollViewHolder).onBind(item.pollItem, choicePoll, clickPoll)
             }
+
+            PollListData.AdMob -> {
+                (holder as CommunityPollAdMobViewHolder).onBind()
+            }
         }
 
     }
 
     override fun getItemViewType(position: Int): Int {
         return when (getItem(position)) {
-            is PollListData.Ad -> 0
-            is PollListData.Poll -> 1
+            is PollListData.Ad -> VIEW_TYPE_AD
+            is PollListData.Poll -> VIEW_TYPE_POLL
+            PollListData.AdMob -> VIEW_TYPE_ADMOB
         }
+    }
+
+    /** 화면이 사라질 때 호출해 로드한 AdMob 배너를 해제한다. */
+    fun releaseAdMob() {
+        adMobViewHolders.forEach { it.release() }
+        adMobViewHolders.clear()
+    }
+
+    private companion object {
+        const val VIEW_TYPE_AD = 0
+        const val VIEW_TYPE_POLL = 1
+        const val VIEW_TYPE_ADMOB = 2
+    }
+}
+
+/** 서버 광고가 없을 때 투표 카드 자리에 AdMob 배너를 채운다. 한 번 요청한 배너는 재바인딩돼도 다시 요청하지 않는다. */
+class CommunityPollAdMobViewHolder(private val binding: ItemPollAdmobBinding) : ViewHolder(binding.root) {
+    private var adView: AdView? = null
+
+    fun onBind() {
+        if (adView != null) return
+        val context = binding.root.context
+        adView = AdView(context).apply {
+            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, CARD_WIDTH_DP))
+            adUnitId = context.getString(CommonR.string.admob_poll_list_card)
+            loadAd(AdRequest.Builder().build())
+        }.also {
+            binding.flPollAdMob.addView(
+                it,
+                FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.CENTER),
+            )
+        }
+    }
+
+    fun release() {
+        adView?.destroy()
+        binding.flPollAdMob.removeAllViews()
+        adView = null
+    }
+
+    private companion object {
+        /** `item_poll_admob.xml` 카드 폭과 같다. */
+        const val CARD_WIDTH_DP = 280
     }
 }
 
