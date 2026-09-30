@@ -42,7 +42,7 @@ interface CommunityDataSource {
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>
     fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<AdvertisementResponse>>
 }

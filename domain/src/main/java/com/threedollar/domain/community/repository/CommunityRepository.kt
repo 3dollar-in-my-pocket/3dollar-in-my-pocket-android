@@ -38,7 +38,7 @@ interface CommunityRepository {
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
     fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<List<AdvertisementModelV2>>>
 }
