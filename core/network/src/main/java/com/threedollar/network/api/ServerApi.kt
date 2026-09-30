@@ -146,6 +146,13 @@ interface ServerApi {
         @Body pollReportCreateApiRequest: PollReportCreateApiRequest,
     ): Response<BaseResponse<String>>
 
+    @PUT("/api/v1/poll/{pollId}/comment/{commentId}/stickers")
+    suspend fun putPollCommentStickers(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body stickerRequest: StickerRequest,
+    ): Response<BaseResponse<String>>
+
     @GET("/api/v1/poll/{pollId}/comments")
     suspend fun getPollCommentList(
         @Path("pollId") id: String,

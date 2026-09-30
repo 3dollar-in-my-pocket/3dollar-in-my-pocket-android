@@ -1,5 +1,6 @@
 package com.threedollar.data.community.datasource
 
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
@@ -85,6 +86,14 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
 
     override fun getPollCommentList(id: String, cursor: String?, size: Int): Flow<BaseResponse<GetPollCommentListResponse>> = flow {
         emit(apiResult(serverApi.getPollCommentList(id, cursor, size)))
+    }
+
+    override fun putPollCommentStickers(
+        pollId: String,
+        commentId: String,
+        stickerRequest: StickerRequest,
+    ): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.putPollCommentStickers(pollId, commentId, stickerRequest)))
     }
 
     override fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>> = flow {
