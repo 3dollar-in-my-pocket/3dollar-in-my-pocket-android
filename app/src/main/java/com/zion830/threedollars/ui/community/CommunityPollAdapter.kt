@@ -84,15 +84,19 @@ class CommunityPollAdapter(
     }
 }
 
-/** 서버 광고가 없을 때 투표 카드 자리에 AdMob 배너를 채운다. 한 번 요청한 배너는 재바인딩돼도 다시 요청하지 않는다. */
+/**
+ * 서버 광고가 없을 때 투표 카드 자리에 AdMob 배너를 채운다. 한 번 요청한 배너는 재바인딩돼도 다시 요청하지 않는다.
+ * 카드 크기(280 × 242) 안에서 큰 소재를 받도록 인라인 적응형으로 요청한다. 앵커드 적응형은 50dp 안팎의 띠배너만 온다.
+ */
 class CommunityPollAdMobViewHolder(private val binding: ItemPollAdmobBinding) : ViewHolder(binding.root) {
     private var adView: AdView? = null
 
     fun onBind() {
         if (adView != null) return
         val context = binding.root.context
+        binding.flPollAdMob.clipToOutline = true
         adView = AdView(context).apply {
-            setAdSize(AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(context, CARD_WIDTH_DP))
+            setAdSize(AdSize.getInlineAdaptiveBannerAdSize(CARD_WIDTH_DP, CARD_HEIGHT_DP))
             adUnitId = context.getString(CommonR.string.admob_poll_list_card)
             loadAd(AdRequest.Builder().build())
         }.also {
@@ -110,8 +114,9 @@ class CommunityPollAdMobViewHolder(private val binding: ItemPollAdmobBinding) : 
     }
 
     private companion object {
-        /** `item_poll_admob.xml` 카드 폭과 같다. */
+        /** `item_poll_admob.xml` 카드 크기와 같다. */
         const val CARD_WIDTH_DP = 280
+        const val CARD_HEIGHT_DP = 242
     }
 }
 
