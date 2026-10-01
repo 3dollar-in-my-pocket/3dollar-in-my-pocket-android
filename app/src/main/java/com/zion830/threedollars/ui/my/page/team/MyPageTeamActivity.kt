@@ -18,6 +18,7 @@ import com.zion830.threedollars.ui.my.page.screen.MyPageTeamScreen
 import com.threedollar.common.base.BaseComposeActivity
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.core.net.toUri
+import com.threedollar.common.R as CommonR
 
 @AndroidEntryPoint
 class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
@@ -55,7 +56,7 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
     }
 
     private fun inItAd() {
-        RewardedAd.load(this, AD_UNIT_ID, AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
+        RewardedAd.load(this, getString(CommonR.string.admob_my_page_team_rewarded), AdRequest.Builder().build(), object : RewardedAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
                 rewardedAd = null
             }
@@ -87,7 +88,6 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
     }
 
     companion object {
-        private const val AD_UNIT_ID = "ca-app-pub-5385646520024289/4616671581"
         private const val TEAM_INSTAGRAM_URL = "https://www.instagram.com/3dollar_in_my_pocket"
     }
 }
