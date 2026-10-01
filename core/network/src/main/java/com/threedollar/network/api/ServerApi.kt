@@ -263,8 +263,8 @@ interface ServerApi {
     @GET("/api/v2/advertisements")
     suspend fun getAdvertisements(
         @Query("position") position: String,
-        @Header("X-Device-Latitude") deviceLatitude: Double,
-        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double?,
+        @Header("X-Device-Longitude") deviceLongitude: Double?,
     ): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite

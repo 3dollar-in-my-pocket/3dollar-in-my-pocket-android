@@ -101,8 +101,8 @@ class CommunityDataSourceImpl @Inject constructor(private val serverApi: ServerA
 
     override fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<AdvertisementResponse>> = flow {
         emit(
             apiResult(

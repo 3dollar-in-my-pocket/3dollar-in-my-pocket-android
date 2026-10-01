@@ -231,8 +231,8 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
 
     override fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(
         position = position,
         deviceLatitude = deviceLatitude,
