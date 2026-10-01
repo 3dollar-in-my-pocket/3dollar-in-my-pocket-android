@@ -15,6 +15,7 @@
     <!-- 적응형 배너 (앵커드·인라인) -->
     <string name="admob_map_banner">ca-app-pub-3940256099942544/9214589741</string>
     <string name="admob_community_tab_banner">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="admob_feed_list_banner">ca-app-pub-3940256099942544/9214589741</string>
     <string name="admob_poll_list_card">ca-app-pub-3940256099942544/9214589741</string>
 
     <!-- 보상형 -->
