@@ -1,5 +1,6 @@
 package com.threedollar.data.community.datasource
 
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -37,6 +38,7 @@ interface CommunityDataSource {
     fun editPollComment(pollId: String, commentId: String, pollCommentApiRequest: PollCommentApiRequest): Flow<BaseResponse<String>>
     fun reportPollComment(pollId: String, commentId: String, pollReportCreateApiRequest: PollReportCreateApiRequest): Flow<BaseResponse<String>>
     fun getPollCommentList(id: String, cursor: String?, size: Int = 20): Flow<BaseResponse<GetPollCommentListResponse>>
+    fun putPollCommentStickers(pollId: String, commentId: String, stickerRequest: StickerRequest): Flow<BaseResponse<String>>
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<GetPopularStoresResponse>>
     fun getNeighborhoods(): Flow<BaseResponse<GetNeighborhoodsResponse>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsResponse>>

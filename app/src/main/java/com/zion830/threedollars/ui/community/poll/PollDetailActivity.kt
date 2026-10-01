@@ -52,7 +52,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
     private var pollComments: PollCommentList? = null
     private var isLoading = false
     private val adapter by lazy {
-        PollCommentAdapter {
+        PollCommentAdapter(optionClick = {
             if (it.current.comment.isOwner) {
                 isCommentEdit = true
                 editCommentId = it.current.comment.commentId
@@ -70,7 +70,7 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                         else viewModel.reportComment(it.current.comment.commentId, reasonModel.id)
                     }.show(supportFragmentManager, "")
             }
-        }
+        }, likeClick = viewModel::toggleCommentLike)
     }
 
     override fun initView() {
@@ -225,6 +225,19 @@ class PollDetailActivity : BaseActivity<ActivityPollDetailBinding, PollDetailVie
                 launch {
                     viewModel.toast.collect {
                         Toast.makeText(this@PollDetailActivity, it, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                launch {
+                    viewModel.commentLikeChanged.collect { comment ->
+                        val updated = pollComment.replaceComment(comment)
+                        pollComment.clear()
+                        pollComment.addAll(updated)
+                        adapter.submitList(updated)
+                    }
+                }
+                launch {
+                    viewModel.commentLikeFailed.collect { message ->
+                        Toast.makeText(this@PollDetailActivity, message ?: getString(CommonR.string.connection_failed), Toast.LENGTH_SHORT).show()
                     }
                 }
             }

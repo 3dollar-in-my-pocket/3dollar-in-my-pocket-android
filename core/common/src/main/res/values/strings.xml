@@ -381,6 +381,7 @@
     <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
     <string name="str_like">좋아요 %d</string>
+    <string name="str_like_empty">좋아요</string>
     
     <!-- Photo -->
     <string name="add_photo">사진제보</string>
