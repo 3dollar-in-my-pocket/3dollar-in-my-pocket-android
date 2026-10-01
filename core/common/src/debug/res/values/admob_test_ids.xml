@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    debug 빌드(로컬·Firebase App Distribution 개발 버전)는 구글 공식 테스트 광고 단위만 쓴다.
+    테스터 실기기에서 실광고가 노출·클릭되면 무효 트래픽으로 잡힐 수 있다.
+    main 의 admob_* 를 추가하면 여기에도 같은 이름으로 추가한다 (AdMobDebugTestIdsTest 가 검사).
+    https://developers.google.com/admob/android/test-ads#sample_ad_units
+-->
+<resources>
+    <!-- 고정 크기 배너 (BANNER, MEDIUM_RECTANGLE) -->
+    <string name="admob_list_banner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_store_detail_banner">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_search_by_address">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="admob_community_comment_banner">ca-app-pub-3940256099942544/6300978111</string>
+
+    <!-- 적응형 배너 (앵커드·인라인) -->
+    <string name="admob_map_banner">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="admob_community_tab_banner">ca-app-pub-3940256099942544/9214589741</string>
+    <string name="admob_poll_list_card">ca-app-pub-3940256099942544/9214589741</string>
+
+    <!-- 보상형 -->
+    <string name="admob_my_page_team_rewarded">ca-app-pub-3940256099942544/5224354917</string>
+</resources>
