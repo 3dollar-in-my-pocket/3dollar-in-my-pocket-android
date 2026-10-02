@@ -23,12 +23,12 @@
     <color name="green_200">#99E8C2</color>
     <color name="green_100">#F1FFF8</color>
     
-    <color name="pink">#FF858F</color>
-    <color name="pink_500">#DE616B</color>
-    <color name="pink_400">#F9737E</color>
-    <color name="pink_300">#FFAAB1</color>
-    <color name="pink_200">#FFDADD</color>
-    <color name="pink_100">#FFF3F4</color>
+    <color name="pink">#FF8181</color>
+    <color name="pink_500">#E96060</color>
+    <color name="pink_400">#F57575</color>
+    <color name="pink_300">#FFB1AD</color>
+    <color name="pink_200">#FFD9D5</color>
+    <color name="pink_100">#FFEFEF</color>
 
     <color name="purple">#9C6ADE</color>
 
