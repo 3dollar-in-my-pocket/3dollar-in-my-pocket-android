@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.limitToMaxCategories
 
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
@@ -91,6 +92,7 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
+            is AddStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
             is AddStoreContract.Intent.ResetState -> resetState()
         }
@@ -524,6 +526,17 @@ class AddStoreViewModel @Inject constructor(
 
     private fun setSelectCategoryModelList(list: List<SelectCategoryModel>) {
         _state.update { it.copy(selectCategoryList = list) }
+    }
+
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+        val categories = list.limitToMaxCategories()
+        _removedCategoriesData.clear()
+        _state.update {
+            it.copy(
+                selectCategoryList = categories,
+                selectedCategoryId = categories.firstOrNull()?.menuType?.categoryId,
+            )
+        }
     }
 
     private fun checkNearStore(location: LatLng) {

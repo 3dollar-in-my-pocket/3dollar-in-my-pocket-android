@@ -38,6 +38,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.limitToMaxCategories
 
 @HiltViewModel
 class EditStoreViewModel @Inject constructor(
@@ -81,6 +82,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.ConfirmLocation -> confirmLocation()
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
+            is EditStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
             is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
@@ -246,6 +248,16 @@ class EditStoreViewModel @Inject constructor(
 
     private fun cancelLocationEdit() {
         _state.update { it.copy(tempLocation = null) }
+    }
+
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+        val categories = list.limitToMaxCategories()
+        _state.update {
+            it.copy(
+                tempSelectCategoryList = categories,
+                selectedCategoryId = categories.firstOrNull()?.menuType?.categoryId,
+            )
+        }
     }
 
     private fun setSelectCategoryList(list: List<SelectCategoryModel>) {
