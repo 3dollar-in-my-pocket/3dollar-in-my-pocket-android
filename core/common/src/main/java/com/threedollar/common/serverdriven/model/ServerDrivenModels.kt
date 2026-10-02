@@ -1,5 +1,7 @@
 package com.threedollar.common.serverdriven.model
 
+import com.threedollar.common.sdui.model.section.SDAdMobSlotHeight
+
 data class SDScreenModel(
     val sections: List<SDSectionModel> = emptyList(),
 )
@@ -203,6 +205,7 @@ sealed interface HomeListCardModel {
         override val cardId: String,
         val clickLog: SDClickLogModel? = null,
         val impressionLog: SDImpressionLogModel? = null,
+        val heightDp: Int = SDAdMobSlotHeight.MIN_DP,
     ) : HomeListCardModel
 }
 
