@@ -5,8 +5,10 @@ import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.data.home.asModel
 import com.threedollar.data.store.asIssuedCouponPageModel
 import com.threedollar.data.store.asModel
+import com.threedollar.data.store.asExtractedMenus
 import com.threedollar.data.store.asUserStoreModel
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.threedollar.domain.store.model.ExtractedStoreMenuModel
 import com.threedollar.domain.store.model.IssuedCouponPageModel
 import com.threedollar.domain.store.model.IssuedCouponStatus
 import com.threedollar.domain.store.model.NewsPostPageModel
@@ -15,15 +17,18 @@ import com.threedollar.domain.store.model.StoreDisplayItemsModel
 import com.threedollar.domain.store.model.StoreNotExistsException
 import com.threedollar.domain.store.repository.StoreRepository
 import com.threedollar.network.api.StoreApi
+import com.threedollar.network.api.StoreMenuExtractionApi
 import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreDisplayItemsRequest
 import com.threedollar.network.result.ApiError
 import com.threedollar.network.result.ApiException
 import com.threedollar.network.util.runApi
+import okhttp3.MultipartBody
 import javax.inject.Inject
 
 class StoreRepositoryImpl @Inject constructor(
-    private val storeApi: StoreApi
+    private val storeApi: StoreApi,
+    private val storeMenuExtractionApi: StoreMenuExtractionApi,
 ) : StoreRepository {
     override suspend fun getScreenStore(
         storeId: Int,
@@ -141,4 +146,8 @@ class StoreRepositoryImpl @Inject constructor(
 
     private fun Throwable.toStoreNotExistsOrSelf(): Throwable =
         if (this is ApiException && error == ApiError.NOT_EXISTS_STORE) StoreNotExistsException(message) else this
+
+    override suspend fun extractStoreMenus(image: MultipartBody.Part): Result<List<ExtractedStoreMenuModel>> = runApi {
+        storeMenuExtractionApi.extractStoreMenus(file = image)
+    }.map { it.asExtractedMenus() }
 }
