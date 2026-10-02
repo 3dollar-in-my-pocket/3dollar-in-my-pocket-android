@@ -37,6 +37,8 @@ import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.CustomEvent
 import com.threedollar.common.analytics.EventName
 import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.ext.addNewFragment
@@ -390,6 +392,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     storeScreen = storeScreen,
                     onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
+                    onAdMobClick = viewModel::sendClickAdMobCard,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
@@ -942,6 +945,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             ))
         }
         isFirstLoad = false
+    }
+
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
+        viewModel.sendPageView()
     }
 
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentHomeBinding =

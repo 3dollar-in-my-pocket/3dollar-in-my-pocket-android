@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -155,6 +156,7 @@ fun HomeBottomSheetContent(
     storeScreen: StoreScreenModel?,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
     onStorePreviewClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
@@ -518,6 +520,7 @@ fun HomeBottomSheetContent(
                         listState = listState,
                         onCardClick = onCardClick,
                         onLoadNextPage = onLoadNextPage,
+                        onAdMobClick = onAdMobClick,
                         modifier = Modifier
                             .weight(1f)
                             .nestedScroll(listNestedScrollConnection),
@@ -654,6 +657,7 @@ private fun HomeListContent(
     listState: LazyListState,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cards = homeListSection.cards
@@ -681,15 +685,20 @@ private fun HomeListContent(
                     onClick = { onCardClick(card) },
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
-                is HomeListCardModel.AdMobCard -> HomeListAdMobCard(card = card)
+                is HomeListCardModel.AdMobCard -> HomeListAdMobCard(card = card, onClick = onAdMobClick)
             }
         }
     }
 }
 
 @Composable
-private fun HomeListAdMobCard(card: HomeListCardModel.AdMobCard) {
+private fun HomeListAdMobCard(
+    card: HomeListCardModel.AdMobCard,
+    onClick: (HomeListCardModel.AdMobCard) -> Unit,
+) {
     val context = LocalContext.current
+    val currentCard by rememberUpdatedState(card)
+    val currentOnClick by rememberUpdatedState(onClick)
     SduiAdMobSlot(
         adUnitId = context.getString(CommonR.string.admob_list_banner),
         heightDp = card.heightDp,
@@ -701,6 +710,10 @@ private fun HomeListAdMobCard(card: HomeListCardModel.AdMobCard) {
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
+                }
+
+                override fun onAdClicked() {
+                    currentOnClick(currentCard)
                 }
             }
         },
