@@ -73,6 +73,9 @@ object AddStoreContract {
         object UpdateStoreWithDetails : Intent()
         object ClearError : Intent()
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
+
+        /** AI 메뉴 인식 결과로 선택 카테고리·입력 메뉴를 덮어쓴다. */
+        data class ApplyExtractedMenus(val list: List<SelectCategoryModel>) : Intent()
         data class CheckNearStore(val location: LatLng) : Intent()
         object ResetState : Intent()
     }

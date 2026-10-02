@@ -112,6 +112,10 @@ object EditStoreContract {
         data object ConfirmLocation : Intent
         data object CancelLocationEdit : Intent
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent
+
+        /** AI 메뉴 인식 결과로 메뉴 수정 중인 카테고리·메뉴를 덮어쓴다. */
+        data class ApplyExtractedMenus(val list: List<SelectCategoryModel>) : Intent
+
         data class ChangeSelectCategory(val category: CategoryModel) : Intent
         data class UpdateSelectedCategories(val categoryIds: List<String>) : Intent
         data class RemoveCategory(val category: CategoryModel) : Intent
