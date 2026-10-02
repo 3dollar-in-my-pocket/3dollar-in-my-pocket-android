@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class StoreContributorScreenResponse(
     @SerializedName("sections")
     val sections: List<StoreContributorSectionResponse>? = emptyList(),
+    @SerializedName("viewLog")
+    val viewLog: SDPageViewLogResponse? = null,
 )
 
 data class StoreContributorHistoriesResponse(
@@ -32,6 +34,8 @@ data class StoreContributorSectionResponse(
 data class StoreContributorActionBarResponse(
     @SerializedName("button")
     val button: StoreContributorButtonResponse? = null,
+    @SerializedName("clickLog")
+    val clickLog: SDClickLogResponse? = null,
 )
 
 data class StoreContributorHeaderResponse(

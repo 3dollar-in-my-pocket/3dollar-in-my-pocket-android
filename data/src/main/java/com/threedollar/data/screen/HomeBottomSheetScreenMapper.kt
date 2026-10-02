@@ -98,6 +98,7 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
             header = header?.asModel(),
             bodies = bodies.orEmpty().map { it.asModel() },
             style = style?.asModel(),
+            impressionLog = impressionLog?.asModel(),
         )
 
         normalizedType == "ADMOB_CARD" || normalizedType == "AD_MOB" -> HomeListCardModel.AdMobCard(
@@ -246,7 +247,7 @@ private fun SDCursorResponse.asModel(): SDCursorModel = SDCursorModel(
     hasMore = hasMore ?: false,
 )
 
-private fun SDClickLogResponse.asModel(): SDClickLogModel = SDClickLogModel(
+internal fun SDClickLogResponse.asModel(): SDClickLogModel = SDClickLogModel(
     eventType = eventType.orEmpty(),
     screenName = screenName.orEmpty(),
     objectType = objectType.orEmpty(),
@@ -262,7 +263,7 @@ private fun SDImpressionLogResponse.asModel(): SDImpressionLogModel = SDImpressi
     extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
 )
 
-private fun SDPageViewLogResponse.asModelOrNull(): SDViewLogModel? {
+internal fun SDPageViewLogResponse.asModelOrNull(): SDViewLogModel? {
     val screen = screenName?.takeIf { it.isNotBlank() } ?: return null
     return SDViewLogModel(
         eventType = eventType.orEmpty(),
