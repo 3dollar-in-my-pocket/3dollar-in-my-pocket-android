@@ -63,7 +63,7 @@ class SplashActivity :
         }
 
     override fun initView() {
-        setDarkSystemBars()
+        setLightSystemBars()
         initAdvertisements()
         initPushToken()
         initFlow()
