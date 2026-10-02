@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.threedollar.domain.community.data.PollComment
 import com.zion830.threedollars.databinding.ItemPollCommentBinding
 import com.zion830.threedollars.databinding.ItemPollCommentBlindBinding
+import com.zion830.threedollars.ui.like.bind
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.loadUrlImg
 import zion830.com.common.base.onSingleClick
@@ -16,7 +17,10 @@ import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class PollCommentAdapter(private val optionClick: (PollComment) -> Unit) :
+class PollCommentAdapter(
+    private val optionClick: (PollComment) -> Unit,
+    private val likeClick: (PollComment) -> Unit,
+) :
     ListAdapter<PollComment, ViewHolder>(BaseDiffUtilCallback()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return if (viewType == 1) PollCommentBlindViewHolder(ItemPollCommentBlindBinding.inflate(LayoutInflater.from(parent.context), parent, false))
@@ -26,7 +30,7 @@ class PollCommentAdapter(private val optionClick: (PollComment) -> Unit) :
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         when (holder) {
             is PollCommentViewHolder -> {
-                holder.onBind(getItem(position), optionClick)
+                holder.onBind(getItem(position), optionClick, likeClick)
             }
         }
     }
@@ -37,7 +41,7 @@ class PollCommentAdapter(private val optionClick: (PollComment) -> Unit) :
 }
 
 class PollCommentViewHolder(private val binding: ItemPollCommentBinding) : ViewHolder(binding.root) {
-    fun onBind(pollComment: PollComment, commentClick: (PollComment) -> Unit) {
+    fun onBind(pollComment: PollComment, commentClick: (PollComment) -> Unit, likeClick: (PollComment) -> Unit) {
         binding.twPollCommentOption.onSingleClick { commentClick(pollComment) }
         binding.clCommentBack.isSelected = pollComment.current.comment.isOwner
         binding.twPollCommentOption.text = if (pollComment.current.comment.isOwner) "수정" else "신고"
@@ -49,6 +53,7 @@ class PollCommentViewHolder(private val binding: ItemPollCommentBinding) : ViewH
         binding.twPollCommentNick.text = pollComment.current.commentWriter.name
         binding.twPollCommentWriter.isVisible = pollComment.current.poll.isWriter
         binding.twPollCommentContent.text = pollComment.current.comment.content
+        binding.likeButton.bind(pollComment.current.stickers) { likeClick(pollComment) }
     }
 
     private fun getTimeAgo(timeString: String): String {

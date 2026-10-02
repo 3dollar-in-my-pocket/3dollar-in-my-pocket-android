@@ -11,15 +11,20 @@ import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.community.data.CommentId
+import com.threedollar.domain.community.data.PollComment
 import com.threedollar.domain.community.data.PollCommentList
 import com.threedollar.domain.community.data.PollItem
 import com.threedollar.domain.community.model.ReportReasonsGroupType
 import com.threedollar.domain.community.model.ReportReasonsModel
 import com.threedollar.domain.community.repository.CommunityRepository
+import com.zion830.threedollars.ui.like.likeRequestStickerId
+import com.zion830.threedollars.ui.like.likeSticker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -57,6 +62,14 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
     val pollComment: SharedFlow<PollCommentList> get() = _pollComment.asSharedFlow()
     private val _toast: MutableSharedFlow<String> = MutableSharedFlow()
     val toast: SharedFlow<String> = _toast.asSharedFlow()
+
+    private val _commentLikeChanged = MutableSharedFlow<PollComment>()
+    val commentLikeChanged: SharedFlow<PollComment> get() = _commentLikeChanged.asSharedFlow()
+
+    private val _commentLikeFailed = MutableSharedFlow<String?>()
+    val commentLikeFailed: SharedFlow<String?> get() = _commentLikeFailed.asSharedFlow()
+
+    private val likingCommentIds = mutableSetOf<String>()
 
     private val _pollAd = MutableSharedFlow<List<AdvertisementModelV2>>()
     val pollAd: SharedFlow<List<AdvertisementModelV2>> get() = _pollAd.asSharedFlow()
@@ -131,6 +144,35 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
         }
     }
 
+    /**
+     * 댓글 좋아요를 먼저 화면에 반영하고 스티커 교체를 요청한다.
+     * 실패하면 원래 상태로 되돌리고, 응답 전에는 같은 댓글의 요청을 다시 보내지 않는다.
+     */
+    fun toggleCommentLike(comment: PollComment) {
+        val commentId = comment.current.comment.commentId
+        if (!likingCommentIds.add(commentId)) return
+        val toggled = comment.withToggledLike()
+        sendClickLike(commentId, toggled.current.stickers.likeSticker.reactedByMe)
+        viewModelScope.launch(coroutineExceptionHandler) {
+            try {
+                _commentLikeChanged.emit(toggled)
+                val response = try {
+                    communityRepository.putPollCommentSticker(pollId, commentId, comment.current.stickers.likeRequestStickerId()).firstOrNull()
+                } catch (e: CancellationException) {
+                    throw e
+                } catch (e: Exception) {
+                    null
+                }
+                if (response?.ok != true) {
+                    _commentLikeChanged.emit(comment)
+                    _commentLikeFailed.emit(response?.message?.takeIf { it.isNotBlank() })
+                }
+            } finally {
+                likingCommentIds.remove(commentId)
+            }
+        }
+    }
+
     private fun getReportList(reportReasonsGroupType: ReportReasonsGroupType) {
         viewModelScope.launch(coroutineExceptionHandler) {
             communityRepository.getReportReasons(reportReasonsGroupType).collect {
@@ -166,6 +208,21 @@ class PollDetailViewModel @Inject constructor(private val communityRepository: C
                 additionalParams = mapOf(
                     ParameterName.POLL_ID to pollId,
                     ParameterName.OPTION_ID to optionId
+                )
+            )
+        )
+    }
+
+    private fun sendClickLike(commentId: String, isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(
+                    ParameterName.POLL_ID to pollId,
+                    ParameterName.REVIEW_ID to commentId,
+                    ParameterName.VALUE to isLiked
                 )
             )
         )

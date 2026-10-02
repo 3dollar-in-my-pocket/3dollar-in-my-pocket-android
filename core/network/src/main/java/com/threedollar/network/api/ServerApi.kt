@@ -146,6 +146,13 @@ interface ServerApi {
         @Body pollReportCreateApiRequest: PollReportCreateApiRequest,
     ): Response<BaseResponse<String>>
 
+    @PUT("/api/v1/poll/{pollId}/comment/{commentId}/stickers")
+    suspend fun putPollCommentStickers(
+        @Path("pollId") pollId: String,
+        @Path("commentId") commentId: String,
+        @Body stickerRequest: StickerRequest,
+    ): Response<BaseResponse<String>>
+
     @GET("/api/v1/poll/{pollId}/comments")
     suspend fun getPollCommentList(
         @Path("pollId") id: String,
@@ -263,8 +270,8 @@ interface ServerApi {
     @GET("/api/v2/advertisements")
     suspend fun getAdvertisements(
         @Query("position") position: String,
-        @Header("X-Device-Latitude") deviceLatitude: Double,
-        @Header("X-Device-Longitude") deviceLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double?,
+        @Header("X-Device-Longitude") deviceLongitude: Double?,
     ): Response<BaseResponse<AdvertisementResponse>>
 
     // favorite

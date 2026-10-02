@@ -381,6 +381,7 @@
     <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
     <string name="str_like">좋아요 %d</string>
+    <string name="str_like_empty">좋아요</string>
     
     <!-- Photo -->
     <string name="add_photo">사진제보</string>
@@ -580,6 +581,7 @@
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
     <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
+    <string name="admob_my_page_team_rewarded">ca-app-pub-5385646520024289/4616671581</string>
     
     <!-- UI Common Strings (Legacy) -->
     <string name="go_download">다운로드 하러 가기</string>
@@ -594,6 +596,8 @@
     <string name="str_create_poll_hint">투표 제목을 입력하세요.</string>
     <string name="admob_community_comment_banner">ca-app-pub-5385646520024289/4196241163</string>
     <string name="admob_community_tab_banner">ca-app-pub-5385646520024289/3222264361</string>
+    <string name="admob_feed_list_banner">ca-app-pub-5385646520024289/4870299205</string>
+    <string name="admob_poll_list_card">ca-app-pub-5385646520024289/1325951653</string>
     <string name="select_neighborhood_default">📍 %s</string>
     
     <!-- My Page Feature Strings -->

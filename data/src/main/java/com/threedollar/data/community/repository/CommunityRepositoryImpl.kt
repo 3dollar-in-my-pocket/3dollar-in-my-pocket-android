@@ -1,6 +1,7 @@
 package com.threedollar.data.community.repository
 
 
+import com.threedollar.network.request.StickerRequest
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.data.community.datasource.CommunityDataSource
@@ -196,6 +197,13 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
             )
         }
 
+    override fun putPollCommentSticker(pollId: String, commentId: String, stickerId: String?): Flow<BaseResponse<String>> =
+        communityDataSource.putPollCommentStickers(
+            pollId = pollId,
+            commentId = commentId,
+            stickerRequest = StickerRequest(stickers = listOfNotNull(stickerId?.let { StickerRequest.Sticker(stickerId = it) })),
+        )
+
     override fun getNeighborhoods(): Flow<BaseResponse<Neighborhoods>> =
         communityDataSource.getNeighborhoods().map {
             BaseResponse(
@@ -231,8 +239,8 @@ class CommunityRepositoryImpl @Inject constructor(private val communityDataSourc
 
     override fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<List<AdvertisementModelV2>>> = communityDataSource.getAdvertisements(
         position = position,
         deviceLatitude = deviceLatitude,

@@ -3,6 +3,7 @@ package com.threedollar.data.community.mapper
 import com.threedollar.common.utils.toDefaultInt
 import com.threedollar.domain.community.data.Cursor
 import com.threedollar.domain.community.data.PollComment
+import com.threedollar.domain.home.data.store.StickerModel
 import com.threedollar.network.data.poll.response.GetPollCommentListResponse
 
 object GetPollCommentListResponseMapper {
@@ -16,7 +17,18 @@ object GetPollCommentListResponseMapper {
             comment = this?.comment.toMapper(),
             commentReport = this?.commentReport.toMapper(),
             commentWriter = this?.commentWriter.toMapper(),
-            poll = this?.poll.toMapper()
+            poll = this?.poll.toMapper(),
+            stickers = this?.stickers.orEmpty().mapNotNull { it.toMapper() }
+        )
+    }
+
+    private fun GetPollCommentListResponse.Content.Current.Sticker?.toMapper(): StickerModel? {
+        val stickerId = this?.stickerId?.takeIf { it.isNotBlank() } ?: return null
+        return StickerModel(
+            stickerId = stickerId,
+            emoji = emoji.orEmpty(),
+            count = count.toDefaultInt(),
+            reactedByMe = reactedByMe ?: false
         )
     }
 

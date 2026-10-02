@@ -58,6 +58,7 @@ class StoreReviewDetailActivity :
                     }
                 }
             },
+            likeClick = { viewModel.toggleReviewLike(storeId, it) },
         )
     }
     private val backPressedCallback = object : OnBackPressedCallback(true) {
@@ -151,6 +152,10 @@ class StoreReviewDetailActivity :
                             }, 500)
                         }
                     }
+                }
+
+                launch {
+                    viewModel.reviewLikeOverrides.collect { moreReviewAdapter.updateLikeOverrides(it) }
                 }
 
                 launch {

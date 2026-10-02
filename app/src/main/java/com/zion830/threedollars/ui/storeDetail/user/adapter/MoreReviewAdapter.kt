@@ -7,30 +7,54 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.ReviewStatusType
+import com.threedollar.domain.home.data.store.StickerModel
 import com.threedollar.common.ext.loadImage
 import com.threedollar.common.listener.OnItemClickListener
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.databinding.ItemMoreReviewBinding
+import com.zion830.threedollars.ui.like.bind
 import com.zion830.threedollars.utils.StringUtils
 import zion830.com.common.base.BaseDiffUtilCallback
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 
-class MoreReviewAdapter(private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>) :
+class MoreReviewAdapter(
+    private val reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
+    private val likeClick: (ReviewContentModel) -> Unit,
+) :
     PagingDataAdapter<ReviewContentModel, MoreReviewViewHolder>(BaseDiffUtilCallback()) {
+
+    private var likeOverrides: Map<Long, List<StickerModel>> = emptyMap()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         MoreReviewViewHolder(ItemMoreReviewBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: MoreReviewViewHolder, position: Int) {
-        holder.bind(getItem(position) as ReviewContentModel, reviewEditOrDeleteClickEvent, position)
+        val item = getItem(position) ?: return
+        val stickers = likeOverrides[item.review.reviewId] ?: item.stickers
+        holder.bind(item.copy(stickers = stickers), reviewEditOrDeleteClickEvent, likeClick, position)
+    }
+
+    /** 좋아요를 바꾼 리뷰만 다시 그린다. */
+    fun updateLikeOverrides(overrides: Map<Long, List<StickerModel>>) {
+        val changedIds = (overrides.keys + likeOverrides.keys).filter { overrides[it] != likeOverrides[it] }.toSet()
+        likeOverrides = overrides
+        if (changedIds.isEmpty()) return
+        snapshot().forEachIndexed { index, item ->
+            if (item?.review?.reviewId in changedIds) notifyItemChanged(index)
+        }
     }
 }
 
 class MoreReviewViewHolder(private val binding: ItemMoreReviewBinding) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(item: ReviewContentModel, reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>, position: Int) {
+    fun bind(
+        item: ReviewContentModel,
+        reviewEditOrDeleteClickEvent: OnItemClickListener<ReviewContentModel>,
+        likeClick: (ReviewContentModel) -> Unit,
+        position: Int,
+    ) {
         binding.blindTextView.isVisible = item.review.status != ReviewStatusType.POSTED
         binding.reviewConstraintLayout.isVisible = item.review.status == ReviewStatusType.POSTED
 
@@ -41,6 +65,7 @@ class MoreReviewViewHolder(private val binding: ItemMoreReviewBinding) : Recycle
             binding.medalImageView.loadImage(item.reviewWriter.medal.iconUrl)
             binding.createdAtTextView.text = StringUtils.getTimeString(item.review.createdAt, "yy.MM.dd E")
             binding.reviewRatingBar.rating = item.review.rating.toFloat()
+            binding.likeButton.bind(item.stickers) { likeClick(item) }
 
             if (position % 2 == 0) {
                 binding.reviewConstraintLayout.setBackgroundResource(DesignSystemR.drawable.rect_radius_12_gray_0)
