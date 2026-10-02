@@ -752,7 +752,7 @@ class HomeViewModel @Inject constructor(
             categoriesFilter = fallbackChip(text = "음식 종류"),
             categoriesFilterClickLog = null,
             currentCategoryFilter = HomeFilterCurrentCategory(
-                fontColor = "#FF858F",
+                fontColor = "#FF8181",
                 style = SELECTED_CATEGORY_STYLE,
                 clickLog = null,
             ),
@@ -767,7 +767,7 @@ class HomeViewModel @Inject constructor(
         text = SDTextModel(
             text = text,
             isHtml = false,
-            fontColor = if (selected) "#FF858F" else "#5A5A5A",
+            fontColor = if (selected) "#FF8181" else "#5A5A5A",
         ),
         additionalText = null,
         style = if (selected) SELECTED_CATEGORY_STYLE else DEFAULT_CHIP_STYLE,
@@ -1045,8 +1045,8 @@ class HomeViewModel @Inject constructor(
             border = SDBorderModel(color = "#D0D0D0", width = 1.0),
         )
         private val SELECTED_CATEGORY_STYLE = SDSurfaceStyleModel(
-            backgroundColor = "#FFF3F4",
-            border = SDBorderModel(color = "#FF858F", width = 1.0),
+            backgroundColor = "#FFEFEF",
+            border = SDBorderModel(color = "#FF8181", width = 1.0),
         )
     }
 }

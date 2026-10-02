@@ -283,6 +283,6 @@ private fun HomeFilterCellType.homeFilterContentType(): String = when (this) {
 }
 
 private val DEFAULT_SELECTED_CATEGORY_STYLE = SDSurfaceStyleModel(
-    backgroundColor = "#FFF3F4",
-    border = com.threedollar.common.serverdriven.model.SDBorderModel(color = "#FF858F", width = 1.0),
+    backgroundColor = "#FFEFEF",
+    border = com.threedollar.common.serverdriven.model.SDBorderModel(color = "#FF8181", width = 1.0),
 )
