@@ -25,6 +25,8 @@ sealed interface StoreContributorUiIntent {
     data object OnRefresh : StoreContributorUiIntent
     data object OnCloseClick : StoreContributorUiIntent
     data object OnLoadNextPage : StoreContributorUiIntent
+    data object OnShown : StoreContributorUiIntent
+    data object OnEditClick : StoreContributorUiIntent
     data class OnActionClick(val action: SDLinkModel) : StoreContributorUiIntent
 }
 

@@ -18,8 +18,12 @@ data class HomeFilterConfigurationResponse(
 )
 
 data class HomeFilterViewLogResponse(
+    @SerializedName("eventType")
+    val eventType: String? = null,
     @SerializedName("screenName")
     val screenName: String? = null,
+    @SerializedName("extraParameters")
+    val extraParameters: Map<String, JsonElement>? = null,
 )
 
 data class HomeFilterSectionResponse(

@@ -144,7 +144,8 @@ class StoreDetailSduiActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val EXTRA_STORE_ID = "extra_store_id"
+        /** 개발 빌드 디버그 메뉴의 가게 ID 표시도 이 키로 읽는다. */
+        internal const val EXTRA_STORE_ID = "extra_store_id"
         private const val EXTRA_FRAGMENT = "extra_fragment"
 
         /**

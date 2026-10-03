@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "data": {
+    "cards": [
+      {
+        "type": "EMPTY_CARD",
+        "cardId": "EMPTY",
+        "impressionLog": {
+          "eventType": "IMPRESSION",
+          "screenName": "home",
+          "objectType": "card",
+          "objectId": "empty",
+          "extraParameters": {}
+        }
+      }
+    ],
+    "cursor": {
+      "hasMore": false
+    }
+  }
+}
