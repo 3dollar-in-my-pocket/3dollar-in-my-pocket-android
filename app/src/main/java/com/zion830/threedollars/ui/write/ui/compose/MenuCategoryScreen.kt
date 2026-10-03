@@ -33,6 +33,7 @@ import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import com.threedollar.domain.home.data.store.CategoryModel
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionBanner
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 
 data class CategorySection(
@@ -44,6 +45,7 @@ data class CategorySection(
 fun MenuCategoryScreen(
     state: AddStoreContract.State,
     onIntent: (AddStoreContract.Intent) -> Unit,
+    onMenuExtractionClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     val selectedCategoryIds = state.selectCategoryList.map { it.menuType.categoryId }
@@ -67,6 +69,7 @@ fun MenuCategoryScreen(
 
     MenuCategoryContent(
         categorySections = categorySections,
+        onMenuExtractionClick = onMenuExtractionClick,
         onCategoryClick = { category ->
             val updatedCategory = category.copy(isSelected = !category.isSelected)
             onIntent(AddStoreContract.Intent.ChangeSelectCategory(updatedCategory))
@@ -79,6 +82,7 @@ fun MenuCategoryScreen(
 @Composable
 private fun MenuCategoryContent(
     categorySections: List<CategorySection>,
+    onMenuExtractionClick: (() -> Unit)?,
     onCategoryClick: (CategoryModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -126,7 +130,14 @@ private fun MenuCategoryContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+
+        if (onMenuExtractionClick != null) {
+            MenuExtractionBanner(onClick = onMenuExtractionClick)
+            Spacer(modifier = Modifier.height(32.dp))
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         categorySections.forEachIndexed { index, section ->
             Text(
@@ -203,6 +214,7 @@ private fun MenuCategoryContentPreview() {
 
     MenuCategoryContent(
         categorySections = categorySections,
+        onMenuExtractionClick = {},
         onCategoryClick = {}
     )
 }

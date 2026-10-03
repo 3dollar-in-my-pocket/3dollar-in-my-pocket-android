@@ -3,11 +3,13 @@ package com.threedollar.domain.store.repository
 import com.threedollar.common.sdui.model.screen.SDScreenModel
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.domain.home.data.store.UserStoreModel
+import com.threedollar.domain.store.model.ExtractedStoreMenuModel
 import com.threedollar.domain.store.model.IssuedCouponPageModel
 import com.threedollar.domain.store.model.IssuedCouponStatus
 import com.threedollar.domain.store.model.NewsPostPageModel
 import com.threedollar.domain.store.model.StoreDisplayItemType
 import com.threedollar.domain.store.model.StoreDisplayItemsModel
+import okhttp3.MultipartBody
 
 interface StoreRepository {
     suspend fun getScreenStore(
@@ -72,4 +74,7 @@ interface StoreRepository {
     suspend fun putStoreReviewSticker(storeId: String, reviewId: String, stickerId: String?): Result<Unit>
 
     suspend fun deleteStoreReview(reviewId: String): Result<Unit>
+
+    /** 메뉴판 사진 1장에서 메뉴를 추출한다. 인식된 메뉴가 없으면 빈 목록이다. */
+    suspend fun extractStoreMenus(image: MultipartBody.Part): Result<List<ExtractedStoreMenuModel>>
 }

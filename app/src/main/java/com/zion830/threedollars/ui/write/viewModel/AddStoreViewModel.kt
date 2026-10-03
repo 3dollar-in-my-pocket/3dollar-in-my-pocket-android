@@ -33,6 +33,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
+import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
@@ -91,6 +93,7 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
+            is AddStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
             is AddStoreContract.Intent.ResetState -> resetState()
         }
@@ -524,6 +527,16 @@ class AddStoreViewModel @Inject constructor(
 
     private fun setSelectCategoryModelList(list: List<SelectCategoryModel>) {
         _state.update { it.copy(selectCategoryList = list) }
+    }
+
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+        _state.update {
+            val merged = it.selectCategoryList.mergeExtracted(list)
+            it.copy(
+                selectCategoryList = merged,
+                selectedCategoryId = merged.firstExtractedCategoryId(list),
+            )
+        }
     }
 
     private fun checkNearStore(location: LatLng) {

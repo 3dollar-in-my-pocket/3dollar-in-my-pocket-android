@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "data": {
+    "imageUrl": "https://storage.dev.threedollars.co.kr/store-menu/v1/v1-9b5a44f6-d04e-4049-8d33-a0e188681e29.jpg",
+    "menus": [
+      {
+        "name": "붕어빵",
+        "category": {
+          "category": "BUNGEOPPANG",
+          "categoryId": "BUNGEOPPANG",
+          "name": "붕어빵",
+          "imageUrl": "https://storage.threedollars.co.kr/menu/v1_bungeoppang.png?version=1",
+          "disableImageUrl": "https://storage.threedollars.co.kr/menu/v4/disable_bungeoppang_3x.png?version=1",
+          "description": "붕어빵 만나기 30초 전",
+          "classification": {
+            "type": "TREND_SNACKS",
+            "description": "✨트렌드 간식",
+            "priority": 1
+          },
+          "isNew": false
+        }
+      }
+    ]
+  }
+}
