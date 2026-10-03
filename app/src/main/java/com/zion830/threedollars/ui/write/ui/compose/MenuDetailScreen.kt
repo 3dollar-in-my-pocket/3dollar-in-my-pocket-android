@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
@@ -58,7 +60,7 @@ fun MenuDetailScreen(
     state: AddStoreContract.State,
     onIntent: (AddStoreContract.Intent) -> Unit,
     onShowCategoryEditSheet: () -> Unit,
-    onImageMenuAddClick: () -> Unit,
+    onImageMenuAddClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     LaunchedEffect(state.selectCategoryList, state.selectedCategoryId) {
@@ -84,12 +86,13 @@ fun MenuDetailScreen(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MenuDetailScreenContent(
     selectCategoryList: List<SelectCategoryModel>,
     selectedCategoryId: String?,
     onCategoryClick: () -> Unit,
-    onImageMenuAddClick: () -> Unit,
+    onImageMenuAddClick: (() -> Unit)?,
     onSelectCategory: (String) -> Unit,
     onAddMenu: (String) -> Unit,
     onRemoveMenu: (String, Int) -> Unit,
@@ -97,7 +100,10 @@ private fun MenuDetailScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val selectedCategory = selectCategoryList.find { it.menuType.categoryId == selectedCategoryId }
+    val listState = rememberLazyListState()
+    val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
@@ -116,12 +122,16 @@ private fun MenuDetailScreenContent(
                 fontWeight = FontWeight.W600,
                 fontFamily = PretendardFontFamily,
                 color = Gray100,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 16.dp),
             )
-            MenuImageAddButton(
-                onClick = onImageMenuAddClick,
-                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
-            )
+            if (onImageMenuAddClick != null) {
+                MenuImageAddButton(
+                    onClick = onImageMenuAddClick,
+                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp),
+                )
+            }
+        }
+        stickyHeader {
             MenuCategoryTabRow(
                 categories = selectCategoryList,
                 selectedCategoryId = selectedCategoryId,
@@ -130,18 +140,18 @@ private fun MenuDetailScreenContent(
             )
         }
         selectedCategory?.let { category ->
-            item(key = category.menuType.categoryId) {
-                val categoryId = category.menuType.categoryId
-                MenuCategoryEditorSection(
-                    selectCategory = category,
-                    onAddMenu = { onAddMenu(categoryId) },
-                    onRemoveMenu = { menuIndex -> onRemoveMenu(categoryId, menuIndex) },
-                    onUpdateMenu = { menuIndex, name, price, count ->
-                        onUpdateMenu(categoryId, menuIndex, name, price, count)
-                    },
-                    modifier = Modifier.padding(20.dp),
-                )
-            }
+            val categoryId = category.menuType.categoryId
+            menuCategoryEditorItems(
+                selectCategory = category,
+                onAddMenu = {
+                    markMenuAdding()
+                    onAddMenu(categoryId)
+                },
+                onRemoveMenu = { menuIndex -> onRemoveMenu(categoryId, menuIndex) },
+                onUpdateMenu = { menuIndex, name, price, count ->
+                    onUpdateMenu(categoryId, menuIndex, name, price, count)
+                },
+            )
         }
     }
 }

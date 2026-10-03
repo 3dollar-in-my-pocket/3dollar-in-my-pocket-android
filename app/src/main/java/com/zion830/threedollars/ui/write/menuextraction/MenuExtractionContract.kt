@@ -17,6 +17,6 @@ sealed interface MenuExtractionEffect {
     data class ShowErrorAlert(val message: String?, @StringRes val fallbackMessageRes: Int) : MenuExtractionEffect
     data class ShowToast(@StringRes val messageRes: Int) : MenuExtractionEffect
 
-    /** [등록하기]를 눌렀을 때 진입 화면에 덮어쓸 카테고리·메뉴. */
+    /** [등록하기]를 눌렀을 때 진입 화면에 합칠 카테고리·메뉴. */
     data class Completed(val categories: List<SelectCategoryModel>) : MenuExtractionEffect
 }

@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -44,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -70,12 +73,14 @@ import com.threedollar.common.compose.dialog.DialogButton
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
-import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryEditorSection
+import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
 import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryTabRow
+import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 
 /**
  * AI 메뉴 인식 흐름(사진 선택 모달 → 로딩 → 결과)을 [content] 위에 얹는다.
- * [content]에는 사진 선택 모달을 여는 함수가 전달된다. 결과를 [등록하기] 하면 [onCompleted]로 카테고리·메뉴를 넘긴다.
+ * [content]에는 사진 선택 모달을 여는 함수가 전달되고, 이 흐름에서 이미 인식을 썼으면 null 이 전달된다(진입점 숨김).
+ * 결과를 [등록하기] 하면 [onCompleted]로 카테고리·메뉴를 넘긴다.
  */
 @Composable
 fun MenuExtractionHost(
@@ -83,10 +88,12 @@ fun MenuExtractionHost(
     screenTitle: String,
     onCompleted: (List<SelectCategoryModel>) -> Unit,
     modifier: Modifier = Modifier,
-    content: @Composable (openPhotoSource: () -> Unit) -> Unit,
+    content: @Composable (openPhotoSource: (() -> Unit)?) -> Unit,
 ) {
     val context = LocalContext.current
     val state by viewModel.state.collectAsState()
+    val isAvailable by viewModel.isAvailable.collectAsState()
+    val focusManager = LocalFocusManager.current
     val currentOnCompleted by rememberUpdatedState(onCompleted)
     var isPhotoSourceVisible by remember { mutableStateOf(false) }
     var errorAlert by remember { mutableStateOf<MenuExtractionEffect.ShowErrorAlert?>(null) }
@@ -111,7 +118,17 @@ fun MenuExtractionHost(
     }
 
     Box(modifier = modifier.fillMaxSize()) {
-        content { isPhotoSourceVisible = true }
+        content(
+            if (isAvailable) {
+                {
+                    // 메뉴 입력 중이던 키보드가 모달·결과 화면 위에 남지 않도록 포커스를 푼다.
+                    focusManager.clearFocus(force = true)
+                    isPhotoSourceVisible = true
+                }
+            } else {
+                null
+            },
+        )
 
         when (state.phase) {
             MenuExtractionState.Phase.LOADING -> {
@@ -361,6 +378,7 @@ private fun MenuExtractionLoadingScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MenuExtractionResultScreen(
     title: String,
@@ -380,7 +398,9 @@ private fun MenuExtractionResultScreen(
             .clickable(interactionSource = remember { MutableInteractionSource() }, indication = null) {},
     ) {
         MenuExtractionTopBar(title = title, onBack = onClose, onClose = onClose)
-        LazyColumn(modifier = Modifier.weight(1f)) {
+        val listState = rememberLazyListState()
+        val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
+        LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
             item {
                 Text(
                     text = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
@@ -390,6 +410,8 @@ private fun MenuExtractionResultScreen(
                     color = Gray100,
                     modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 16.dp),
                 )
+            }
+            stickyHeader {
                 MenuCategoryTabRow(
                     categories = state.categories,
                     selectedCategoryId = state.selectedCategoryId,
@@ -397,16 +419,16 @@ private fun MenuExtractionResultScreen(
                 )
             }
             selectedCategory?.let { category ->
-                item(key = category.menuType.categoryId) {
-                    val categoryId = category.menuType.categoryId
-                    MenuCategoryEditorSection(
-                        selectCategory = category,
-                        onAddMenu = { onAddMenu(categoryId) },
-                        onRemoveMenu = { index -> onRemoveMenu(categoryId, index) },
-                        onUpdateMenu = { index, name, price, count -> onUpdateMenu(categoryId, index, name, price, count) },
-                        modifier = Modifier.padding(20.dp),
-                    )
-                }
+                val categoryId = category.menuType.categoryId
+                menuCategoryEditorItems(
+                    selectCategory = category,
+                    onAddMenu = {
+                        markMenuAdding()
+                        onAddMenu(categoryId)
+                    },
+                    onRemoveMenu = { index -> onRemoveMenu(categoryId, index) },
+                    onUpdateMenu = { index, name, price, count -> onUpdateMenu(categoryId, index, name, price, count) },
+                )
             }
         }
         Box(

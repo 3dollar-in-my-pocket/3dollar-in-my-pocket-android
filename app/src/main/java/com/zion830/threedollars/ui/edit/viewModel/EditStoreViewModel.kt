@@ -38,7 +38,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
-import com.zion830.threedollars.ui.write.menuextraction.limitToMaxCategories
+import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
+import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
 @HiltViewModel
 class EditStoreViewModel @Inject constructor(
@@ -251,11 +252,11 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
-        val categories = list.limitToMaxCategories()
         _state.update {
+            val merged = (it.tempSelectCategoryList ?: it.selectCategoryList).mergeExtracted(list)
             it.copy(
-                tempSelectCategoryList = categories,
-                selectedCategoryId = categories.firstOrNull()?.menuType?.categoryId,
+                tempSelectCategoryList = merged,
+                selectedCategoryId = merged.firstExtractedCategoryId(list),
             )
         }
     }

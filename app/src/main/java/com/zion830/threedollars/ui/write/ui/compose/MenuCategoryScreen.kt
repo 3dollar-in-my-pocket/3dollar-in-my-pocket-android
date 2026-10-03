@@ -45,7 +45,7 @@ data class CategorySection(
 fun MenuCategoryScreen(
     state: AddStoreContract.State,
     onIntent: (AddStoreContract.Intent) -> Unit,
-    onMenuExtractionClick: () -> Unit,
+    onMenuExtractionClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     val selectedCategoryIds = state.selectCategoryList.map { it.menuType.categoryId }
@@ -82,7 +82,7 @@ fun MenuCategoryScreen(
 @Composable
 private fun MenuCategoryContent(
     categorySections: List<CategorySection>,
-    onMenuExtractionClick: () -> Unit,
+    onMenuExtractionClick: (() -> Unit)?,
     onCategoryClick: (CategoryModel) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -132,9 +132,12 @@ private fun MenuCategoryContent(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        MenuExtractionBanner(onClick = onMenuExtractionClick)
-
-        Spacer(modifier = Modifier.height(32.dp))
+        if (onMenuExtractionClick != null) {
+            MenuExtractionBanner(onClick = onMenuExtractionClick)
+            Spacer(modifier = Modifier.height(32.dp))
+        } else {
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         categorySections.forEachIndexed { index, section ->
             Text(

@@ -80,7 +80,7 @@ class MenuPhotoFileReader @Inject constructor(
     private fun photoDirectory(): File = File(context.cacheDir, PHOTO_DIRECTORY).apply { mkdirs() }
 
     private companion object {
-        const val MAX_IMAGE_SIDE_PX = 2048
+        const val MAX_IMAGE_SIDE_PX = 1024
         const val JPEG_QUALITY = 85
         const val PART_NAME = "file"
         const val JPEG_MEDIA_TYPE = "image/jpeg"

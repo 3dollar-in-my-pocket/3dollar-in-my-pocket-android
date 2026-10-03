@@ -21,6 +21,9 @@ import javax.inject.Inject
 /**
  * 메뉴판 사진 1장 → AI 메뉴 인식 → 결과 확인·수정까지를 맡는다. 가게 제보와 가게 정보 수정이 함께 쓴다.
  * 결과를 진입 화면에 반영하는 일은 [MenuExtractionEffect.Completed]를 받은 쪽이 한다.
+ *
+ * 무료 AI 요청 제한 때문에 한 번의 등록·수정 흐름(이 ViewModel 의 수명)에서 인식은 한 번만 쓴다.
+ * 인식 결과(메뉴 1개 이상)를 받으면 [isAvailable]이 꺼지고, 실패·0건·로딩 중 닫기는 다시 쓸 수 있다.
  */
 @HiltViewModel
 class MenuExtractionViewModel @Inject constructor(
@@ -34,11 +37,15 @@ class MenuExtractionViewModel @Inject constructor(
     private val _effect = Channel<MenuExtractionEffect>(Channel.BUFFERED)
     val effect: Flow<MenuExtractionEffect> = _effect.receiveAsFlow()
 
+    private val _isAvailable = MutableStateFlow(true)
+    val isAvailable: StateFlow<Boolean> = _isAvailable.asStateFlow()
+
     private var extractionJob: Job? = null
 
     fun createCaptureUri(): Uri = photoFileReader.createCaptureUri()
 
     fun extract(uri: Uri) {
+        if (!_isAvailable.value) return
         extractionJob?.cancel()
         _state.value = MenuExtractionState(phase = MenuExtractionState.Phase.LOADING)
         extractionJob = viewModelScope.launch(coroutineExceptionHandler) {
@@ -54,6 +61,7 @@ class MenuExtractionViewModel @Inject constructor(
                         failWith(message = null, fallbackMessageRes = CommonR.string.menu_extraction_empty_error)
                         return@onSuccess
                     }
+                    _isAvailable.value = false
                     _state.value = MenuExtractionState(
                         phase = MenuExtractionState.Phase.RESULT,
                         recognizedMenuCount = menus.size,

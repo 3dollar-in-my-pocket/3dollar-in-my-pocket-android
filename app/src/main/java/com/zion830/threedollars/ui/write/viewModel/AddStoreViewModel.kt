@@ -33,7 +33,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.zion830.threedollars.ui.write.menuextraction.limitToMaxCategories
+import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
+import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
 @HiltViewModel
 class AddStoreViewModel @Inject constructor(
@@ -529,12 +530,11 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
-        val categories = list.limitToMaxCategories()
-        _removedCategoriesData.clear()
         _state.update {
+            val merged = it.selectCategoryList.mergeExtracted(list)
             it.copy(
-                selectCategoryList = categories,
-                selectedCategoryId = categories.firstOrNull()?.menuType?.categoryId,
+                selectCategoryList = merged,
+                selectedCategoryId = merged.firstExtractedCategoryId(list),
             )
         }
     }
