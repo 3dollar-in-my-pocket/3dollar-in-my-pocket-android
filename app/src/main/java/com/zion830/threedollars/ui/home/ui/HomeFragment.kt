@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
@@ -22,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.core.view.doOnLayout
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.activityViewModels
@@ -154,6 +156,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var isFirstLoad = true
 
     private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
+    private var isStoreScreenOpened = false
+    private var isMapControlPushedUnderFilter = false
 
     private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
@@ -462,11 +466,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun updateMapControlBottomMargin(sheetVisibleHeightPx: Int) {
         val bottomMarginPx = sheetVisibleHeightPx +
             SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP - HomeSheetLayout.MAP_CONTROL_SHADOW_INSET_DP)
+        updateMapControlPushedUnderFilter(bottomMarginPx)
         val params = binding.mapControlComposeView.layoutParams as ViewGroup.MarginLayoutParams
         if (params.bottomMargin == bottomMarginPx) return
         binding.mapControlComposeView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
             bottomMargin = bottomMarginPx
         }
+    }
+
+    /**
+     * 지도 버튼(현재 위치·북마크)과 [+ 가게 제보]는 시트 바로 위에 붙어 올라간다.
+     * 시트를 끝까지 올려 버튼이 상단 필터 영역까지 밀려 올라오면 리스트 위에 떠 보이지 않게 숨긴다.
+     */
+    private fun updateMapControlPushedUnderFilter(bottomMarginPx: Int) {
+        val container = binding.mapControlComposeView.parent as? View ?: return
+        if (container.height <= 0) return
+        val controlTopPx = container.height - bottomMarginPx - binding.mapControlComposeView.height
+        val isPushed = controlTopPx < binding.filterComposeView.bottom
+        if (isPushed == isMapControlPushedUnderFilter) return
+        isMapControlPushedUnderFilter = isPushed
+        updateMapControlVisibility()
+    }
+
+    private fun updateMapControlVisibility() {
+        val isHidden = isStoreScreenOpened || isMapControlPushedUnderFilter
+        binding.mapControlComposeView.isInvisible = isHidden
+        binding.writeButtonComposeView.isInvisible = isHidden
     }
 
     private fun initButton() {
@@ -537,8 +562,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
-                        binding.mapControlComposeView.isVisible = screen == null
-                        binding.writeButtonComposeView.isVisible = screen == null
+                        isStoreScreenOpened = screen != null
+                        updateMapControlVisibility()
                     }
                 }
                 launch {
