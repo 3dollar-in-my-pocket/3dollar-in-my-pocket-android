@@ -19,7 +19,7 @@
     </style>
 
     <style name="SplashTheme" parent="AppTheme">
-        <item name="android:windowBackground">@color/splash_background</item>
+        <item name="android:windowBackground">@drawable/bg_splash_window</item>
     </style>
 
     <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
