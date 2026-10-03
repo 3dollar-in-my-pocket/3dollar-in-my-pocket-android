@@ -17,6 +17,7 @@ import com.naver.maps.map.NaverMapSdk
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.utils.GlobalEvent
 import com.zion830.threedollars.datasource.model.LoginType
+import com.zion830.threedollars.debug.DebugTools
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import dagger.hilt.android.HiltAndroidApp
@@ -71,6 +72,7 @@ class GlobalApplication : Application() {
         eventTracker = FirebaseAnalytics.getInstance(APPLICATION_CONTEXT)
         LogManager.initialize(eventTracker)
         com.threedollar.common.analytics.SDClickLogger.initialize(eventTracker)
+        DebugTools.install(this)
 
         MobileAds.setRequestConfiguration(
             RequestConfiguration.Builder()
