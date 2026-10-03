@@ -46,8 +46,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
+import androidx.core.os.bundleOf
 import com.threedollar.common.R
+import com.threedollar.common.analytics.GALogMonitor
 
 class BossDownloadDialog : BottomSheetDialogFragment() {
 
@@ -95,10 +96,12 @@ class BossDownloadDialog : BottomSheetDialogFragment() {
     }
 
     private fun initFirebaseAnalytics() {
-        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
-            param(FirebaseAnalytics.Param.SCREEN_CLASS, "BossDownloadDialog")
-            param(FirebaseAnalytics.Param.SCREEN_NAME, "duplicate_store_check")
-        }
+        val parameters = bundleOf(
+            FirebaseAnalytics.Param.SCREEN_CLASS to "BossDownloadDialog",
+            FirebaseAnalytics.Param.SCREEN_NAME to "duplicate_store_check",
+        )
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, parameters)
+        GALogMonitor.record(FirebaseAnalytics.Event.SCREEN_VIEW, parameters)
     }
     fun setOnConfirmListener(callback: () -> Unit): BossDownloadDialog {
         onConfirmCallback = callback

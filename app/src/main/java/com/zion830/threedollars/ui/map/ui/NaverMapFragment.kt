@@ -31,7 +31,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.logEvent
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.geometry.LatLngBounds
 import com.naver.maps.map.CameraAnimation
@@ -69,6 +68,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.threedollar.common.analytics.GALogMonitor
 
 @AndroidEntryPoint
 open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyCallback {
@@ -155,7 +155,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private fun initMapUiSetting(map: NaverMap) {
         binding.btnFindLocation.setOnClickListener {
-            FirebaseAnalytics.getInstance(requireContext()).logEvent("click_current_location") {}
+            FirebaseAnalytics.getInstance(requireContext()).logEvent(CLICK_CURRENT_LOCATION_EVENT, Bundle())
+            GALogMonitor.record(CLICK_CURRENT_LOCATION_EVENT, Bundle())
             requireActivity().requestPermissionIfNeeds()
             moveToCurrentLocation(false)
         }
@@ -556,6 +557,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
          * iOS는 타임아웃 없이 첫 fix까지 기다린다.
          */
         const val CURRENT_LOCATION_TIMEOUT_MILLIS = 10_000L
+        const val CLICK_CURRENT_LOCATION_EVENT = "click_current_location"
     }
 
     fun setIsShowOverlay(isVisible: Boolean) {

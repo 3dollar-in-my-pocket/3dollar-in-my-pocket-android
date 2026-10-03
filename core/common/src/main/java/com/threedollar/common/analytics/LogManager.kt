@@ -44,6 +44,7 @@ object LogManager : LogManagerProtocol {
         }
 
         firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+        GALogMonitor.record(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
     }
 
     override fun sendEvent(event: LogEvent) {
@@ -60,6 +61,7 @@ object LogManager : LogManagerProtocol {
         }
 
         firebaseAnalytics?.logEvent(event.name.value, bundle)
+        GALogMonitor.record(event.name.value, bundle)
     }
 
     private fun Bundle.putParameter(key: ParameterName, value: Any) {

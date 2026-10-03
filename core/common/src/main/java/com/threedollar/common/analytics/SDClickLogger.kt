@@ -35,6 +35,7 @@ $extras""")
         }
 
         firebaseAnalytics?.logEvent(EventName.Click.value, bundle)
+        GALogMonitor.record(EventName.Click.value, bundle)
     }
 
     fun send(log: SDImpressionLogModel) {
@@ -56,6 +57,7 @@ $extras""")
         }
 
         firebaseAnalytics?.logEvent(EventName.IMPRESSION.value, bundle)
+        GALogMonitor.record(EventName.IMPRESSION.value, bundle)
     }
 
     fun send(log: SDViewLogModel) {
@@ -78,6 +80,7 @@ $extras""")
         }
 
         firebaseAnalytics?.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
+        GALogMonitor.record(FirebaseAnalytics.Event.SCREEN_VIEW, bundle)
     }
 
     private fun Bundle.putServerDrivenParameters(parameters: Map<String, SDClickLogValue>) {
