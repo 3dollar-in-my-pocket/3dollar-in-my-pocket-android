@@ -6,6 +6,7 @@ import com.threedollar.common.sdui.model.element.SDCustomActionType
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionType
+import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreCouponSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreImageSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreInfoV1SectionModel
@@ -165,5 +166,32 @@ class SDStoreScreenParsingTest {
             .cards?.single()
         assertNull(card?.customAction?.actionType)
         assertEquals("1", card?.customAction?.param(SDCustomActionModel.STORE_ID))
+    }
+
+    // TH-1431 TC2
+    @Test
+    fun `TH1431_TC2_가게상세_AD_MOB_카드의_height를_파싱한다`() {
+        // Given
+        val json = """
+            {
+              "sections": [
+                {
+                  "type": "AD_MOB",
+                  "sectionId": "AD_MOB",
+                  "cards": [
+                    { "type": "ADMOB_CARD", "cardId": "ADMOB:AD_MOB:1", "height": 250 }
+                  ]
+                }
+              ]
+            }
+        """.trimIndent()
+
+        // When
+        val section = gson.fromJson(json, SDStoreScreenModel::class.java).sections.orEmpty().single()
+
+        // Then
+        val card = (section as SDStoreAdmobSectionModel).cards.orEmpty().single()
+        assertEquals(250, card.height)
+        assertEquals(250, card.slotHeightDp)
     }
 }

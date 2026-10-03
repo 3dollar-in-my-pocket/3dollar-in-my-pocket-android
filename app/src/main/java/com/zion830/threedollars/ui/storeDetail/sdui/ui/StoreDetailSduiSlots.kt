@@ -1,19 +1,13 @@
 package com.zion830.threedollars.ui.storeDetail.sdui.ui
 
 import android.os.Bundle
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -22,17 +16,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdSize
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSectionSlots
+import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -43,7 +36,7 @@ private const val STORE_MAP_ZOOM = 16.0
  */
 fun storeDetailSduiSlots(): SDStoreSectionSlots = SDStoreSectionSlots(
     mapContent = { latitude, longitude, modifier -> StoreLocationMap(latitude, longitude, modifier) },
-    adContent = { _, modifier -> StoreDetailBanner(modifier) },
+    adContent = { card, modifier -> StoreDetailBanner(card, modifier) },
 )
 
 /**
@@ -104,39 +97,23 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
 }
 
 /**
- * 가게 상세 배너 광고. 광고 WebView 가 로드되며 포커스를 가져가면 목록이 광고 쪽으로 튀므로
- * 하위 뷰 포커스를 막고, 로드 전후 높이가 바뀌지 않도록 광고 크기로 고정한다. 로드에 실패하면 자리를 접는다.
+ * 가게 상세 배너 광고. 슬롯 높이는 서버가 내려준 카드 높이를 따르고, 로드에 실패하면 자리를 접는다.
  */
 @Composable
-private fun StoreDetailBanner(modifier: Modifier) {
+private fun StoreDetailBanner(card: SDStoreAdmobSectionModel.Card, modifier: Modifier) {
     var isFailed by remember { mutableStateOf(false) }
     if (isFailed) return
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp, vertical = 16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        AndroidView(
-            modifier = Modifier.size(width = AdSize.MEDIUM_RECTANGLE.width.dp, height = AdSize.MEDIUM_RECTANGLE.height.dp),
-            factory = { context ->
-                FrameLayout(context).apply {
-                    descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
-                    addView(
-                        AdView(context).apply {
-                            setAdSize(AdSize.MEDIUM_RECTANGLE)
-                            adUnitId = context.getString(CommonR.string.admob_store_detail_banner)
-                            adListener = object : AdListener() {
-                                override fun onAdFailedToLoad(error: LoadAdError) {
-                                    isFailed = true
-                                }
-                            }
-                            loadAd(AdRequest.Builder().build())
-                        }
-                    )
+    val context = LocalContext.current
+    SduiAdMobSlot(
+        adUnitId = context.getString(CommonR.string.admob_store_detail_banner),
+        heightDp = card.slotHeightDp,
+        adListener = remember {
+            object : AdListener() {
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    isFailed = true
                 }
-            },
-            onRelease = { container -> (container.getChildAt(0) as? AdView)?.destroy() }
-        )
-    }
+            }
+        },
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+    )
 }

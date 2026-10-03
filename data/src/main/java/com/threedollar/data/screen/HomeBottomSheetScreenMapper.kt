@@ -1,6 +1,7 @@
 package com.threedollar.data.screen
 
 import com.google.gson.JsonElement
+import com.threedollar.common.sdui.model.section.SDAdMobSlotHeight
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
@@ -104,6 +105,7 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
             cardId = cardId.orEmpty(),
             clickLog = clickLog?.asModel(),
             impressionLog = impressionLog?.asModel(),
+            heightDp = SDAdMobSlotHeight.resolve(height),
         )
 
         else -> null
