@@ -21,7 +21,7 @@
 
     <application
         android:name=".GlobalApplication"
-        android:icon="@drawable/ic_app_icon"
+        android:icon="@mipmap/ic_launcher"
         android:label="${appName3dollar}"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
@@ -44,7 +44,7 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_app_icon" />
+            android:resource="@drawable/ic_notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
@@ -60,6 +60,7 @@
         <activity
             android:name=".ui.splash.ui.SplashActivity"
             android:exported="true"
+            android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

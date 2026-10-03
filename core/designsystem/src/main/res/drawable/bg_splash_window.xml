@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    스플래시 창 배경. 앱이 뜨는 동안에도 로고가 바로 보이도록 배경에 로고를 함께 그린다.
+    로고 크기는 Android 12+ 시스템 스플래시(ic_splash_screen_icon)와 같은 174x151dp 로 맞춘다.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@color/splash_background" />
+    <item
+        android:width="174dp"
+        android:height="151dp"
+        android:drawable="@drawable/img_splash"
+        android:gravity="center" />
+</layer-list>
