@@ -53,17 +53,20 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.zion830.threedollars.ui.dialog.category.StoreCategory
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
-import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryEditorSection
+import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
 import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryTabRow
 import com.zion830.threedollars.ui.write.ui.compose.MenuImageAddButton
+import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.ExperimentalFoundationApi
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun EditMenuScreen(
     state: EditStoreContract.State,
     onIntent: (EditStoreContract.Intent) -> Unit,
-    onImageMenuAddClick: () -> Unit,
+    onImageMenuAddClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -121,7 +124,9 @@ fun EditMenuScreen(
                 val selectedCategory = currentCategoryList.find {
                     it.menuType.categoryId == state.selectedCategoryId
                 }
-                LazyColumn(modifier = Modifier.weight(1f)) {
+                val listState = rememberLazyListState()
+                val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
+                LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
                     item {
                         Text(
                             text = stringResource(CommonR.string.add_store_menu_detail_title),
@@ -129,12 +134,16 @@ fun EditMenuScreen(
                             fontWeight = FontWeight.W600,
                             fontFamily = PretendardFontFamily,
                             color = Gray100,
-                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp)
+                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 16.dp)
                         )
-                        MenuImageAddButton(
-                            onClick = onImageMenuAddClick,
-                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp)
-                        )
+                        if (onImageMenuAddClick != null) {
+                            MenuImageAddButton(
+                                onClick = onImageMenuAddClick,
+                                modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 16.dp)
+                            )
+                        }
+                    }
+                    stickyHeader {
                         MenuCategoryTabRow(
                             categories = currentCategoryList,
                             selectedCategoryId = state.selectedCategoryId,
@@ -148,30 +157,28 @@ fun EditMenuScreen(
                     }
 
                     selectedCategory?.let { selectCategory ->
-                        item(key = selectCategory.menuType.categoryId) {
-                            val categoryId = selectCategory.menuType.categoryId
-                            MenuCategoryEditorSection(
-                                selectCategory = selectCategory,
-                                onAddMenu = {
-                                    onIntent(EditStoreContract.Intent.AddMenuToCategory(categoryId))
-                                },
-                                onRemoveMenu = { menuIndex ->
-                                    onIntent(EditStoreContract.Intent.RemoveMenuFromCategory(categoryId, menuIndex))
-                                },
-                                onUpdateMenu = { menuIndex, name, price, count ->
-                                    onIntent(
-                                        EditStoreContract.Intent.UpdateMenuInCategory(
-                                            categoryId,
-                                            menuIndex,
-                                            name,
-                                            price,
-                                            count
-                                        )
+                        val categoryId = selectCategory.menuType.categoryId
+                        menuCategoryEditorItems(
+                            selectCategory = selectCategory,
+                            onAddMenu = {
+                                markMenuAdding()
+                                onIntent(EditStoreContract.Intent.AddMenuToCategory(categoryId))
+                            },
+                            onRemoveMenu = { menuIndex ->
+                                onIntent(EditStoreContract.Intent.RemoveMenuFromCategory(categoryId, menuIndex))
+                            },
+                            onUpdateMenu = { menuIndex, name, price, count ->
+                                onIntent(
+                                    EditStoreContract.Intent.UpdateMenuInCategory(
+                                        categoryId,
+                                        menuIndex,
+                                        name,
+                                        price,
+                                        count
                                     )
-                                },
-                                modifier = Modifier.padding(20.dp)
-                            )
-                        }
+                                )
+                            },
+                        )
                     }
                 }
 

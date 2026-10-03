@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +28,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -72,7 +75,11 @@ internal fun MenuCategoryTabRow(
     modifier: Modifier = Modifier,
     onFilterClick: (() -> Unit)? = null,
 ) {
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(ColorWhite),
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             LazyRow(
                 modifier = Modifier.weight(1f),
@@ -139,19 +146,21 @@ private fun MenuCategoryTab(
 
 /**
  * 카테고리 하나의 메뉴 입력 영역. 헤더 오른쪽 [+ 메뉴 추가]로 메뉴가 많아도 스크롤 없이 추가할 수 있다.
+ * 메뉴 행마다 아이템을 나눠, 추가한 메뉴로 스크롤([rememberScrollToAddedMenu])할 수 있게 한다.
  */
-@Composable
-internal fun MenuCategoryEditorSection(
+internal fun LazyListScope.menuCategoryEditorItems(
     selectCategory: SelectCategoryModel,
     onAddMenu: () -> Unit,
     onRemoveMenu: (Int) -> Unit,
     onUpdateMenu: (index: Int, name: String, price: String, count: Int?) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
+    val categoryId = selectCategory.menuType.categoryId
     val menus = selectCategory.menuDetail.orEmpty()
-    Column(modifier = modifier) {
+    item(key = "menu-header-$categoryId") {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
@@ -170,9 +179,9 @@ internal fun MenuCategoryEditorSection(
             )
             MenuAddPillButton(onClick = onAddMenu)
         }
-
-        menus.forEachIndexed { index, menu ->
-            Spacer(modifier = Modifier.height(24.dp))
+    }
+    menus.forEachIndexed { index, menu ->
+        item(key = "menu-$categoryId-$index") {
             MenuInputRow(
                 index = index,
                 menu = menu,
@@ -181,9 +190,34 @@ internal fun MenuCategoryEditorSection(
                 onUpdateName = { name -> onUpdateMenu(index, name, menu.price.orEmpty(), menu.count) },
                 onUpdatePrice = { price -> onUpdateMenu(index, menu.name.orEmpty(), price, menu.count) },
                 onUpdateCount = { count -> onUpdateMenu(index, menu.name.orEmpty(), menu.price.orEmpty(), count) },
+                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 24.dp),
             )
         }
     }
+    item(key = "menu-bottom-$categoryId") {
+        Spacer(modifier = Modifier.height(20.dp))
+    }
+}
+
+/**
+ * [+ 메뉴 추가]로 늘어난 메뉴가 보이도록 목록 끝으로 스크롤한다 (TH-1438).
+ *
+ * 반환한 함수를 메뉴 추가 직전에 호출해 두면, 같은 카테고리의 메뉴 수가 늘어났을 때 한 번만 스크롤한다.
+ * AI 인식 결과 반영이나 탭 전환처럼 메뉴 추가 버튼이 아닌 변화로는 스크롤하지 않는다.
+ */
+@Composable
+internal fun rememberScrollToAddedMenu(listState: LazyListState, selectCategory: SelectCategoryModel?): () -> Unit {
+    val categoryId = selectCategory?.menuType?.categoryId
+    val menuCount = selectCategory?.menuDetail?.size ?: 0
+    var pendingAdd by remember { mutableStateOf<Pair<String, Int>?>(null) }
+    LaunchedEffect(categoryId, menuCount) {
+        val (pendingCategoryId, countBeforeAdd) = pendingAdd ?: return@LaunchedEffect
+        pendingAdd = null
+        if (categoryId == pendingCategoryId && menuCount > countBeforeAdd) {
+            listState.animateScrollToItem(listState.layoutInfo.totalItemsCount - 1)
+        }
+    }
+    return { if (categoryId != null) pendingAdd = categoryId to menuCount }
 }
 
 @Composable
@@ -222,8 +256,9 @@ private fun MenuInputRow(
     onUpdateName: (String) -> Unit,
     onUpdatePrice: (String) -> Unit,
     onUpdateCount: (Int?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column {
+    Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
