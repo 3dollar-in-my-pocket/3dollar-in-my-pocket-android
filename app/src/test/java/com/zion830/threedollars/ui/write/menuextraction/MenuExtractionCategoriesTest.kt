@@ -148,20 +148,33 @@ class MenuExtractionCategoriesTest {
         assertEquals("CAFE", merged.firstExtractedCategoryId(extracted))
     }
 
-    // TH-1333 TC20 (TH-1439)
+    // TH-1333 TC20 (TH-1439 → TH-1450)
     @Test
-    fun `TH1333_TC20_이름이_같은_메뉴는_수량과_가격만_갱신된다`() {
+    fun `TH1333_TC20_이름_수량_가격이_모두_같으면_하나만_남는다`() {
         // Given
-        val existing = listOf(selected(cafe, UserStoreMenuModel(name = "아메 리카노", price = "3500", count = 2)))
-        val extracted = listOf(menu("아메리카노", cafe, price = 4000)).toSelectCategories()
+        val existing = listOf(selected(cafe, UserStoreMenuModel(name = "아메 리카노", price = "4000", count = 1)))
+        val extracted = listOf(menu("아메리카노", cafe, price = 4000, count = 1)).toSelectCategories()
 
         // When
         val menus = existing.mergeExtracted(extracted).single().menuDetail.orEmpty()
 
         // Then
-        assertEquals(1, menus.size)
-        assertEquals("4000", menus.single().price)
-        assertEquals(2, menus.single().count)
+        assertEquals(listOf("아메 리카노"), menus.map { it.name })
+    }
+
+    // TH-1333 TC20 (TH-1439 → TH-1450)
+    @Test
+    fun `TH1333_TC20_이름이_같아도_수량이나_가격이_다르면_별도_메뉴로_추가된다`() {
+        // Given
+        val existing = listOf(selected(cafe, UserStoreMenuModel(name = "아메리카노", price = "3500", count = 2)))
+        val extracted = listOf(menu("아메리카노", cafe, price = 4000, count = 2), menu("아메리카노", cafe)).toSelectCategories()
+
+        // When
+        val menus = existing.mergeExtracted(extracted).single().menuDetail.orEmpty()
+
+        // Then
+        assertEquals(listOf("3500", "4000", ""), menus.map { it.price })
+        assertEquals(listOf(2, 2, null), menus.map { it.count })
     }
 
     // TH-1333 TC21 (TH-1439)
@@ -210,18 +223,23 @@ class MenuExtractionCategoriesTest {
         assertEquals(listOf("아메리카노"), merged[1].menuDetail?.map { it.name })
     }
 
+    // TH-1333 TC29 (TH-1450)
     @Test
-    fun `인식값이_비어있으면_같은_이름의_기존_수량과_가격을_유지한다`() {
+    fun `TH1333_TC29_같은_메뉴판의_묶음별_가격_메뉴는_모두_남는다`() {
         // Given
-        val existing = listOf(selected(cafe, UserStoreMenuModel(name = "아메리카노", price = "3500", count = 2)))
-        val extracted = listOf(menu("아메리카노", cafe)).toSelectCategories()
+        val existing = listOf(selected(etc, UserStoreMenuModel()))
+        val extracted = listOf(
+            menu("찹쌀꽈배기", etc, price = 2500, count = 3),
+            menu("찹쌀꽈배기", etc, price = 10000, count = 13),
+        ).toSelectCategories()
 
         // When
-        val updated = existing.mergeExtracted(extracted).single().menuDetail.orEmpty().single()
+        val menus = existing.mergeExtracted(extracted).single().menuDetail.orEmpty()
 
         // Then
-        assertEquals("3500", updated.price)
-        assertEquals(2, updated.count)
+        assertEquals(listOf("찹쌀꽈배기", "찹쌀꽈배기"), menus.map { it.name })
+        assertEquals(listOf(3, 13), menus.map { it.count })
+        assertEquals(listOf("2500", "10000"), menus.map { it.price })
     }
 
     @Test

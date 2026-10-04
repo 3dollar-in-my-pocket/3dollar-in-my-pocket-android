@@ -68,6 +68,11 @@ import base.compose.Gray80
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.LogObjectId
+import com.threedollar.common.analytics.LogObjectType
+import com.threedollar.common.analytics.ScreenName
+import com.threedollar.common.analytics.sendClick
 import com.threedollar.common.compose.dialog.CommonDialog
 import com.threedollar.common.compose.dialog.DialogButton
 import com.threedollar.domain.home.data.store.SelectCategoryModel
@@ -156,10 +161,12 @@ fun MenuExtractionHost(
         MenuPhotoSourceDialog(
             onDismiss = { isPhotoSourceVisible = false },
             onPickGallery = {
+                LogManager.sendClick(ScreenName.WRITE_DETAIL_MENU_PHOTO_POPUP, LogObjectType.BUTTON, LogObjectId.SELECT_PHOTO)
                 isPhotoSourceVisible = false
                 galleryLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
             },
             onTakePhoto = {
+                LogManager.sendClick(ScreenName.WRITE_DETAIL_MENU_PHOTO_POPUP, LogObjectType.BUTTON, LogObjectId.TAKE_PHOTO)
                 isPhotoSourceVisible = false
                 val uri = viewModel.createCaptureUri()
                 captureUri = uri.toString()
@@ -251,6 +258,9 @@ private fun MenuPhotoSourceDialog(
     onPickGallery: () -> Unit,
     onTakePhoto: () -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        LogManager.sendPageView(ScreenName.WRITE_DETAIL_MENU_PHOTO_POPUP, "MenuPhotoSourceDialog")
+    }
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false),
@@ -390,6 +400,9 @@ private fun MenuExtractionResultScreen(
     onUpdateMenu: (String, Int, String, String, Int?) -> Unit,
     onRegister: () -> Unit,
 ) {
+    LaunchedEffect(Unit) {
+        LogManager.sendPageView(ScreenName.WRITE_DETAIL_MENU_EXTRACTION_RESULT, "MenuExtractionResultScreen")
+    }
     val selectedCategory = state.categories.find { it.menuType.categoryId == state.selectedCategoryId }
     Column(
         modifier = Modifier

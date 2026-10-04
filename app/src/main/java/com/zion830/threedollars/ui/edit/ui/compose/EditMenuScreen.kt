@@ -48,6 +48,8 @@ import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.domain.home.data.store.CategoryModel
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.data.store.UserStoreMenuModel
@@ -69,6 +71,9 @@ fun EditMenuScreen(
     onImageMenuAddClick: (() -> Unit)?,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(Unit) {
+        LogManager.sendPageView(ScreenName.WRITE_DETAIL_MENU, "EditMenuScreen")
+    }
     val scope = rememberCoroutineScope()
     val bottomSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,

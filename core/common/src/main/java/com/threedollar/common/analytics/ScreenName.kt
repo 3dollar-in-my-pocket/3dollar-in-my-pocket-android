@@ -40,7 +40,10 @@ enum class ScreenName(val value: String) {
     FAQ("faq"),
     TEAM_INFO("team_info"),
     MARKER_POPUP("marker_popup"),
-    FEED_LIST("feed_list");
+    FEED_LIST("feed_list"),
+    WRITE_DETAIL_MENU("write_detail_menu"),
+    WRITE_DETAIL_MENU_PHOTO_POPUP("write_detail_menu_photo_popup"),
+    WRITE_DETAIL_MENU_EXTRACTION_RESULT("write_detail_menu_extraction_result");
 
     override fun toString(): String = value
 }

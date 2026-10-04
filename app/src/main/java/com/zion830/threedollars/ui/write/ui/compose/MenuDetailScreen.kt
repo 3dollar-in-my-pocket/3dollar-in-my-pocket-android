@@ -41,6 +41,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.threedollar.common.R as CommonR
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ScreenName
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray30
@@ -63,6 +65,9 @@ fun MenuDetailScreen(
     onImageMenuAddClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
+    LaunchedEffect(Unit) {
+        LogManager.sendPageView(ScreenName.WRITE_DETAIL_MENU, "MenuDetailScreen")
+    }
     LaunchedEffect(state.selectCategoryList, state.selectedCategoryId) {
         if (state.selectCategoryList.isNotEmpty() && state.selectedCategoryId == null) {
             onIntent(AddStoreContract.Intent.SetSelectedCategoryId(state.selectCategoryList.first().menuType.categoryId))

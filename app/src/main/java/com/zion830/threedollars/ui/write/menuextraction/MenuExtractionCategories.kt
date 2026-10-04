@@ -36,7 +36,8 @@ fun List<SelectCategoryModel>.limitToMaxCategories(): List<SelectCategoryModel> 
 /**
  * 인식 결과를 이미 고른 카테고리·입력한 메뉴에 합친다 (iOS `MenuForm.merging` 과 같은 규칙, TH-1439).
  * - 기존 카테고리 순서를 유지하고, 새 카테고리는 뒤에 최대 [MAX_MENU_CATEGORY_COUNT]개까지 붙인다.
- * - 같은 카테고리 안에서 이름(공백·대소문자 무시)이 같으면 인식된 수량·가격만 갱신하고(인식 값이 비면 기존 값 유지), 없으면 추가한다.
+ * - 같은 카테고리에 이름(공백·대소문자 무시)·수량·가격이 모두 같은 메뉴가 있으면 중복으로 보고 빼고,
+ *   하나라도 다르면 별도 메뉴로 추가한다 (TH-1450, 메뉴판에 같은 메뉴가 묶음별 가격으로 여러 줄 있는 경우).
  * - 인식 메뉴가 들어간 카테고리의 빈 입력 칸은 정리한다.
  */
 fun List<SelectCategoryModel>.mergeExtracted(extracted: List<SelectCategoryModel>): List<SelectCategoryModel> {
@@ -52,7 +53,7 @@ fun List<SelectCategoryModel>.mergeExtracted(extracted: List<SelectCategoryModel
         if (index < 0) return@forEach
         val target = merged[index]
         val menus = target.menuDetail.orEmpty().filterNot { it.isBlankInput() }.toMutableList()
-        category.menuDetail.orEmpty().forEach { menu -> menus.upsert(menu.copy(category = target.menuType)) }
+        category.menuDetail.orEmpty().forEach { menu -> menus.addIfNotDuplicate(menu.copy(category = target.menuType)) }
         merged[index] = target.copy(menuDetail = menus)
     }
     return merged
@@ -63,19 +64,14 @@ fun List<SelectCategoryModel>.firstExtractedCategoryId(extracted: List<SelectCat
     extracted.firstOrNull { category -> any { it.menuType.categoryId == category.menuType.categoryId } }?.menuType?.categoryId
         ?: firstOrNull()?.menuType?.categoryId
 
-private fun MutableList<UserStoreMenuModel>.upsert(menu: UserStoreMenuModel) {
-    val key = menu.name.normalizedMenuName()
-    val index = indexOfFirst { it.name.normalizedMenuName() == key }
-    if (index < 0) {
-        add(menu)
-        return
-    }
-    val existing = this[index]
-    this[index] = existing.copy(
-        count = menu.count ?: existing.count,
-        price = menu.price?.takeIf { it.isNotBlank() } ?: existing.price,
-    )
+private fun MutableList<UserStoreMenuModel>.addIfNotDuplicate(menu: UserStoreMenuModel) {
+    if (none { it.isSameMenu(menu) }) add(menu)
 }
+
+private fun UserStoreMenuModel.isSameMenu(other: UserStoreMenuModel): Boolean =
+    name.normalizedMenuName() == other.name.normalizedMenuName() &&
+        count == other.count &&
+        price.orEmpty().trim() == other.price.orEmpty().trim()
 
 private fun String?.normalizedMenuName(): String = orEmpty().lowercase().filterNot { it.isWhitespace() }
 
