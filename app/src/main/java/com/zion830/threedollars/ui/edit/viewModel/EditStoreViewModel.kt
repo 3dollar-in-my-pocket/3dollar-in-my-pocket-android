@@ -38,6 +38,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
+import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
 @HiltViewModel
 class EditStoreViewModel @Inject constructor(
@@ -81,6 +83,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.ConfirmLocation -> confirmLocation()
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
+            is EditStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
             is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
@@ -246,6 +249,16 @@ class EditStoreViewModel @Inject constructor(
 
     private fun cancelLocationEdit() {
         _state.update { it.copy(tempLocation = null) }
+    }
+
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+        _state.update {
+            val merged = (it.tempSelectCategoryList ?: it.selectCategoryList).mergeExtracted(list)
+            it.copy(
+                tempSelectCategoryList = merged,
+                selectedCategoryId = merged.firstExtractedCategoryId(list),
+            )
+        }
     }
 
     private fun setSelectCategoryList(list: List<SelectCategoryModel>) {

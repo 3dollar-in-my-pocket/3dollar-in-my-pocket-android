@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.data.fake.FakeStoreApi
+import com.threedollar.data.fake.FakeStoreMenuExtractionApi
 import com.threedollar.data.store.repository.StoreRepositoryImpl
 import com.threedollar.domain.home.data.store.SectionTypeModel
 import com.threedollar.domain.store.model.IssuedCouponStatus
@@ -22,7 +23,7 @@ import retrofit2.Response
 class StoreRepositoryImplTest {
 
     private val storeApi = FakeStoreApi()
-    private val repository = StoreRepositoryImpl(storeApi)
+    private val repository = StoreRepositoryImpl(storeApi, FakeStoreMenuExtractionApi())
 
     // TH-1375
     @Test
@@ -120,7 +121,7 @@ class StoreRepositoryImplTest {
 
         // When
         val posts = repository.getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow().posts
-        val unknownPage = StoreRepositoryImpl(unknownApi).getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow()
+        val unknownPage = StoreRepositoryImpl(unknownApi, FakeStoreMenuExtractionApi()).getStoreNewsPosts(storeId = "120009", cursor = null, size = 20).getOrThrow()
 
         // Then
         val multiImagePost = posts.first { it.postId == "176" }

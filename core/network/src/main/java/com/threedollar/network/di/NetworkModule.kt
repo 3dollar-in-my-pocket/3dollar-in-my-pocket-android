@@ -13,6 +13,7 @@ import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.api.StoreApi
+import com.threedollar.network.api.StoreMenuExtractionApi
 import com.threedollar.network.interceptor.ABTestInterceptor
 import com.threedollar.network.sdui.core.gson.SDUIGson
 import dagger.Module
@@ -39,6 +40,7 @@ object NetworkModule {
     private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
     private const val BASE_URL: String = BuildConfig.BASE_URL
     private const val TIME_OUT_SEC = 5L
+    private const val MENU_EXTRACTION_TIME_OUT_SEC = 60L
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -163,6 +165,20 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(LoginApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStoreMenuExtractionApi(@OkhttpClient okHttpClient: OkHttpClient): StoreMenuExtractionApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(
+            okHttpClient.newBuilder()
+                .readTimeout(MENU_EXTRACTION_TIME_OUT_SEC, TimeUnit.SECONDS)
+                .writeTimeout(MENU_EXTRACTION_TIME_OUT_SEC, TimeUnit.SECONDS)
+                .build()
+        )
+        .build()
+        .create(StoreMenuExtractionApi::class.java)
 
     @Provides
     @Singleton
