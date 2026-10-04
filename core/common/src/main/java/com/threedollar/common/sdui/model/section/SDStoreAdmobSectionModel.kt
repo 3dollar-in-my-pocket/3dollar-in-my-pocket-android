@@ -14,6 +14,9 @@ data class SDStoreAdmobSectionModel(
         val type: String?,
         val cardId: String?,
         val clickLog: SDLogModel?,
-        val impressionLog: SDLogModel?
-    )
+        val impressionLog: SDLogModel?,
+        val height: Int? = null
+    ) {
+        val slotHeightDp: Int get() = SDAdMobSlotHeight.resolve(height)
+    }
 }
