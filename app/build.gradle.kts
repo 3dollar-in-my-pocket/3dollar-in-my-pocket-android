@@ -102,6 +102,7 @@ dependencies {
     implementation(project(":domain"))
     implementation(project(":data"))
     implementation(project(":core:designsystem"))
+    debugImplementation(libs.chucker)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.config)

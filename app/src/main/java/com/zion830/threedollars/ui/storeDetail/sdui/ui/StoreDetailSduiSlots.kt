@@ -7,6 +7,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,6 +19,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.naver.maps.map.CameraPosition
 import com.naver.maps.map.MapView
@@ -34,9 +36,9 @@ private const val STORE_MAP_ZOOM = 16.0
 /**
  * 가게 상세 섹션 중 앱 모듈 SDK 가 필요한 부분(EDIT 지도, AD_MOB 배너).
  */
-fun storeDetailSduiSlots(): SDStoreSectionSlots = SDStoreSectionSlots(
+fun storeDetailSduiSlots(onAdClick: (SDLogModel?) -> Unit): SDStoreSectionSlots = SDStoreSectionSlots(
     mapContent = { latitude, longitude, modifier -> StoreLocationMap(latitude, longitude, modifier) },
-    adContent = { card, modifier -> StoreDetailBanner(card, modifier) },
+    adContent = { card, modifier -> StoreDetailBanner(card, onAdClick, modifier) },
 )
 
 /**
@@ -100,10 +102,16 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
  * 가게 상세 배너 광고. 슬롯 높이는 서버가 내려준 카드 높이를 따르고, 로드에 실패하면 자리를 접는다.
  */
 @Composable
-private fun StoreDetailBanner(card: SDStoreAdmobSectionModel.Card, modifier: Modifier) {
+private fun StoreDetailBanner(
+    card: SDStoreAdmobSectionModel.Card,
+    onAdClick: (SDLogModel?) -> Unit,
+    modifier: Modifier,
+) {
     var isFailed by remember { mutableStateOf(false) }
     if (isFailed) return
     val context = LocalContext.current
+    val currentCard by rememberUpdatedState(card)
+    val currentOnAdClick by rememberUpdatedState(onAdClick)
     SduiAdMobSlot(
         adUnitId = context.getString(CommonR.string.admob_store_detail_banner),
         heightDp = card.slotHeightDp,
@@ -111,6 +119,10 @@ private fun StoreDetailBanner(card: SDStoreAdmobSectionModel.Card, modifier: Mod
             object : AdListener() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     isFailed = true
+                }
+
+                override fun onAdClicked() {
+                    currentOnAdClick(currentCard.clickLog)
                 }
             }
         },

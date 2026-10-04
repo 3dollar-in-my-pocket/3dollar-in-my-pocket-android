@@ -1,6 +1,9 @@
 package com.threedollar.network.di
 
+import android.content.Context
 import android.os.Build
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
@@ -15,6 +18,7 @@ import com.threedollar.network.sdui.core.gson.SDUIGson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -67,6 +71,7 @@ object NetworkModule {
     @Provides
     @OkhttpClient
     fun provideOkHttpClient(
+        @ApplicationContext context: Context,
         sharedPrefUtils: SharedPrefUtils,
         interceptor: HttpLoggingInterceptor,
         authenticator: Authenticator,
@@ -96,8 +101,18 @@ object NetworkModule {
                 it.proceed(request)
             }
             .addInterceptor(abTestInterceptor)
+            .addInterceptor(chuckerInterceptor(context))
             .authenticator(authenticator)
             .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
+            .build()
+
+    /**
+     * 개발 빌드 디버그 메뉴의 "네트워크 로그"(Chucker)가 요청·응답을 기록한다. 실제로 나가는 헤더가 보이도록 헤더를 붙이는
+     * 인터셉터 뒤에 둔다. release 빌드는 no-op 라이브러리라 아무 일도 하지 않는다.
+     */
+    private fun chuckerInterceptor(context: Context): ChuckerInterceptor =
+        ChuckerInterceptor.Builder(context)
+            .collector(ChuckerCollector(context, showNotification = false))
             .build()
 
     @Singleton
