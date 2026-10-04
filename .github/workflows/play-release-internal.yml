@@ -188,7 +188,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Internal Test:* <https://play.google.com/apps/testing/com.zion830.threedollars|테스터 참여 링크>\n확인이 끝나면 <${{ github.server_url }}/${{ github.repository }}/actions/workflows/play-promote-production.yml|Play Promote to Production> 으로 같은 빌드를 프로덕션 초안에 올린다."
+                    "text": "*Internal Test:* <https://play.google.com/apps/internaltest/4699298931467208901|테스터 참여 링크>\n확인이 끝나면 <${{ github.server_url }}/${{ github.repository }}/actions/workflows/play-promote-production.yml|Play Promote to Production> 으로 같은 빌드를 프로덕션 초안에 올린다."
                   }
                 }
               ]
@@ -216,7 +216,7 @@ jobs:
               embeds: [{
                 title: "Play Store 내부 테스트 배포 완료",
                 color: 3066993,
-                description: ("[내부 테스트 참여](https://play.google.com/apps/testing/com.zion830.threedollars)\n확인이 끝나면 [Play Promote to Production](" + $promote_url + ") 으로 같은 빌드를 프로덕션 초안에 올린다."),
+                description: ("[내부 테스트 참여](https://play.google.com/apps/internaltest/4699298931467208901)\n확인이 끝나면 [Play Promote to Production](" + $promote_url + ") 으로 같은 빌드를 프로덕션 초안에 올린다."),
                 fields: [
                   {name: "Version", value: $tag_name, inline: true},
                   {name: "Version Code", value: $version_code, inline: true}
