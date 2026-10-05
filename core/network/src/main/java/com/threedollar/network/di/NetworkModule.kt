@@ -1,6 +1,9 @@
 package com.threedollar.network.di
 
+import android.content.Context
 import android.os.Build
+import com.chuckerteam.chucker.api.ChuckerCollector
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.threedollar.common.utils.GlobalEvent
 import com.threedollar.common.utils.SharedPrefUtils
 import com.threedollar.network.BuildConfig
@@ -10,11 +13,13 @@ import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.api.StoreApi
+import com.threedollar.network.api.StoreMenuExtractionApi
 import com.threedollar.network.interceptor.ABTestInterceptor
 import com.threedollar.network.sdui.core.gson.SDUIGson
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.Authenticator
 import okhttp3.OkHttpClient
@@ -35,6 +40,7 @@ object NetworkModule {
     private const val KAKAO_LOGIN_URL = "https://kauth.kakao.com/"
     private const val BASE_URL: String = BuildConfig.BASE_URL
     private const val TIME_OUT_SEC = 5L
+    private const val MENU_EXTRACTION_TIME_OUT_SEC = 60L
 
     @Qualifier
     @Retention(AnnotationRetention.BINARY)
@@ -67,6 +73,7 @@ object NetworkModule {
     @Provides
     @OkhttpClient
     fun provideOkHttpClient(
+        @ApplicationContext context: Context,
         sharedPrefUtils: SharedPrefUtils,
         interceptor: HttpLoggingInterceptor,
         authenticator: Authenticator,
@@ -96,8 +103,18 @@ object NetworkModule {
                 it.proceed(request)
             }
             .addInterceptor(abTestInterceptor)
+            .addInterceptor(chuckerInterceptor(context))
             .authenticator(authenticator)
             .connectTimeout(TIME_OUT_SEC, TimeUnit.SECONDS)
+            .build()
+
+    /**
+     * 개발 빌드 디버그 메뉴의 "네트워크 로그"(Chucker)가 요청·응답을 기록한다. 실제로 나가는 헤더가 보이도록 헤더를 붙이는
+     * 인터셉터 뒤에 둔다. release 빌드는 no-op 라이브러리라 아무 일도 하지 않는다.
+     */
+    private fun chuckerInterceptor(context: Context): ChuckerInterceptor =
+        ChuckerInterceptor.Builder(context)
+            .collector(ChuckerCollector(context, showNotification = false))
             .build()
 
     @Singleton
@@ -148,6 +165,20 @@ object NetworkModule {
             .client(okHttpClient)
             .build()
             .create(LoginApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStoreMenuExtractionApi(@OkhttpClient okHttpClient: OkHttpClient): StoreMenuExtractionApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(
+            okHttpClient.newBuilder()
+                .readTimeout(MENU_EXTRACTION_TIME_OUT_SEC, TimeUnit.SECONDS)
+                .writeTimeout(MENU_EXTRACTION_TIME_OUT_SEC, TimeUnit.SECONDS)
+                .build()
+        )
+        .build()
+        .create(StoreMenuExtractionApi::class.java)
 
     @Provides
     @Singleton

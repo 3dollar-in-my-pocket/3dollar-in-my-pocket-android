@@ -1,0 +1,178 @@
+{
+  "ok": true,
+  "data": {
+    "sections": [
+      {
+        "type": "SCREEN_HEADER",
+        "header": {
+          "title": {
+            "text": "정보 기여자 목록",
+            "isHtml": false,
+            "fontColor": "#0F0F0F"
+          }
+        }
+      },
+      {
+        "type": "HISTORIES_HEADER",
+        "header": {
+          "title": {
+            "text": "함께 만든 가게 정보",
+            "isHtml": false,
+            "fontColor": "#0F0F0F"
+          }
+        }
+      },
+      {
+        "type": "HISTORIES",
+        "cards": [
+          {
+            "type": "ICON_TEXT_CARD",
+            "cardId": "H_6ab6a28320134fcca11e436f",
+            "title": {
+              "text": "안드 뽀미",
+              "isHtml": false,
+              "fontColor": "#0F0F0F"
+            },
+            "subTitles": [
+              {
+                "text": "가게 정보를 수정했어요.",
+                "isHtml": false,
+                "fontColor": "#969696"
+              },
+              {
+                "text": "사진 정보를 추가했어요.",
+                "isHtml": false,
+                "fontColor": "#969696"
+              }
+            ],
+            "image": {
+              "url": "https://storage.threedollars.co.kr/medal/v1-newbie-default.png?version=1",
+              "style": {
+                "width": 36.0,
+                "height": 36.0,
+                "dimmed": false
+              }
+            },
+            "metadata": {
+              "text": "6일 전",
+              "isHtml": false,
+              "fontColor": "#969696"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "type": "ICON_TEXT_CARD",
+            "cardId": "H_6a9ed044b6faaa6256e08840",
+            "title": {
+              "text": "안드 뽀미",
+              "isHtml": false,
+              "fontColor": "#0F0F0F"
+            },
+            "subTitles": [
+              {
+                "text": "사진 정보를 추가했어요.",
+                "isHtml": false,
+                "fontColor": "#969696"
+              }
+            ],
+            "image": {
+              "url": "https://storage.threedollars.co.kr/medal/v1-newbie-default.png?version=1",
+              "style": {
+                "width": 36.0,
+                "height": 36.0,
+                "dimmed": false
+              }
+            },
+            "metadata": {
+              "text": "24일 전",
+              "isHtml": false,
+              "fontColor": "#969696"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          },
+          {
+            "type": "ICON_TEXT_CARD",
+            "cardId": "H_0",
+            "title": {
+              "text": "사라진 제보자",
+              "isHtml": false,
+              "fontColor": "#0F0F0F"
+            },
+            "subTitles": [],
+            "subTitleChip": {
+              "text": {
+                "text": "#가게를 등록했어요",
+                "isHtml": false,
+                "fontColor": "#FF858F"
+              },
+              "style": {
+                "backgroundColor": "#FFF3F4"
+              }
+            },
+            "image": {
+              "url": "https://storage.threedollars.co.kr/medal/v1-newbie-default.png?version=1",
+              "style": {
+                "width": 36.0,
+                "height": 36.0,
+                "dimmed": false
+              }
+            },
+            "metadata": {
+              "text": "2023.09.21",
+              "isHtml": false,
+              "fontColor": "#969696"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF"
+            }
+          }
+        ],
+        "cursor": {
+          "hasMore": false
+        }
+      },
+      {
+        "type": "ACTION",
+        "actionBar": {
+          "type": "ACTION_BAR",
+          "button": {
+            "text": {
+              "text": "나도 수정하기",
+              "isHtml": false,
+              "fontColor": "#0F0F0F"
+            },
+            "link": {
+              "type": "APP_SCHEME",
+              "link": "/storeUpdate?storeId=139"
+            },
+            "style": {
+              "backgroundColor": "#FFFFFF",
+              "border": {
+                "color": "#D0D0D0",
+                "width": 1.0
+              }
+            }
+          },
+          "clickLog": {
+            "eventType": "CLICK",
+            "screenName": "store_contributors",
+            "objectType": "button",
+            "objectId": "edit",
+            "extraParameters": {}
+          }
+        }
+      }
+    ],
+    "viewLog": {
+      "eventType": "PAGE_VIEW",
+      "screenName": "store_contributors",
+      "extraParameters": {
+        "store_id": "139"
+      }
+    }
+  }
+}

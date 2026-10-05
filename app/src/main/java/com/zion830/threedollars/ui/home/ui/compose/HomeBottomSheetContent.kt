@@ -43,6 +43,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -66,7 +67,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -78,10 +78,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import base.compose.ColorWhite
 import base.compose.Gray0
@@ -115,6 +114,7 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiDefaults
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -156,6 +156,7 @@ fun HomeBottomSheetContent(
     storeScreen: StoreScreenModel?,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
     onStorePreviewClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
@@ -519,6 +520,7 @@ fun HomeBottomSheetContent(
                         listState = listState,
                         onCardClick = onCardClick,
                         onLoadNextPage = onLoadNextPage,
+                        onAdMobClick = onAdMobClick,
                         modifier = Modifier
                             .weight(1f)
                             .nestedScroll(listNestedScrollConnection),
@@ -655,6 +657,7 @@ private fun HomeListContent(
     listState: LazyListState,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
+    onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cards = homeListSection.cards
@@ -682,37 +685,41 @@ private fun HomeListContent(
                     onClick = { onCardClick(card) },
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
-                is HomeListCardModel.AdMobCard -> HomeListAdMobCard()
+                is HomeListCardModel.AdMobCard -> HomeListAdMobCard(card = card, onClick = onAdMobClick)
             }
         }
     }
 }
 
 @Composable
-private fun HomeListAdMobCard() {
-    AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 12.dp)
-            .height(HomeListAdMobConfig.containerHeight)
-            .background(ColorWhite),
-        factory = { context ->
-            AdView(context).apply {
-                setAdSize(HomeListAdMobConfig.adSize)
-                adUnitId = context.getString(CommonR.string.admob_list_banner)
-                setBackgroundColor(android.graphics.Color.WHITE)
-                adListener = object : AdListener() {
-                    override fun onAdLoaded() {
-                        Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob loaded")
-                    }
-
-                    override fun onAdFailedToLoad(error: LoadAdError) {
-                        Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
-                    }
+private fun HomeListAdMobCard(
+    card: HomeListCardModel.AdMobCard,
+    onClick: (HomeListCardModel.AdMobCard) -> Unit,
+) {
+    val context = LocalContext.current
+    val currentCard by rememberUpdatedState(card)
+    val currentOnClick by rememberUpdatedState(onClick)
+    SduiAdMobSlot(
+        adUnitId = context.getString(CommonR.string.admob_list_banner),
+        heightDp = card.heightDp,
+        adListener = remember {
+            object : AdListener() {
+                override fun onAdLoaded() {
+                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob loaded")
                 }
-                loadAd(AdRequest.Builder().build())
+
+                override fun onAdFailedToLoad(error: LoadAdError) {
+                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
+                }
+
+                override fun onAdClicked() {
+                    currentOnClick(currentCard)
+                }
             }
         },
+        modifier = Modifier
+            .padding(vertical = 12.dp)
+            .background(ColorWhite),
     )
 }
 

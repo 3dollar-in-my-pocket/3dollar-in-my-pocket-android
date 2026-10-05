@@ -22,6 +22,7 @@ import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDClickLogModel
+import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
@@ -58,6 +59,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -133,6 +135,9 @@ class HomeViewModel @Inject constructor(
     private var homeListNextCursor: String? = null
 
     private var preset: String? = null
+    private var homeViewLog: SDViewLogModel? = null
+    private var hasHomeViewLogResult = false
+    private var isPageViewPending = false
 
     private var hasRequestedHomeList = false
     private var isHomeListLoading = false
@@ -501,12 +506,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun sendClickAdMobCard(card: HomeListCardModel.AdMobCard) {
+        card.clickLog?.let { SDClickLogger.send(it) }
+    }
+
     private fun sendHomeListImpressionLogs(cards: List<HomeListCardModel>) {
         cards.forEach { card ->
             when (card) {
                 is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
                 is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.EmptyCard -> Unit
+                is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
             }
         }
     }
@@ -535,16 +544,44 @@ class HomeViewModel @Inject constructor(
 
     fun applyPreset(preset: String) {
         this.preset = preset
+        homeViewLog = null
+        hasHomeViewLogResult = false
         fetchHomeFilterScreen(shouldRefreshCards = true)
+    }
+
+    /**
+     * 홈 page_view 는 서버 viewLog(적용된 preset 포함)로 보낸다. 홈 필터 화면을 아직 못 받았으면 받은 뒤에 보내고,
+     * 응답에 viewLog 가 없거나 요청이 실패하면 정적 page_view 로 대신한다.
+     */
+    fun sendPageView() {
+        isPageViewPending = true
+        sendPendingPageView()
+    }
+
+    private fun onHomeViewLogResult(viewLog: SDViewLogModel?) {
+        homeViewLog = viewLog
+        hasHomeViewLogResult = true
+        sendPendingPageView()
+    }
+
+    private fun sendPendingPageView() {
+        if (!isPageViewPending || !hasHomeViewLogResult) return
+        isPageViewPending = false
+        homeViewLog?.let { SDClickLogger.send(it) }
+            ?: LogManager.sendPageView(screenName, HOME_PAGE_VIEW_CLASS_NAME)
     }
 
     private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false) {
         val requestedPreset = preset
         viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getHomeFilterScreen(preset = requestedPreset).collect { response ->
+            screenRepository.getHomeFilterScreen(preset = requestedPreset).catch { throwable ->
+                if (requestedPreset == preset) onHomeViewLogResult(null)
+                throw throwable
+            }.collect { response ->
                 if (requestedPreset != preset) return@collect
                 if (response.ok && response.data != null) {
                     val screen = response.data!!
+                    onHomeViewLogResult(screen.viewLog)
                     _uiState.update {
                         it.copy(
                             filterSections = screen.sections,
@@ -562,6 +599,7 @@ class HomeViewModel @Inject constructor(
                     }
                 } else {
                     _filterCells.value = makeFallbackFilterCells(uiState.value.selectedCategory)
+                    onHomeViewLogResult(null)
                 }
             }
         }
@@ -714,7 +752,7 @@ class HomeViewModel @Inject constructor(
             categoriesFilter = fallbackChip(text = "음식 종류"),
             categoriesFilterClickLog = null,
             currentCategoryFilter = HomeFilterCurrentCategory(
-                fontColor = "#FF858F",
+                fontColor = "#FF8181",
                 style = SELECTED_CATEGORY_STYLE,
                 clickLog = null,
             ),
@@ -729,7 +767,7 @@ class HomeViewModel @Inject constructor(
         text = SDTextModel(
             text = text,
             isHtml = false,
-            fontColor = if (selected) "#FF858F" else "#5A5A5A",
+            fontColor = if (selected) "#FF8181" else "#5A5A5A",
         ),
         additionalText = null,
         style = if (selected) SELECTED_CATEGORY_STYLE else DEFAULT_CHIP_STYLE,
@@ -1001,13 +1039,14 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         private const val KEY_MAP_POSITION = "map_position"
+        private const val HOME_PAGE_VIEW_CLASS_NAME = "HomeFragment"
         private val DEFAULT_CHIP_STYLE = SDSurfaceStyleModel(
             backgroundColor = "#FFFFFF",
             border = SDBorderModel(color = "#D0D0D0", width = 1.0),
         )
         private val SELECTED_CATEGORY_STYLE = SDSurfaceStyleModel(
-            backgroundColor = "#FFF3F4",
-            border = SDBorderModel(color = "#FF858F", width = 1.0),
+            backgroundColor = "#FFEFEF",
+            border = SDBorderModel(color = "#FF8181", width = 1.0),
         )
     }
 }

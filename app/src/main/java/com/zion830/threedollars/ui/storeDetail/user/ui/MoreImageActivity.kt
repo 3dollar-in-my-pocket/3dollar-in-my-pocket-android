@@ -13,6 +13,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseActivity
 import com.threedollar.common.ext.showSnack
 import com.threedollar.common.listener.OnItemClickListener
@@ -36,6 +38,12 @@ class MoreImageActivity : BaseActivity<ActivityMoreImageBinding, StoreDetailView
     override val viewModel: StoreDetailViewModel by viewModels()
 
     private var progressDialog: AlertDialog? = null
+
+    /**
+     * 사진 더보기 화면은 가게 상세가 아니므로 공유 ViewModel 의 store_detail page_view 를 보내지 않는다.
+     * (store_id 없는 store_detail page_view 가 섞여 상세 page_view 파라미터 채움률을 떨어뜨렸다)
+     */
+    override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) = Unit
 
     private val storeId: Int by lazy {
         intent.getIntExtra(STORE_ID, -1)

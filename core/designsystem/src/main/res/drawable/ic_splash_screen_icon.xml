@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android 12+ 시스템 스플래시 아이콘.
+    시스템은 배경 없는 아이콘을 288dp 영역으로 확대해 그리고 지름 192dp 원으로 잘라낸다.
+    하트가 잘리지 않는 최대 크기인 174x151dp 로 보이도록 여백을 비율로 둔다 (스플래시 화면 bg_splash_window 와 같은 크기).
+    좌우 (288-174)/2/288, 상하 (288-151)/2/288
+-->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/img_splash"
+    android:insetLeft="19.792%"
+    android:insetRight="19.792%"
+    android:insetTop="23.785%"
+    android:insetBottom="23.785%" />
