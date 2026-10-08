@@ -79,7 +79,7 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
-import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryTabRow
+import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryStickyHeader
 import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 
 /**
@@ -425,20 +425,20 @@ private fun MenuExtractionResultScreen(
                 )
             }
             stickyHeader {
-                MenuCategoryTabRow(
+                MenuCategoryStickyHeader(
                     categories = state.categories,
-                    selectedCategoryId = state.selectedCategoryId,
+                    selectedCategory = selectedCategory,
                     onSelect = onSelectCategory,
+                    onAddMenu = { categoryId ->
+                        markMenuAdding()
+                        onAddMenu(categoryId)
+                    },
                 )
             }
             selectedCategory?.let { category ->
                 val categoryId = category.menuType.categoryId
                 menuCategoryEditorItems(
                     selectCategory = category,
-                    onAddMenu = {
-                        markMenuAdding()
-                        onAddMenu(categoryId)
-                    },
                     onRemoveMenu = { index -> onRemoveMenu(categoryId, index) },
                     onUpdateMenu = { index, name, price, count -> onUpdateMenu(categoryId, index, name, price, count) },
                 )

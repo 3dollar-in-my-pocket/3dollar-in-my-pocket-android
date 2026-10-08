@@ -145,22 +145,49 @@ private fun MenuCategoryTab(
 }
 
 /**
- * 카테고리 하나의 메뉴 입력 영역. 헤더 오른쪽 [+ 메뉴 추가]로 메뉴가 많아도 스크롤 없이 추가할 수 있다.
- * 메뉴 행마다 아이템을 나눠, 추가한 메뉴로 스크롤([rememberScrollToAddedMenu])할 수 있게 한다.
+ * 메뉴 입력 목록 상단에 고정하는 헤더. 카테고리 탭과, 선택한 카테고리의 [+ 메뉴 추가] 버튼을 함께 둬
+ * 메뉴가 많아도 스크롤 없이 추가할 수 있게 한다 (TH-1456).
  */
-internal fun LazyListScope.menuCategoryEditorItems(
+@Composable
+internal fun MenuCategoryStickyHeader(
+    categories: List<SelectCategoryModel>,
+    selectedCategory: SelectCategoryModel?,
+    onSelect: (String) -> Unit,
+    onAddMenu: (categoryId: String) -> Unit,
+    modifier: Modifier = Modifier,
+    onFilterClick: (() -> Unit)? = null,
+) {
+    Column(modifier = modifier) {
+        MenuCategoryTabRow(
+            categories = categories,
+            selectedCategoryId = selectedCategory?.menuType?.categoryId,
+            onSelect = onSelect,
+            onFilterClick = onFilterClick,
+        )
+        if (selectedCategory != null) {
+            MenuCategoryAddHeader(
+                selectCategory = selectedCategory,
+                onAddMenu = { onAddMenu(selectedCategory.menuType.categoryId) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun MenuCategoryAddHeader(
     selectCategory: SelectCategoryModel,
     onAddMenu: () -> Unit,
-    onRemoveMenu: (Int) -> Unit,
-    onUpdateMenu: (index: Int, name: String, price: String, count: Int?) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val categoryId = selectCategory.menuType.categoryId
-    val menus = selectCategory.menuDetail.orEmpty()
-    item(key = "menu-header-$categoryId") {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(ColorWhite),
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                .padding(horizontal = 20.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
@@ -170,7 +197,7 @@ internal fun LazyListScope.menuCategoryEditorItems(
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = stringResource(CommonR.string.add_store_menu_with_name, selectCategory.menuType.name),
+                text = selectCategory.menuType.name,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.W700,
                 fontFamily = PretendardFontFamily,
@@ -179,7 +206,25 @@ internal fun LazyListScope.menuCategoryEditorItems(
             )
             MenuAddPillButton(onClick = onAddMenu)
         }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(1.dp)
+                .background(Gray20),
+        )
     }
+}
+
+/**
+ * 카테고리 하나의 메뉴 입력 행들. 메뉴 행마다 아이템을 나눠, 추가한 메뉴로 스크롤([rememberScrollToAddedMenu])할 수 있게 한다.
+ */
+internal fun LazyListScope.menuCategoryEditorItems(
+    selectCategory: SelectCategoryModel,
+    onRemoveMenu: (Int) -> Unit,
+    onUpdateMenu: (index: Int, name: String, price: String, count: Int?) -> Unit,
+) {
+    val categoryId = selectCategory.menuType.categoryId
+    val menus = selectCategory.menuDetail.orEmpty()
     menus.forEachIndexed { index, menu ->
         item(key = "menu-$categoryId-$index") {
             MenuInputRow(
