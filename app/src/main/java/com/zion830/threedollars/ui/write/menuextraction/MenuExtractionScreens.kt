@@ -62,7 +62,6 @@ import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray80
 import base.compose.Pink
@@ -296,7 +295,8 @@ private fun MenuPhotoSourceDialog(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(12.dp)),
             )
             Spacer(modifier = Modifier.height(20.dp))
             PhotoSourceButton(
@@ -333,7 +333,7 @@ private fun PhotoSourceButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
-            tint = Gray50,
+            tint = Gray70,
             modifier = Modifier.size(18.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -342,7 +342,7 @@ private fun PhotoSourceButton(
             fontSize = 14.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
-            color = Gray50,
+            color = Gray70,
         )
     }
 }
