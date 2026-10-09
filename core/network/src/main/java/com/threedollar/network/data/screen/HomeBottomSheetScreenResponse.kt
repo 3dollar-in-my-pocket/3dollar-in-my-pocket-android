@@ -188,6 +188,8 @@ data class SDImageStyleResponse(
     val width: Double? = null,
     @SerializedName("height")
     val height: Double? = null,
+    @SerializedName("dimmed")
+    val dimmed: Boolean? = null,
 )
 
 data class SDChipResponse(
@@ -199,6 +201,10 @@ data class SDChipResponse(
     val additionalText: SDTextResponse? = null,
     @SerializedName("style")
     val style: SDSurfaceStyleResponse? = null,
+    @SerializedName("imageAlignment")
+    val imageAlignment: String? = null,
+    @SerializedName("contentSpacing")
+    val contentSpacing: Double? = null,
 )
 
 data class SDButtonResponse(

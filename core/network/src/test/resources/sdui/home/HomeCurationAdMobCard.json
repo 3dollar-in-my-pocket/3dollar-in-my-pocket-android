@@ -1,0 +1,23 @@
+{
+  "type": "ADMOB_CARD",
+  "cardId": "ADMOB:a598ebd7-2fcd-48b5-8dfa-b4170c4452fa",
+  "clickLog": {
+    "screenName": "home",
+    "objectType": "card",
+    "objectId": "admob",
+    "extraParameters": {
+      "tabId": "CURATION"
+    },
+    "eventType": "CLICK"
+  },
+  "impressionLog": {
+    "screenName": "home",
+    "objectType": "card",
+    "objectId": "admob",
+    "extraParameters": {
+      "tabId": "CURATION"
+    },
+    "eventType": "IMPRESSION"
+  },
+  "height": 50
+}

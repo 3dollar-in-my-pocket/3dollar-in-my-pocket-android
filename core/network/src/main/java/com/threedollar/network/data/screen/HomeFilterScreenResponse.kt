@@ -29,6 +29,22 @@ data class HomeFilterSectionResponse(
     val bars: List<HomeFilterBarResponse>? = emptyList(),
     @SerializedName("controls")
     val controls: List<HomeMapControlResponse>? = emptyList(),
+    @SerializedName("tabs")
+    val tabs: List<HomeBottomSheetTabResponse>? = emptyList(),
+)
+
+data class HomeBottomSheetTabResponse(
+    @SerializedName("tabId") val tabId: String? = null,
+    @SerializedName("viewType") val viewType: String? = null,
+    @SerializedName("selected") val selected: HomeBottomSheetTabAppearanceResponse? = null,
+    @SerializedName("unselected") val unselected: HomeBottomSheetTabAppearanceResponse? = null,
+    @SerializedName("defaultSelected") val defaultSelected: Boolean? = false,
+    @SerializedName("clickLog") val clickLog: SDClickLogResponse? = null,
+)
+
+data class HomeBottomSheetTabAppearanceResponse(
+    @SerializedName("title") val title: SDTextResponse? = null,
+    @SerializedName("style") val style: SDSurfaceStyleResponse? = null,
 )
 
 data class HomeMapControlResponse(

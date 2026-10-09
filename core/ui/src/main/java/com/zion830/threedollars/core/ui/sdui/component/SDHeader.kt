@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.component.SDHeaderModel
@@ -24,7 +25,8 @@ fun SDHeader(
     model: SDHeaderModel,
     modifier: Modifier = Modifier,
     onAction: (SDActionEvent) -> Unit = {},
-    titleMaxLines: Int = 1
+    titleMaxLines: Int = 1,
+    titleLineHeight: TextUnit = TextUnit.Unspecified
 ) {
     Row(
         modifier = modifier,
@@ -36,7 +38,7 @@ fun SDHeader(
             verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             model.title?.let {
-                SDText(model = it, maxLines = titleMaxLines, fontSize = dpToSp(16), fontWeight = FontWeight.W700)
+                SDText(model = it, maxLines = titleMaxLines, fontSize = dpToSp(16), fontWeight = FontWeight.W700, lineHeight = titleLineHeight)
             }
             model.subTitle?.let {
                 SDText(model = it, maxLines = 1, fontSize = dpToSp(12))

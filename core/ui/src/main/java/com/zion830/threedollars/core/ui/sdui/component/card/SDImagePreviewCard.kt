@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import base.compose.Gray0
 import base.compose.Gray10
@@ -32,15 +35,14 @@ object SDImagePreviewCardDefaults {
 }
 
 @Composable
-internal fun SDImagePreviewCard(
-    model: ImagePreviewCardModel,
-    onPressed: (ImagePreviewCardModel) -> Unit
+fun SDImagePreviewCardLayout(
+    modifier: Modifier = Modifier,
+    imageSize: Dp = SDImagePreviewCardDefaults.DefaultSize,
+    image: @Composable BoxScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .background(model.style?.backgroundColor.toColor())
-            .noRippleClickable { onPressed.invoke(model) },
+        modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start
     ) {
@@ -48,24 +50,45 @@ internal fun SDImagePreviewCard(
             modifier = Modifier
                 .border(width = 1.dp, color = Gray10, shape = SDImagePreviewCardDefaults.Shape)
                 .clip(SDImagePreviewCardDefaults.Shape)
-                .size(SDImagePreviewCardDefaults.DefaultSize)
+                .size(imageSize)
                 .background(Gray0),
-            contentAlignment = Alignment.Center
-        ) {
+            contentAlignment = Alignment.Center,
+            content = image
+        )
+
+        VerticalSpacer(8)
+
+        content()
+    }
+}
+
+@Composable
+fun SDImagePreviewCard(
+    model: ImagePreviewCardModel,
+    modifier: Modifier = Modifier,
+    imageSize: Dp = SDImagePreviewCardDefaults.DefaultSize,
+    imageContentScale: ContentScale = ContentScale.Crop,
+    onPressed: (ImagePreviewCardModel) -> Unit
+) {
+    SDImagePreviewCardLayout(
+        modifier = modifier
+            .wrapContentSize()
+            .background(model.style?.backgroundColor.toColor())
+            .noRippleClickable { onPressed.invoke(model) },
+        imageSize = imageSize,
+        image = {
             model.image?.let {
                 SDImage(
                     model = it,
                     modifier = Modifier.size(
-                        width = it.style?.width?.dp ?: SDImagePreviewCardDefaults.DefaultSize,
-                        height = it.style?.height?.dp ?: SDImagePreviewCardDefaults.DefaultSize,
+                        width = it.style?.width?.dp ?: imageSize,
+                        height = it.style?.height?.dp ?: imageSize,
                     ),
-                    contentScale = ContentScale.Crop
+                    contentScale = imageContentScale
                 )
             }
         }
-
-        VerticalSpacer(8)
-
+    ) {
         model.title?.let {
             SDText(
                 model = it,
