@@ -33,6 +33,7 @@ import com.threedollar.domain.community.data.PollItem
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.databinding.FragmentCommunityBinding
 import com.zion830.threedollars.ui.community.data.PollListData
+import com.zion830.threedollars.ui.community.data.withAdCard
 import com.zion830.threedollars.ui.community.dialog.NeighborHoodsChoiceDialog
 import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.ui.community.polls.PollListActivity
@@ -120,6 +121,11 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
     override fun getFragmentBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentCommunityBinding =
         FragmentCommunityBinding.inflate(inflater, container, false)
 
+    override fun onDestroyView() {
+        pollAdapter.releaseAdMob()
+        super.onDestroyView()
+    }
+
     override fun initView() {
         selectedPopular(true)
         initAdvertisements()
@@ -161,25 +167,19 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            viewModel.getAdvertisements(deviceLatitude = null, deviceLongitude = null)
             return
         }
-        val locationResult =  fusedLocationProviderClient.lastLocation
-        locationResult.addOnSuccessListener {
-            if (it != null) {
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener {
                 viewModel.getAdvertisements(
-                    deviceLatitude = it.latitude,
-                    deviceLongitude = it.longitude
+                    deviceLatitude = it?.latitude,
+                    deviceLongitude = it?.longitude
                 )
             }
-        }
-
+            .addOnFailureListener {
+                viewModel.getAdvertisements(deviceLatitude = null, deviceLongitude = null)
+            }
     }
 
     private fun initAdapter() {
@@ -294,29 +294,8 @@ class CommunityFragment : BaseFragment<FragmentCommunityBinding, CommunityViewMo
 
     private fun submitPollList(polls: List<PollListData.Poll>) {
         pollItems.clear()
-        pollItems.addAll(advertisementModelV2?.let { polls.injectAd(it) } ?: polls)
+        pollItems.addAll(polls.withAdCard(advertisementModelV2))
         pollAdapter.submitList(pollItems.toList())
-    }
-
-    private fun List<PollListData.Poll>.injectAd(
-        target: AdvertisementModelV2
-    ): List<PollListData> {
-        val originList = this
-        val targetIndex = target.metadata.exposureIndex
-
-        if (targetIndex < 0) {
-            return this
-        }
-
-        return buildList(originList.size + 1) {
-            addAll(originList)
-
-            if (targetIndex > lastIndex) {
-                add(PollListData.Ad(target))
-            } else {
-                add(targetIndex, PollListData.Ad(target))
-            }
-        }
     }
 
     private fun PollListData.isSelectPoll(pollId: String) = if (this is PollListData.Poll) this.pollItem.poll.pollId == pollId else false

@@ -34,11 +34,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionHost
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
+import androidx.compose.ui.res.stringResource
 
 @AndroidEntryPoint
 class EditStoreFragment : Fragment() {
 
     private val editStoreViewModel: EditStoreViewModel by viewModels()
+    private val menuExtractionViewModel: MenuExtractionViewModel by viewModels()
     private var progressDialog: AlertDialog? = null
 
     private val photoPickerLauncher = registerForActivityResult(ActivityResultContracts.PickMultipleVisualMedia()) { uris ->
@@ -75,10 +79,19 @@ class EditStoreFragment : Fragment() {
                         )
                     }
                     EditScreen.StoreMenu -> {
-                        EditMenuScreen(
-                            state = state,
-                            onIntent = editStoreViewModel::processIntent
-                        )
+                        MenuExtractionHost(
+                            viewModel = menuExtractionViewModel,
+                            screenTitle = stringResource(CommonR.string.edit_store_section_menu),
+                            onCompleted = { categories ->
+                                editStoreViewModel.processIntent(EditStoreContract.Intent.ApplyExtractedMenus(categories))
+                            },
+                        ) { openPhotoSource ->
+                            EditMenuScreen(
+                                state = state,
+                                onIntent = editStoreViewModel::processIntent,
+                                onImageMenuAddClick = openPhotoSource,
+                            )
+                        }
                     }
                 }
             }

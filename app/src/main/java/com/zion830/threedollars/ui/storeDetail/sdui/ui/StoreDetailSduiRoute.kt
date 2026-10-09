@@ -46,7 +46,9 @@ fun StoreDetailSduiRoute(
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val slots = remember { storeDetailSduiSlots() }
+    val slots = remember(viewModel) {
+        storeDetailSduiSlots(onAdClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnAdClick(it)) })
+    }
 
     if (collectEffects) {
         StoreDetailSduiEffects(viewModel = viewModel, navigator = navigator, listState = listState)

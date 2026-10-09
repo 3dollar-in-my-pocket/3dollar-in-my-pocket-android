@@ -17,6 +17,7 @@ import com.threedollar.domain.community.data.PollItem
 import com.threedollar.domain.community.data.PopularStore
 import com.threedollar.domain.community.repository.CommunityRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.single
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -54,19 +56,26 @@ class CommunityViewModel @Inject constructor(private val communityRepository: Co
     private val _advertisements: MutableSharedFlow<List<AdvertisementModelV2>> = MutableSharedFlow()
     val advertisements: SharedFlow<List<AdvertisementModelV2>> get() = _advertisements
 
-    fun getAdvertisements(deviceLatitude: Double, deviceLongitude: Double) {
+    /**
+     * 투표 카드 서버 광고를 조회한 뒤 투표·동네 목록을 불러온다.
+     * 위치를 모르면 위치 없이 조회하고, 실패·빈 응답은 광고 없음으로 보고 AdMob 카드로 대신한다.
+     */
+    fun getAdvertisements(deviceLatitude: Double?, deviceLongitude: Double?) {
         viewModelScope.launch(coroutineExceptionHandler) {
-            communityRepository.getAdvertisements(
-                position = AdvertisementsPosition.POLL_CARD,
-                deviceLatitude = deviceLatitude,
-                deviceLongitude = deviceLongitude
-            ).collect {
-                if (it.ok) {
-                    _advertisements.emit(it.data.orEmpty())
-                } else _toast.emit(it.message.orEmpty())
-                getPollCategories()
-                getNeighborhoods()
+            val advertisements = try {
+                communityRepository.getAdvertisements(
+                    position = AdvertisementsPosition.POLL_CARD,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude
+                ).firstOrNull()?.takeIf { it.ok }?.data.orEmpty()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (e: Exception) {
+                emptyList()
             }
+            _advertisements.emit(advertisements)
+            getPollCategories()
+            getNeighborhoods()
         }
     }
 

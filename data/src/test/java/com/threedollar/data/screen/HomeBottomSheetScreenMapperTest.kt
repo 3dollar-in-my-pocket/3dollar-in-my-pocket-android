@@ -205,6 +205,61 @@ class HomeBottomSheetScreenMapperTest {
         assertEquals("IMPRESSION", card.impressionLog?.eventType)
     }
 
+    // TH-1431 TC1
+    @Test
+    fun `TH1431_TC1_ADMOB_CARD의_height를_광고슬롯높이로_매핑한다`() {
+        // Given
+        val response = Gson().fromJson(
+            """
+            {
+              "cards": [
+                { "type": "ADMOB_CARD", "cardId": "ADMOB:1", "height": 100 }
+              ]
+            }
+            """.trimIndent(),
+            HomeListSectionResponse::class.java,
+        )
+
+        // When
+        val card = response.asModel().cards.single() as HomeListCardModel.AdMobCard
+
+        // Then
+        assertEquals(100, card.heightDp)
+    }
+
+    // TH-1431 TC3
+    @Test
+    fun `TH1431_TC3_height가_다른_ADMOB_CARD는_카드마다_자기높이를_가진다`() {
+        // Given
+        val response = HomeListSectionResponse(
+            cards = listOf(
+                HomeListCardResponse(type = "ADMOB_CARD", cardId = "ADMOB:1", height = 50),
+                HomeListCardResponse(type = "ADMOB_CARD", cardId = "ADMOB:2", height = 250),
+            ),
+        )
+
+        // When
+        val heights = response.asModel().cards.map { (it as HomeListCardModel.AdMobCard).heightDp }
+
+        // Then
+        assertEquals(listOf(50, 250), heights)
+    }
+
+    // TH-1431 TC4
+    @Test
+    fun `TH1431_TC4_ADMOB_CARD의_height가_50미만이면_50으로_매핑한다`() {
+        // Given
+        val response = HomeListSectionResponse(
+            cards = listOf(HomeListCardResponse(type = "ADMOB_CARD", cardId = "ADMOB:1", height = 20)),
+        )
+
+        // When
+        val card = response.asModel().cards.single() as HomeListCardModel.AdMobCard
+
+        // Then
+        assertEquals(50, card.heightDp)
+    }
+
     @Test
     fun homeListSectionMapper_preservesServerFontWeightAndMarkerText() {
         val response = Gson().fromJson(

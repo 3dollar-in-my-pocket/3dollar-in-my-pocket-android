@@ -41,6 +41,9 @@ import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.domain.home.request.ReportReasonsGroupType as NetworkReportReasonsGroupType
 import com.threedollar.domain.community.model.ReportReasonsModel as DomainReportReasonsModel
 
+/** 서버 광고 metadata 에 노출 위치가 없을 때 쓰는 기본값. 두 번째 칸이며 iOS 와 같다. */
+internal const val DEFAULT_AD_EXPOSURE_INDEX = 1
+
 fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
     return AdvertisementModelV2(
         advertisementId = advertisementId ?: 0,
@@ -61,7 +64,7 @@ fun AdvertisementResponse.Advertisement.asModel(): AdvertisementModelV2 {
             url = link?.url ?: ""
         ),
         metadata = AdvertisementModelV2.MetaData(
-            exposureIndex = metadata?.exposureIndex ?: 0
+            exposureIndex = metadata?.exposureIndex ?: DEFAULT_AD_EXPOSURE_INDEX
         ),
         subTitle = AdvertisementModelV2.SubTitle(
             content = subTitle?.content ?: "",

@@ -42,7 +42,7 @@ import com.threedollar.common.R as CommonR
  * 홈 시트와 전체 화면 상세가 같은 규칙으로 동작하도록 한 곳에 모은다.
  *
  * @param fragmentContainerId 정보 수정 화면을 올릴 컨테이너
- * @param launchForResult 결과를 받아야 하는 화면(보스 리뷰 작성·방문 인증)을 띄운다. 돌아오면 호스트가 상세를 갱신한다.
+ * @param launchForResult 결과를 받아야 하는 화면(보스 리뷰 작성·방문 인증·리뷰 리스트)을 띄운다. 돌아오면 호스트가 상세를 갱신한다.
  * @param launchImagePicker 시스템 사진 선택 도구를 띄운다. 선택 결과는 호스트가 [onImagesPicked] 로 넘긴다.
  * @param onClose 상세를 닫는다(시트는 닫기, 전체 화면은 finish).
  */
@@ -107,7 +107,7 @@ class StoreDetailSduiNavigator(
                 launchForResult(StoreCertificationActivity.getIntent(activity, storeId))
             }
 
-            is StoreDetailDestination.ReviewList -> activity.startActivity(
+            is StoreDetailDestination.ReviewList -> launchForResult(
                 StoreReviewDetailActivity.getInstance(activity, destination.storeId.toIntOrNull() ?: 0)
             )
 

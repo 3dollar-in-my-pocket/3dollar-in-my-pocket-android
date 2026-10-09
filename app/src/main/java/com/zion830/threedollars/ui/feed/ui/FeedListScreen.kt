@@ -228,7 +228,7 @@ private fun FeedAdMobBanner() {
                     addView(
                         AdView(context).apply {
                             setAdSize(AdSize.getInlineAdaptiveBannerAdSize(screenWidthDp, AD_SLOT_HEIGHT_DP))
-                            adUnitId = context.getString(CommonR.string.admob_community_tab_banner)
+                            adUnitId = context.getString(CommonR.string.admob_feed_list_banner)
                             adListener = object : AdListener() {
                                 override fun onAdFailedToLoad(error: LoadAdError) {
                                     isFailed = true

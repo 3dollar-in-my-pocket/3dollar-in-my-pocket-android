@@ -74,6 +74,8 @@ dependencies {
     testImplementation(libs.bundles.testing)
 
     implementation(libs.bundles.retrofit)
+    debugImplementation(libs.chucker)
+    releaseImplementation(libs.chucker.no.op)
 
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)

@@ -56,6 +56,9 @@ sealed interface StoreDetailSduiUiIntent {
 
     data class OnImpression(val key: String, val log: SDLogModel?) : StoreDetailSduiUiIntent
 
+    /** 애드몹 SDK 가 광고 클릭을 알렸을 때. 카드의 서버 clickLog 를 보낸다. */
+    data class OnAdClick(val log: SDLogModel?) : StoreDetailSduiUiIntent
+
     data class ScrollToFragment(val fragment: String) : StoreDetailSduiUiIntent
 
     data class OnReviewDeleteConfirmed(val reviewId: String) : StoreDetailSduiUiIntent

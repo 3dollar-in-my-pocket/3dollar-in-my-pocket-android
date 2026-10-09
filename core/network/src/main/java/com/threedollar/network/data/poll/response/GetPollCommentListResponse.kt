@@ -21,8 +21,21 @@ data class GetPollCommentListResponse(
             @SerializedName("commentWriter")
             var commentWriter: CommentWriter? = null,
             @SerializedName("poll")
-            var poll: Poll? = null
+            var poll: Poll? = null,
+            @SerializedName("stickers")
+            var stickers: List<Sticker?>? = null
         ) {
+            data class Sticker(
+                @SerializedName("stickerId")
+                var stickerId: String? = null, // LIKE
+                @SerializedName("emoji")
+                var emoji: String? = null,
+                @SerializedName("count")
+                var count: Int? = null, // 0
+                @SerializedName("reactedByMe")
+                var reactedByMe: Boolean? = null // false
+            )
+
             data class Comment(
                 @SerializedName("commentId")
                 var commentId: String? = null, // string

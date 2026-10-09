@@ -237,7 +237,11 @@ private fun HomeFilterClickLogResponse.asModel(): SDClickLogModel = SDClickLogMo
 
 private fun HomeFilterViewLogResponse.asModelOrNull(): SDViewLogModel? {
     val screen = screenName?.takeIf { it.isNotBlank() } ?: return null
-    return SDViewLogModel(screenName = screen)
+    return SDViewLogModel(
+        screenName = screen,
+        eventType = eventType.orEmpty(),
+        extraParameters = extraParameters.orEmpty().mapValues { it.value.asClickLogValue() },
+    )
 }
 
 private fun JsonElement.asClickLogValue(): SDClickLogValue {

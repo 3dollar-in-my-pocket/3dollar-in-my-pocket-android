@@ -33,12 +33,15 @@ interface CommunityRepository {
     fun editPollComment(pollId: String, commentId: String, content: String): Flow<BaseResponse<String>>
     fun reportPollComment(pollId: String, commentId: String, reason: String, reasonDetail: String?): Flow<BaseResponse<String>>
     fun getPollCommentList(id: String, cursor: String?): Flow<BaseResponse<PollCommentList>>
+
+    /** 투표 댓글의 스티커를 교체한다. [stickerId] 가 null 이면 빈 목록을 보내 좋아요를 취소한다. */
+    fun putPollCommentSticker(pollId: String, commentId: String, stickerId: String?): Flow<BaseResponse<String>>
     fun getNeighborhoods(): Flow<BaseResponse<Neighborhoods>>
     fun getPopularStores(criteria: String, district: String, cursor: String): Flow<BaseResponse<PopularStores>>
     fun getReportReasons(reportReasonsGroupType: ReportReasonsGroupType): Flow<BaseResponse<ReportReasonsModel>>
     fun getAdvertisements(
         position: AdvertisementsPosition,
-        deviceLatitude: Double,
-        deviceLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
     ): Flow<BaseResponse<List<AdvertisementModelV2>>>
 }

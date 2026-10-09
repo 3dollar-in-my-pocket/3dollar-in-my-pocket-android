@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
@@ -19,11 +20,13 @@ import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
 
 @AndroidEntryPoint
 class AddStoreDetailFragment : Fragment() {
 
     private val viewModel: AddStoreViewModel by activityViewModels()
+    private val menuExtractionViewModel: MenuExtractionViewModel by viewModels()
     private lateinit var callback: OnBackPressedCallback
 
     override fun onAttach(context: Context) {
@@ -53,6 +56,7 @@ class AddStoreDetailFragment : Fragment() {
                 MaterialTheme {
                     AddStoreFlowScreen(
                         viewModel = viewModel,
+                        menuExtractionViewModel = menuExtractionViewModel,
                         onNavigateBack = { navigateBack() },
                         onCloseClick = { navigateToHome() },
                         onComplete = { navigateToStoreDetail() },

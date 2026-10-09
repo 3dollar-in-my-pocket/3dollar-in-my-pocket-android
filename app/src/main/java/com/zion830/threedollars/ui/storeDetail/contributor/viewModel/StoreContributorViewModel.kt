@@ -1,12 +1,18 @@
 package com.zion830.threedollars.ui.storeDetail.contributor.viewModel
 
 import androidx.lifecycle.SavedStateHandle
+import com.threedollar.common.analytics.LogManager
+import com.threedollar.common.analytics.ParameterName
+import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.base.UdfViewModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.domain.screen.repository.ScreenRepository
 import com.zion830.threedollars.ui.storeDetail.contributor.model.appendFirstCardsSection
+import com.zion830.threedollars.ui.storeDetail.contributor.model.createStoreContributorEditClickEvent
+import com.zion830.threedollars.ui.storeDetail.contributor.model.storeContributorPageViewClassName
+import com.zion830.threedollars.ui.storeDetail.contributor.model.storeContributorScreenName
 import com.zion830.threedollars.ui.storeDetail.contributor.model.firstCardsSection
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiEffect
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiIntent
@@ -32,6 +38,7 @@ class StoreContributorViewModel @Inject constructor(
     private val storeId: String = savedStateHandle.get<String>(StoreContributorActivity.EXTRA_STORE_ID).orEmpty()
     private var initialized = false
     private var loadVersion = 0
+    private var isPageViewPending = false
 
     private val stateStore = MutableStateFlow<StoreContributorUiState>(StoreContributorUiState.Loading)
     override val state: StateFlow<StoreContributorUiState> = stateStore.asStateFlow()
@@ -48,6 +55,11 @@ class StoreContributorViewModel @Inject constructor(
             StoreContributorUiIntent.OnRefresh -> refresh()
             StoreContributorUiIntent.OnCloseClick -> _effect.trySend(StoreContributorUiEffect.Close)
             StoreContributorUiIntent.OnLoadNextPage -> loadNextPage()
+            StoreContributorUiIntent.OnShown -> {
+                isPageViewPending = true
+                sendPendingPageView()
+            }
+            StoreContributorUiIntent.OnEditClick -> sendEditClickLog()
             is StoreContributorUiIntent.OnActionClick -> _effect.trySend(StoreContributorUiEffect.ExecuteAction(intent.action))
         }
     }
@@ -61,6 +73,7 @@ class StoreContributorViewModel @Inject constructor(
             is StoreContributorUiState.Success -> currentState.copy(isPaging = false)
             else -> StoreContributorUiState.Error(exception.message.orEmpty())
         }
+        sendPendingPageView()
     }
 
     private fun onInit() {
@@ -95,10 +108,46 @@ class StoreContributorViewModel @Inject constructor(
                         screen = screen,
                         canLoadMore = cardsSection?.cursor?.hasMore == true,
                     )
+                    sendPendingPageView()
                 } else {
                     stateStore.value = StoreContributorUiState.Error(response.message.orEmpty())
+                    sendPendingPageView()
                 }
             }
+        }
+    }
+
+    /**
+     * page_view 는 서버 viewLog(store_id 포함)로 보낸다. 화면을 아직 못 받았으면 받은 뒤에 보내고,
+     * 응답에 viewLog 가 없거나 실패하면 store_id 를 붙인 정적 page_view 로 대신한다.
+     */
+    private fun sendPendingPageView() {
+        if (!isPageViewPending) return
+        val currentState = stateStore.value
+        if (currentState is StoreContributorUiState.Loading) return
+        isPageViewPending = false
+        val viewLog = (currentState as? StoreContributorUiState.Success)?.screen?.viewLog
+        if (viewLog != null) {
+            SDClickLogger.send(viewLog)
+        } else {
+            LogManager.sendPageView(
+                storeContributorScreenName,
+                storeContributorPageViewClassName,
+                mapOf(ParameterName.STORE_ID to storeId),
+            )
+        }
+    }
+
+    private fun sendEditClickLog() {
+        val clickLog = (stateStore.value as? StoreContributorUiState.Success)
+            ?.screen
+            ?.sections
+            ?.filterIsInstance<SDSectionModel.ActionBarSection>()
+            ?.firstNotNullOfOrNull { it.actionBar.clickLog }
+        if (clickLog != null) {
+            SDClickLogger.send(clickLog)
+        } else {
+            LogManager.sendEvent(createStoreContributorEditClickEvent(storeId))
         }
     }
 

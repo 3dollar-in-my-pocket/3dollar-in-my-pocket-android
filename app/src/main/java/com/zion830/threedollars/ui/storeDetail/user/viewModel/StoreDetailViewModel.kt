@@ -11,6 +11,7 @@ import com.threedollar.domain.home.data.store.ImageContentModel
 import com.threedollar.domain.home.data.store.ReasonModel
 import com.threedollar.domain.home.data.store.ReviewContentModel
 import com.threedollar.domain.home.data.store.ReviewSortType
+import com.threedollar.domain.home.data.store.StickerModel
 import com.threedollar.domain.home.data.store.UserStoreDetailModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -26,7 +27,11 @@ import com.threedollar.common.base.BaseViewModel
 import com.threedollar.domain.store.repository.StoreRepository
 import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionType
+import com.zion830.threedollars.ui.like.likeRequestStickerId
+import com.zion830.threedollars.ui.like.likeSticker
+import com.zion830.threedollars.ui.like.toggledLike
 import com.zion830.threedollars.ui.storeDetail.displayitem.StoreDisplayItemController
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailErrorMessage
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItem
 import com.zion830.threedollars.utils.StringUtils
 import com.zion830.threedollars.utils.showCustomBlackToast
@@ -78,6 +83,13 @@ class StoreDetailViewModel @Inject constructor(
 
     private val _reviewPagingData = MutableStateFlow<PagingData<ReviewContentModel>?>(null)
     val reviewPagingData get() = _reviewPagingData
+
+    private val _reviewLikeOverrides = MutableStateFlow<Map<Long, List<StickerModel>>>(emptyMap())
+
+    /** 리뷰 리스트에서 좋아요를 바꾼 리뷰의 스티커. 페이징 데이터는 다시 받지 않고 이 값으로 덮어 그린다. */
+    val reviewLikeOverrides: StateFlow<Map<Long, List<StickerModel>>> get() = _reviewLikeOverrides
+
+    private val likingReviewIds = mutableSetOf<Long>()
 
     private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
@@ -285,9 +297,35 @@ class StoreDetailViewModel @Inject constructor(
     }
 
     fun getReview(storeId: Int, sortType: ReviewSortType) {
+        _reviewLikeOverrides.value = emptyMap()
         viewModelScope.launch {
             homeRepository.getStoreReview(storeId, sortType).cachedIn(viewModelScope).collect {
                 _reviewPagingData.value = it
+            }
+        }
+    }
+
+    /**
+     * 리뷰 좋아요를 먼저 화면에 반영하고 스티커 교체를 요청한다. [review] 는 화면에 보이는(덮어쓴) 상태여야 한다.
+     * 실패하면 원래 상태로 되돌리고, 응답 전에는 같은 리뷰의 요청을 다시 보내지 않는다.
+     */
+    fun toggleReviewLike(storeId: Int, review: ReviewContentModel) {
+        val reviewId = review.review.reviewId
+        if (!likingReviewIds.add(reviewId)) return
+        val toggled = review.stickers.toggledLike()
+        sendClickLikeFromList(reviewId, toggled.likeSticker.reactedByMe)
+        _reviewLikeOverrides.update { it + (reviewId to toggled) }
+        viewModelScope.launch {
+            try {
+                storeRepository.putStoreReviewSticker(storeId.toString(), reviewId.toString(), review.stickers.likeRequestStickerId())
+                    .onFailure { throwable ->
+                        _reviewLikeOverrides.update { overrides ->
+                            if (overrides[reviewId] == toggled) overrides + (reviewId to review.stickers) else overrides
+                        }
+                        _serverError.emit(StoreDetailErrorMessage.from(throwable) ?: StringUtils.getString(CommonR.string.connection_failed))
+                    }
+            } finally {
+                likingReviewIds.remove(reviewId)
             }
         }
     }
@@ -424,6 +462,20 @@ class StoreDetailViewModel @Inject constructor(
     }
 
     // GA Events - Review List
+    private fun sendClickLikeFromList(reviewId: Long, isLiked: Boolean) {
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = ScreenName.REVIEW_LIST,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.LIKE,
+                additionalParams = mapOf(
+                    ParameterName.REVIEW_ID to reviewId.toString(),
+                    ParameterName.VALUE to isLiked
+                )
+            )
+        )
+    }
+
     fun sendClickSortReviewList(sortType: String) {
         LogManager.sendEvent(
             ClickEvent(

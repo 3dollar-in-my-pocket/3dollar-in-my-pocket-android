@@ -12,13 +12,20 @@ import org.junit.Test
 
 class StoreContributorAnalyticsTest {
 
+    // TH-1435 TC16
     @Test
-    fun createStoreContributorEditClickEvent_returnsExpectedAnalyticsContract() {
-        val event = createStoreContributorEditClickEvent()
+    fun `TH1435_TC16_서버로그가_없을때_수정버튼_정적클릭로그에_store_id를_담는다`() {
+        // Given
+        val storeId = "139"
 
+        // When
+        val event = createStoreContributorEditClickEvent(storeId)
+
+        // Then
         assertEquals(ScreenName.STORE_CONTRIBUTORS, event.screen)
         assertEquals(LogObjectType.BUTTON.value, event.extraParameters[ParameterName.OBJECT_TYPE])
         assertEquals(LogObjectId.EDIT.value, event.extraParameters[ParameterName.OBJECT_ID])
+        assertEquals(storeId, event.extraParameters[ParameterName.STORE_ID])
     }
 
     @Test

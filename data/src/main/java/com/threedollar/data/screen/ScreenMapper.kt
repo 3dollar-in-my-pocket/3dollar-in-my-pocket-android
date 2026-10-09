@@ -31,7 +31,8 @@ import com.threedollar.network.data.screen.StoreContributorSurfaceStyleResponse
 import com.threedollar.network.data.screen.StoreContributorTextResponse
 
 fun StoreContributorScreenResponse.asModel(): SDScreenModel = SDScreenModel(
-    sections = sections.orEmpty().map { it.asModel() }
+    sections = sections.orEmpty().map { it.asModel() },
+    viewLog = viewLog?.asModelOrNull(),
 )
 
 fun StoreContributorHistoriesResponse.asCardsSectionModel(): SDSectionModel.CardsSection = SDSectionModel.CardsSection(
@@ -67,7 +68,8 @@ fun StoreContributorSectionResponse.asModel(): SDSectionModel {
 }
 
 private fun StoreContributorActionBarResponse?.asModel(): SDActionBarModel = SDActionBarModel(
-    button = this?.button.asModel()
+    button = this?.button.asModel(),
+    clickLog = this?.clickLog?.asModel(),
 )
 
 private fun StoreContributorHeaderResponse?.asModel(): SDHeaderModel = SDHeaderModel(

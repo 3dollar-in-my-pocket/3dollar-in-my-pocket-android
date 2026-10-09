@@ -219,6 +219,21 @@
     <string name="add_store_menu_suffix">메뉴</string>
     <string name="add_store_menu_format">메뉴%d</string>
     <string name="add_store_menu_with_name">%s 메뉴</string>
+    <string name="menu_extraction_banner_title">사진 한 장으로\n메뉴를 쉽게 등록할 수 있어요.</string>
+    <string name="menu_extraction_banner_button">메뉴 등록</string>
+    <string name="menu_extraction_add_by_image">이미지로 메뉴 추가</string>
+    <string name="menu_extraction_photo_title">메뉴판 사진을 선택해\n이미지를 올려주세요.</string>
+    <string name="menu_extraction_photo_description">상품명, 가격, 카테고리가 잘 보이는\n선명한 사진이면 좋아요.</string>
+    <string name="menu_extraction_pick_gallery">사진에서 선택</string>
+    <string name="menu_extraction_take_photo">사진찍기</string>
+    <string name="menu_extraction_loading_title">메뉴와 가격을 읽고 있어요</string>
+    <string name="menu_extraction_loading_description">잠시만 기다려주세요. 곧 등록 결과를 보여드릴게요.</string>
+    <string name="menu_extraction_result_title">총 %d개의 메뉴를 인식했어요.\n이대로 등록할까요?</string>
+    <string name="menu_extraction_register">등록하기</string>
+    <string name="menu_extraction_empty_error">메뉴를 인식하지 못했어요.\n다른 사진으로 다시 시도해주세요.</string>
+    <string name="menu_extraction_camera_unavailable">카메라를 실행할 수 없어요.</string>
+    <string name="menu_input_min_price">최소 가격은 1원 이상 입력해주세요</string>
+    <string name="menu_input_min_count">최소 수량은 1개 이상 입력해주세요</string>
     <string name="add_store_select_category_count">추가할 카테고리를 선택해 주세요 (%d/10)</string>
     <string name="add_store_location_confirm">가게 위치 확인</string>
     <string name="add_store_appearance_day">출몰 요일</string>
@@ -381,6 +396,7 @@
     <string name="str_choice_review_description">여러개의 리뷰를 선택할 수 있습니다.</string>
     <string name="str_boss_review_write_description">이 가게를 추천하시나요?</string>
     <string name="str_like">좋아요 %d</string>
+    <string name="str_like_empty">좋아요</string>
     
     <!-- Photo -->
     <string name="add_photo">사진제보</string>
@@ -580,6 +596,7 @@
     <string name="admob_map_banner">ca-app-pub-5385646520024289/1202088761</string>
     <string name="admob_store_detail_banner">ca-app-pub-5385646520024289/7477048617</string>
     <string name="admob_search_by_address">ca-app-pub-5385646520024289/3229596049</string>
+    <string name="admob_my_page_team_rewarded">ca-app-pub-5385646520024289/4616671581</string>
     
     <!-- UI Common Strings (Legacy) -->
     <string name="go_download">다운로드 하러 가기</string>
@@ -594,6 +611,8 @@
     <string name="str_create_poll_hint">투표 제목을 입력하세요.</string>
     <string name="admob_community_comment_banner">ca-app-pub-5385646520024289/4196241163</string>
     <string name="admob_community_tab_banner">ca-app-pub-5385646520024289/3222264361</string>
+    <string name="admob_feed_list_banner">ca-app-pub-5385646520024289/4870299205</string>
+    <string name="admob_poll_list_card">ca-app-pub-5385646520024289/1325951653</string>
     <string name="select_neighborhood_default">📍 %s</string>
     
     <!-- My Page Feature Strings -->

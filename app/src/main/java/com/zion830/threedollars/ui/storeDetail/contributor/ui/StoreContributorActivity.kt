@@ -53,7 +53,6 @@ import base.compose.AppTheme
 import base.compose.ColorWhite
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
-import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.serverdriven.model.SDActionBarModel
 import com.threedollar.common.serverdriven.model.SDCardModel
@@ -69,12 +68,10 @@ import com.zion830.threedollars.core.ui.serverdriven.SDActionButton
 import com.zion830.threedollars.core.ui.serverdriven.SDCardRenderer
 import com.zion830.threedollars.core.ui.serverdriven.SDSectionRenderer
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
-import com.zion830.threedollars.ui.storeDetail.contributor.model.createStoreContributorEditClickEvent
 import com.zion830.threedollars.ui.storeDetail.contributor.model.isStoreUpdateAction
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiEffect
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiIntent
 import com.zion830.threedollars.ui.storeDetail.contributor.model.StoreContributorUiState
-import com.zion830.threedollars.ui.storeDetail.contributor.model.storeContributorScreenName
 import com.zion830.threedollars.ui.storeDetail.contributor.viewModel.StoreContributorViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -145,7 +142,7 @@ class StoreContributorActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        LogManager.sendPageView(storeContributorScreenName, this::class.java.simpleName)
+        viewModel.dispatch(StoreContributorUiIntent.OnShown)
     }
 
     override fun finish() {
@@ -163,7 +160,7 @@ class StoreContributorActivity : AppCompatActivity() {
     private fun handleLocalEditAction(action: SDLinkModel): Boolean {
         if (!action.isStoreUpdateAction()) return false
 
-        LogManager.sendEvent(createStoreContributorEditClickEvent())
+        viewModel.dispatch(StoreContributorUiIntent.OnEditClick)
         val uri = Uri.parse(action.link)
 
         val targetStoreId = uri.getQueryParameter("storeId")

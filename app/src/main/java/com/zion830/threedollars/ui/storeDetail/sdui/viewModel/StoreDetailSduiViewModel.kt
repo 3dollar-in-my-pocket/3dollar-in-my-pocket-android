@@ -107,6 +107,7 @@ class StoreDetailSduiViewModel @Inject constructor(
             StoreDetailSduiUiIntent.OnFavoriteClick -> toggleFavorite()
             StoreDetailSduiUiIntent.OnDisplayed -> onDisplayed()
             is StoreDetailSduiUiIntent.OnImpression -> onImpression(intent.key, intent.log)
+            is StoreDetailSduiUiIntent.OnAdClick -> logger.click(intent.log)
             is StoreDetailSduiUiIntent.ScrollToFragment -> scrollToFragment(intent.fragment)
             is StoreDetailSduiUiIntent.OnReviewDeleteConfirmed -> deleteReview(intent.reviewId)
             is StoreDetailSduiUiIntent.OnCouponUseConfirmed -> useCoupon(intent.issuedKey)
@@ -151,16 +152,19 @@ class StoreDetailSduiViewModel @Inject constructor(
     /**
      * 미리보기는 실패해도 알리지 않는다. 홈이 목록 카드로 만든 임시 미리보기를 그대로 둔다.
      * 상세보다 먼저 오면 저장 여부·가게명을 미리 채워 tip 의 저장 버튼이 맞게 보이도록 한다.
+     * 미리보기 시트가 열린 시점이므로 미리보기 응답의 viewLog(store_bottom_sheet)로 page_view 를 보낸다.
      */
     private fun fetchPreview(storeId: String) {
         launch {
-            val preview = storeRepository.getStorePreviewScreen(storeId = storeId, lat = latitude, lng = longitude)
+            val screen = storeRepository.getStorePreviewScreen(storeId = storeId, lat = latitude, lng = longitude)
                 .getOrNull()
-                ?.sections.orEmpty()
+                ?: return@launch
+            val preview = screen.sections.orEmpty()
                 .filterIsInstance<SDStorePreviewSectionModel>()
                 .firstOrNull()
                 ?: return@launch
             if (stateStore.value.storeId != storeId) return@launch
+            logger.pageView(screen.viewLog)
             previewStore.value = preview
             stateStore.update {
                 if (it.hasContent) {

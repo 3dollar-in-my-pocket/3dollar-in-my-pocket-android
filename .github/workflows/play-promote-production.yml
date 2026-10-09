@@ -1,0 +1,44 @@
+name: Play Promote to Production
+
+# 내부 테스트 트랙에서 확인한 빌드를 다시 빌드하지 않고 같은 versionCode 그대로 프로덕션 초안으로 옮긴다.
+# 심사 제출은 Play Console 에서 한다. 먼저 dry_run 으로 옮길 릴리즈를 확인할 수 있다.
+on:
+  workflow_dispatch:
+    inputs:
+      version_code:
+        description: '옮길 versionCode (비우면 내부 테스트의 최신 배포 완료 릴리즈)'
+        required: false
+        default: ''
+      dry_run:
+        description: '옮길 릴리즈만 확인하고 변경하지 않기'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Google API client
+        run: pip install google-api-python-client==2.151.0 google-auth==2.36.0
+
+      - name: Promote internal release to production (draft)
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          PACKAGE_NAME: com.zion830.threedollars
+          VERSION_CODE: ${{ inputs.version_code }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: python .github/scripts/play_promote_production.py

@@ -56,6 +56,8 @@ import base.compose.Gray70
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.zion830.threedollars.core.designsystem.R
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionHost
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import kotlinx.coroutines.launch
@@ -81,6 +83,7 @@ object AddStoreRoute {
 @Composable
 fun AddStoreFlowScreen(
     viewModel: AddStoreViewModel,
+    menuExtractionViewModel: MenuExtractionViewModel,
     onNavigateBack: () -> Unit,
     onCloseClick: () -> Unit,
     onComplete: () -> Unit,
@@ -137,219 +140,234 @@ fun AddStoreFlowScreen(
         else -> stringResource(CommonR.string.add_store_next)
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        ModalBottomSheetLayout(
-            sheetState = sheetState,
-            sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
-            sheetContent = {
-                when (currentBottomSheetType) {
-                    BottomSheetType.CATEGORY_EDIT -> {
-                        CategoryEditBottomSheet(
-                            selectCategoryList = state.selectCategoryList,
-                            storeCategories = state.storeCategories,
-                            onConfirm = { categoryIds ->
-                                viewModel.processIntent(AddStoreContract.Intent.UpdateSelectedCategories(categoryIds))
-                            },
-                            onDismiss = {
-                                coroutineScope.launch { sheetState.hide() }
-                            }
-                        )
-                    }
-                    BottomSheetType.TIME_PICKER_START -> {
-                        TimePickerBottomSheet(
-                            selectedTime = state.openingHours.startTime,
-                            onTimeSelected = { time ->
-                                viewModel.processIntent(AddStoreContract.Intent.SetStartTime(time))
-                                coroutineScope.launch { sheetState.hide() }
-                            }
-                        )
-                    }
-                    BottomSheetType.TIME_PICKER_END -> {
-                        TimePickerBottomSheet(
-                            selectedTime = state.openingHours.endTime,
-                            onTimeSelected = { time ->
-                                viewModel.processIntent(AddStoreContract.Intent.SetEndTime(time))
-                                coroutineScope.launch { sheetState.hide() }
-                            }
-                        )
-                    }
-                    BottomSheetType.NONE -> {
-                        Spacer(modifier = Modifier.height(1.dp))
-                    }
-                }
+    MenuExtractionHost(
+        viewModel = menuExtractionViewModel,
+        screenTitle = stringResource(CommonR.string.title_add_store),
+        onCompleted = { categories ->
+            viewModel.processIntent(AddStoreContract.Intent.ApplyExtractedMenus(categories))
+            if (currentRoute == AddStoreRoute.MENU_CATEGORY) {
+                navController.navigate(AddStoreRoute.MENU_DETAIL)
             }
-        ) {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = {
-                    if (currentRoute != AddStoreRoute.COMPLETION) {
-                        AddStoreTopBar(
-                            title = stringResource(CommonR.string.title_add_store),
-                            progress = progress,
-                            onBackClick = {
-                                if (!navController.popBackStack()) {
-                                    onNavigateBack()
+        },
+        modifier = modifier,
+    ) { openPhotoSource ->
+        Box(modifier = Modifier.fillMaxSize()) {
+            ModalBottomSheetLayout(
+                sheetState = sheetState,
+                sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                sheetContent = {
+                    when (currentBottomSheetType) {
+                        BottomSheetType.CATEGORY_EDIT -> {
+                            CategoryEditBottomSheet(
+                                selectCategoryList = state.selectCategoryList,
+                                storeCategories = state.storeCategories,
+                                onConfirm = { categoryIds ->
+                                    viewModel.processIntent(AddStoreContract.Intent.UpdateSelectedCategories(categoryIds))
+                                },
+                                onDismiss = {
+                                    coroutineScope.launch { sheetState.hide() }
                                 }
-                            },
-                            onCloseClick = onCloseClick
-                        )
-                    }
-                },
-                bottomBar = {
-                    if (currentRoute != AddStoreRoute.COMPLETION) {
-                        when (currentRoute) {
-                            AddStoreRoute.REQUIRED_INFO -> {
-                                AddStoreBottomBar(
-                                    buttonText = buttonText,
-                                    enabled = state.isRequiredInfoValid,
-                                    onClick = {
-                                        if (state.isRequiredInfoValid) {
-                                            navController.navigate(AddStoreRoute.MENU_CATEGORY)
-                                        }
-                                    }
-                                )
-                            }
-                            AddStoreRoute.MENU_CATEGORY -> {
-                                AddStoreBottomBar(
-                                    buttonText = buttonText,
-                                    enabled = state.selectCategoryList.isNotEmpty(),
-                                    onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
-                                )
-                            }
-                            AddStoreRoute.MENU_DETAIL -> {
-                                AddStoreBottomBar(
-                                    buttonText = stringResource(CommonR.string.add_store_next),
-                                    enabled = state.selectCategoryList.isNotEmpty(),
-                                    showSkipButton = true,
-                                    onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
-                                    onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
-                                )
-                            }
-                            AddStoreRoute.STORE_DETAIL -> {
-                                AddStoreBottomBar(
-                                    buttonText = stringResource(CommonR.string.add_store_next),
-                                    enabled = true,
-                                    showSkipButton = true,
-                                    onClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) },
-                                    onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
-                                )
-                            }
-                            AddStoreRoute.COMPLETION_MENU_DETAIL -> {
-                                AddStoreBottomBar(
-                                    buttonText = stringResource(CommonR.string.add_store_write_complete),
-                                    enabled = state.selectCategoryList.isNotEmpty(),
-                                    showSkipButton = false,
-                                    onClick = {
-                                        viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
-                                    }
-                                )
-                            }
-                            AddStoreRoute.COMPLETION_STORE_DETAIL -> {
-                                AddStoreBottomBar(
-                                    buttonText = stringResource(CommonR.string.add_store_write_complete),
-                                    enabled = true,
-                                    showSkipButton = false,
-                                    onClick = {
-                                        viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
-                                    }
-                                )
-                            }
-                            else -> {}
+                            )
+                        }
+                        BottomSheetType.TIME_PICKER_START -> {
+                            TimePickerBottomSheet(
+                                selectedTime = state.openingHours.startTime,
+                                onTimeSelected = { time ->
+                                    viewModel.processIntent(AddStoreContract.Intent.SetStartTime(time))
+                                    coroutineScope.launch { sheetState.hide() }
+                                }
+                            )
+                        }
+                        BottomSheetType.TIME_PICKER_END -> {
+                            TimePickerBottomSheet(
+                                selectedTime = state.openingHours.endTime,
+                                onTimeSelected = { time ->
+                                    viewModel.processIntent(AddStoreContract.Intent.SetEndTime(time))
+                                    coroutineScope.launch { sheetState.hide() }
+                                }
+                            )
+                        }
+                        BottomSheetType.NONE -> {
+                            Spacer(modifier = Modifier.height(1.dp))
                         }
                     }
                 }
-            ) { padding ->
-                NavHost(
-                    navController = navController,
-                    startDestination = AddStoreRoute.REQUIRED_INFO,
-                    modifier = Modifier.padding(padding)
-                ) {
-                    composable(AddStoreRoute.REQUIRED_INFO) {
-                        RequiredInfoScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onLocationChangeClick = onLocationChangeClick
-                        )
-                    }
-                    composable(AddStoreRoute.MENU_CATEGORY) {
-                        MenuCategoryScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent
-                        )
-                    }
-                    composable(AddStoreRoute.MENU_DETAIL) {
-                        MenuDetailScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onShowCategoryEditSheet = {
-                                currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
-                                coroutineScope.launch { sheetState.show() }
-                            }
-                        )
-                    }
-                    composable(AddStoreRoute.STORE_DETAIL) {
-                        StoreDetailScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onShowTimePickerSheet = { timeType ->
-                                currentBottomSheetType = when (timeType) {
-                                    TimeType.START -> BottomSheetType.TIME_PICKER_START
-                                    TimeType.END -> BottomSheetType.TIME_PICKER_END
+            ) {
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    topBar = {
+                        if (currentRoute != AddStoreRoute.COMPLETION) {
+                            AddStoreTopBar(
+                                title = stringResource(CommonR.string.title_add_store),
+                                progress = progress,
+                                onBackClick = {
+                                    if (!navController.popBackStack()) {
+                                        onNavigateBack()
+                                    }
+                                },
+                                onCloseClick = onCloseClick
+                            )
+                        }
+                    },
+                    bottomBar = {
+                        if (currentRoute != AddStoreRoute.COMPLETION) {
+                            when (currentRoute) {
+                                AddStoreRoute.REQUIRED_INFO -> {
+                                    AddStoreBottomBar(
+                                        buttonText = buttonText,
+                                        enabled = state.isRequiredInfoValid,
+                                        onClick = {
+                                            if (state.isRequiredInfoValid) {
+                                                navController.navigate(AddStoreRoute.MENU_CATEGORY)
+                                            }
+                                        }
+                                    )
                                 }
-                                coroutineScope.launch { sheetState.show() }
-                            }
-                        )
-                    }
-                    composable(AddStoreRoute.COMPLETION) {
-                        CompletionScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onComplete = onComplete,
-                            onNavigateToMenuDetail = {
-                                navController.navigate(AddStoreRoute.COMPLETION_MENU_DETAIL)
-                            },
-                            onNavigateToStoreDetail = {
-                                navController.navigate(AddStoreRoute.COMPLETION_STORE_DETAIL)
-                            }
-                        )
-                    }
-                    composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
-                        MenuDetailScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onShowCategoryEditSheet = {
-                                currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
-                                coroutineScope.launch { sheetState.show() }
-                            },
-                        )
-                    }
-                    composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
-                        StoreDetailScreen(
-                            state = state,
-                            onIntent = viewModel::processIntent,
-                            onShowTimePickerSheet = { timeType ->
-                                currentBottomSheetType = when (timeType) {
-                                    TimeType.START -> BottomSheetType.TIME_PICKER_START
-                                    TimeType.END -> BottomSheetType.TIME_PICKER_END
+                                AddStoreRoute.MENU_CATEGORY -> {
+                                    AddStoreBottomBar(
+                                        buttonText = buttonText,
+                                        enabled = state.selectCategoryList.isNotEmpty(),
+                                        onClick = { navController.navigate(AddStoreRoute.MENU_DETAIL) }
+                                    )
                                 }
-                                coroutineScope.launch { sheetState.show() }
-                            },
-                            isCompletionMode = true
-                        )
+                                AddStoreRoute.MENU_DETAIL -> {
+                                    AddStoreBottomBar(
+                                        buttonText = stringResource(CommonR.string.add_store_next),
+                                        enabled = state.selectCategoryList.isNotEmpty(),
+                                        showSkipButton = true,
+                                        onClick = { navController.navigate(AddStoreRoute.STORE_DETAIL) },
+                                        onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
+                                    )
+                                }
+                                AddStoreRoute.STORE_DETAIL -> {
+                                    AddStoreBottomBar(
+                                        buttonText = stringResource(CommonR.string.add_store_next),
+                                        enabled = true,
+                                        showSkipButton = true,
+                                        onClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) },
+                                        onSkipClick = { viewModel.processIntent(AddStoreContract.Intent.SubmitNewStore) }
+                                    )
+                                }
+                                AddStoreRoute.COMPLETION_MENU_DETAIL -> {
+                                    AddStoreBottomBar(
+                                        buttonText = stringResource(CommonR.string.add_store_write_complete),
+                                        enabled = state.selectCategoryList.isNotEmpty(),
+                                        showSkipButton = false,
+                                        onClick = {
+                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
+                                        }
+                                    )
+                                }
+                                AddStoreRoute.COMPLETION_STORE_DETAIL -> {
+                                    AddStoreBottomBar(
+                                        buttonText = stringResource(CommonR.string.add_store_write_complete),
+                                        enabled = true,
+                                        showSkipButton = false,
+                                        onClick = {
+                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
+                                        }
+                                    )
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
+                ) { padding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = AddStoreRoute.REQUIRED_INFO,
+                        modifier = Modifier.padding(padding)
+                    ) {
+                        composable(AddStoreRoute.REQUIRED_INFO) {
+                            RequiredInfoScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onLocationChangeClick = onLocationChangeClick
+                            )
+                        }
+                        composable(AddStoreRoute.MENU_CATEGORY) {
+                            MenuCategoryScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onMenuExtractionClick = openPhotoSource,
+                            )
+                        }
+                        composable(AddStoreRoute.MENU_DETAIL) {
+                            MenuDetailScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onShowCategoryEditSheet = {
+                                    currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                onImageMenuAddClick = openPhotoSource,
+                            )
+                        }
+                        composable(AddStoreRoute.STORE_DETAIL) {
+                            StoreDetailScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onShowTimePickerSheet = { timeType ->
+                                    currentBottomSheetType = when (timeType) {
+                                        TimeType.START -> BottomSheetType.TIME_PICKER_START
+                                        TimeType.END -> BottomSheetType.TIME_PICKER_END
+                                    }
+                                    coroutineScope.launch { sheetState.show() }
+                                }
+                            )
+                        }
+                        composable(AddStoreRoute.COMPLETION) {
+                            CompletionScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onComplete = onComplete,
+                                onNavigateToMenuDetail = {
+                                    navController.navigate(AddStoreRoute.COMPLETION_MENU_DETAIL)
+                                },
+                                onNavigateToStoreDetail = {
+                                    navController.navigate(AddStoreRoute.COMPLETION_STORE_DETAIL)
+                                }
+                            )
+                        }
+                        composable(AddStoreRoute.COMPLETION_MENU_DETAIL) {
+                            MenuDetailScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onShowCategoryEditSheet = {
+                                    currentBottomSheetType = BottomSheetType.CATEGORY_EDIT
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                onImageMenuAddClick = openPhotoSource,
+                            )
+                        }
+                        composable(AddStoreRoute.COMPLETION_STORE_DETAIL) {
+                            StoreDetailScreen(
+                                state = state,
+                                onIntent = viewModel::processIntent,
+                                onShowTimePickerSheet = { timeType ->
+                                    currentBottomSheetType = when (timeType) {
+                                        TimeType.START -> BottomSheetType.TIME_PICKER_START
+                                        TimeType.END -> BottomSheetType.TIME_PICKER_END
+                                    }
+                                    coroutineScope.launch { sheetState.show() }
+                                },
+                                isCompletionMode = true
+                            )
+                        }
                     }
                 }
             }
-        }
 
-        if (state.isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
-                    .clickable(enabled = false) {},
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Pink)
+            if (state.isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5f))
+                        .clickable(enabled = false) {},
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = Pink)
+                }
             }
         }
     }

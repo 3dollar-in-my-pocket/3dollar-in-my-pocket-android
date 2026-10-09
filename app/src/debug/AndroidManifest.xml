@@ -12,5 +12,9 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/DesignVerificationTheme" />
+        <activity
+            android:name=".debug.GALogViewerActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

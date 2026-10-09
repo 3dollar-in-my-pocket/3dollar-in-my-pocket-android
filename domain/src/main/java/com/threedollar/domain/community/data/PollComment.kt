@@ -1,5 +1,7 @@
 package com.threedollar.domain.community.data
 
+import com.threedollar.domain.home.data.store.StickerModel
+
 data class PollComment(
     val current: Current
 ) {
@@ -7,7 +9,8 @@ data class PollComment(
         val comment: Comment,
         val commentReport: CommentReport,
         val commentWriter: CommentWriter,
-        val poll: Poll
+        val poll: Poll,
+        val stickers: List<StickerModel> = emptyList(),
     ) {
         data class Comment(
             val commentId: String, // string

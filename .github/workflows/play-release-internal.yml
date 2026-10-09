@@ -1,4 +1,8 @@
-name: Play Production Release (Draft)
+name: Play Release (Internal Testing)
+
+# release/** 브랜치를 푸시하면 release AAB 를 내부 테스트 트랙에 바로 배포한다.
+# 테스터가 플레이스토어에서 확인한 뒤 "Play Promote to Production" 워크플로로 같은 빌드(같은 versionCode)를
+# 프로덕션 초안으로 옮기고, 심사 제출은 콘솔에서 한다.
 
 on:
   push:
@@ -134,8 +138,8 @@ jobs:
 
       # Play 는 앱 상태에 따라 changesNotSentForReview 를 요구하거나(심사 거절 등으로 자동 심사 제출이 막힌 상태)
       # 거부한다("Changes are sent for review automatically"). 옵션 없이 먼저 올리고, 실패하면 옵션을 켜서 한 번 더 올린다.
-      # Edit 커밋이 실패하면 업로드한 AAB 도 반영되지 않으므로 재시도해도 중복 업로드가 되지 않는다. 심사 제출은 콘솔에서 한다.
-      - name: Upload to Google Play production (draft)
+      # Edit 커밋이 실패하면 업로드한 AAB 도 반영되지 않으므로 재시도해도 중복 업로드가 되지 않는다.
+      - name: Upload to Google Play internal testing
         id: upload
         continue-on-error: true
         uses: r0adkll/upload-google-play@v1
@@ -143,20 +147,133 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.zion830.threedollars
           releaseFiles: ${{ steps.artifacts.outputs.release_aab }}
-          tracks: production
-          status: draft
+          tracks: internal
+          status: completed
           releaseName: ${{ steps.version.outputs.tag_name }}
           whatsNewDirectory: distribution/whatsnew
 
-      - name: Upload to Google Play production (draft, changes not sent for review)
+      - name: Upload to Google Play internal testing (changes not sent for review)
         if: steps.upload.outcome == 'failure'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.zion830.threedollars
           releaseFiles: ${{ steps.artifacts.outputs.release_aab }}
-          tracks: production
-          status: draft
+          tracks: internal
+          status: completed
           releaseName: ${{ steps.version.outputs.tag_name }}
           whatsNewDirectory: distribution/whatsnew
           changesNotSentForReview: true
+
+      - name: Notify Slack on Success
+        if: success()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {"type": "plain_text", "text": "Play Store 내부 테스트 배포 완료"}
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {"type": "mrkdwn", "text": "*Version:*\n${{ steps.version.outputs.tag_name }}"},
+                    {"type": "mrkdwn", "text": "*Version Code:*\n${{ steps.version.outputs.version_code }}"}
+                  ]
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Internal Test:* <https://play.google.com/apps/internaltest/4699298931467208901|테스터 참여 링크>\n확인이 끝나면 <${{ github.server_url }}/${{ github.repository }}/actions/workflows/play-promote-production.yml|Play Promote to Production> 으로 같은 빌드를 프로덕션 초안에 올린다."
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Discord on Success
+        if: success()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          TAG_NAME: ${{ steps.version.outputs.tag_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          PROMOTE_URL: ${{ github.server_url }}/${{ github.repository }}/actions/workflows/play-promote-production.yml
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg tag_name "$TAG_NAME" \
+            --arg version_code "$VERSION_CODE" \
+            --arg promote_url "$PROMOTE_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: "Play Store 내부 테스트 배포 완료",
+                color: 3066993,
+                description: ("[내부 테스트 참여](https://play.google.com/apps/internaltest/4699298931467208901)\n확인이 끝나면 [Play Promote to Production](" + $promote_url + ") 으로 같은 빌드를 프로덕션 초안에 올린다."),
+                fields: [
+                  {name: "Version", value: $tag_name, inline: true},
+                  {name: "Version Code", value: $version_code, inline: true}
+                ]
+              }]
+            }')
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null
+
+      - name: Notify Slack on Failure
+        if: failure()
+        continue-on-error: true
+        uses: slackapi/slack-github-action@v1.27.0
+        with:
+          payload: |
+            {
+              "blocks": [
+                {
+                  "type": "header",
+                  "text": {"type": "plain_text", "text": "Play Store 내부 테스트 배포 실패"}
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Workflow:* <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Details>"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+
+      - name: Notify Discord on Failure
+        if: failure()
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          PAYLOAD=$(jq -n \
+            --arg workflow_url "$WORKFLOW_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: "Play Store 내부 테스트 배포 실패",
+                color: 15158332,
+                description: ("[워크플로 실행 결과 확인](" + $workflow_url + ")")
+              }]
+            }')
+
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null
