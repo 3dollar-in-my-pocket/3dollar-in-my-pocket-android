@@ -2,6 +2,8 @@ package com.threedollar.data.screen.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeCurationCardsResponse
+import com.threedollar.network.data.screen.HomeCurationSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
@@ -28,4 +30,22 @@ interface ScreenRemoteDataSource {
     ): Flow<BaseResponse<StoreContributorHistoriesResponse>>
 
     fun getHomeFilterScreen(preset: String? = null): Flow<BaseResponse<HomeFilterScreenResponse>>
+
+    fun getHomeCurationSection(
+        tabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeCurationSectionResponse>>
+
+    fun getHomeCurationCards(
+        tabId: String,
+        carouselId: String,
+        categoryId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeCurationCardsResponse>>
 }

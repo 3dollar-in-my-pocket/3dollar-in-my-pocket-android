@@ -25,6 +25,7 @@ import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
 import com.threedollar.network.data.screen.HomeFilterBarResponse
 import com.threedollar.network.data.screen.HomeFilterBorderResponse
 import com.threedollar.network.data.screen.HomeFilterButtonResponse
@@ -67,6 +68,11 @@ private fun HomeFilterSectionResponse.asModel(): HomeScreenSection {
         HomeScreenSectionType.HOME_MAP_CONTROL -> HomeScreenSection.HomeMapControlSectionModel(
             type = sectionType,
             controls = controls.orEmpty().mapNotNull { it.asModelOrNull() },
+        )
+
+        HomeScreenSectionType.HOME_BOTTOM_SHEET_TAB -> HomeScreenSection.HomeBottomSheetTabSectionModel(
+            type = sectionType,
+            tabs = SDHomeBottomSheetTabsModel(tabs = tabs.orEmpty().mapNotNull { it.asCurationTabModelOrNull() }),
         )
 
         HomeScreenSectionType.UNKNOWN -> HomeScreenSection.Unknown(type = sectionType)

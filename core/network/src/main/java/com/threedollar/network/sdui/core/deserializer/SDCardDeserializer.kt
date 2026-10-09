@@ -5,6 +5,7 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.component.SDCardModel
 import com.threedollar.common.sdui.model.component.SDCardType
 import com.threedollar.common.sdui.model.component.SDUnknownCardModel
@@ -25,6 +26,9 @@ class SDCardDeserializer : JsonDeserializer<SDCardModel> {
         return when (SDCardType.entries.firstOrNull { it.name == rawType }) {
             SDCardType.IMAGE_PREVIEW_CARD -> runCatching<SDCardModel> {
                 context.deserialize(jsonObject, ImagePreviewCardModel::class.java)
+            }.getOrElse { SDUnknownCardModel(cardId) }
+            SDCardType.ADMOB_CARD -> runCatching<SDCardModel> {
+                context.deserialize(jsonObject, SDAdMobCardModel::class.java)
             }.getOrElse { SDUnknownCardModel(cardId) }
             SDCardType.UNKNOWN, null -> SDUnknownCardModel(cardId)
         }

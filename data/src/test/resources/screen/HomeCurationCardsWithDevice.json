@@ -1,0 +1,643 @@
+{
+  "cards": [
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805215",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">프랑스루브르바게트</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">588m</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805215&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805215",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    },
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805187",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">명동양과</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">600m</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805187&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805187",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    },
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805524",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">꼬르꼬바두 본점</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">1.1km</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805524&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805524",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    },
+    {
+      "type": "ADMOB_CARD",
+      "cardId": "ADMOB:2553ca41-528b-46f6-931d-7cea2544f5c2",
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "admob",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD"
+        },
+        "eventType": "CLICK"
+      },
+      "impressionLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "admob",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD"
+        },
+        "eventType": "IMPRESSION"
+      },
+      "height": 100
+    },
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805078",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">아티스트베이커리 안국</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">1.2km</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805078&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805078",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    },
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805202",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">오베베베이커리 대학로점</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">2.6km</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805202&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805202",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    },
+    {
+      "type": "IMAGE_PREVIEW_CARD",
+      "cardId": "S:12805366",
+      "image": {
+        "url": "https://storage.threedollars.co.kr/menu/wakbbu_salt_bread_3x.png",
+        "style": {
+          "width": 100.0,
+          "height": 100.0,
+          "dimmed": false
+        }
+      },
+      "title": {
+        "text": "<span style=\"font-size:14px; font-weight:600; color:#0F0F0F\">산1-1</span>",
+        "isHtml": true,
+        "fontColor": "#0F0F0F"
+      },
+      "metricLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/location_soild.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">2.9km</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        },
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/review.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">0개</span>",
+            "isHtml": true,
+            "fontColor": "#969696"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "contextLabel": [
+        {
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/start_pink.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false
+            }
+          },
+          "imageAlignment": "START",
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#FF8181\">0.0</span>",
+            "isHtml": true,
+            "fontColor": "#FF8181"
+          },
+          "contentSpacing": 2.0,
+          "style": {
+            "backgroundColor": "#FFFFFF"
+          }
+        }
+      ],
+      "link": {
+        "type": "APP_SCHEME",
+        "link": "/store?storeId=12805366&storeType=USER_STORE"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      },
+      "clickLog": {
+        "screenName": "home",
+        "objectType": "card",
+        "objectId": "store",
+        "extraParameters": {
+          "tabId": "CURATION",
+          "carouselId": "POPULAR_SNACKS",
+          "categoryId": "WAKBBU_SALT_BREAD",
+          "store_id": "12805366",
+          "store_type": "USER_STORE"
+        },
+        "eventType": "CLICK"
+      },
+      "refs": []
+    }
+  ]
+}

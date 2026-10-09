@@ -5,7 +5,11 @@ import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
 import com.threedollar.data.screen.asCardsSectionModel
+import com.threedollar.data.screen.asCurationCardsModel
+import com.threedollar.data.screen.asCurationModel
 import com.threedollar.data.screen.asModel
 import com.threedollar.data.screen.datasource.ScreenRemoteDataSource
 import com.threedollar.domain.screen.repository.ScreenRepository
@@ -78,6 +82,42 @@ class ScreenRepositoryImpl @Inject constructor(
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel() ?: HomeFilterScreenModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getHomeCurationSection(
+        tabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<SDHomeCurationSectionModel>> =
+        screenRemoteDataSource.getHomeCurationSection(tabId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asCurationModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getHomeCurationCards(
+        tabId: String,
+        carouselId: String,
+        categoryId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<SDHomeCurationCardsModel>> =
+        screenRemoteDataSource.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asCurationCardsModel(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,
