@@ -5,6 +5,8 @@ import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
 import kotlinx.coroutines.flow.Flow
 
 interface ScreenRepository {
@@ -28,4 +30,22 @@ interface ScreenRepository {
     ): Flow<BaseResponse<SDSectionModel.CardsSection>>
 
     fun getHomeFilterScreen(preset: String? = null): Flow<BaseResponse<HomeFilterScreenModel>>
+
+    fun getHomeCurationSection(
+        tabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double? = null,
+        deviceLongitude: Double? = null,
+    ): Flow<BaseResponse<SDHomeCurationSectionModel>>
+
+    fun getHomeCurationCards(
+        tabId: String,
+        carouselId: String,
+        categoryId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double? = null,
+        deviceLongitude: Double? = null,
+    ): Flow<BaseResponse<SDHomeCurationCardsModel>>
 }

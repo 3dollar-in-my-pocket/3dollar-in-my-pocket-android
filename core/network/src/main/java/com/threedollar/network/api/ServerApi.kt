@@ -25,6 +25,8 @@ import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeCurationCardsResponse
+import com.threedollar.network.data.screen.HomeCurationSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
@@ -224,6 +226,26 @@ interface ServerApi {
     suspend fun getHomeFilterScreen(
         @Query("preset") preset: String? = null,
     ): Response<BaseResponse<HomeFilterScreenResponse>>
+
+    @GET("/api/v1/screen/home/section/curation/{tabId}")
+    suspend fun getHomeCurationSection(
+        @Path("tabId") tabId: String,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double? = null,
+        @Header("X-Device-Longitude") deviceLongitude: Double? = null,
+    ): Response<BaseResponse<HomeCurationSectionResponse>>
+
+    @GET("/api/v1/screen/home/section/curation/{tabId}/carousel/{carouselId}/cards")
+    suspend fun getHomeCurationCards(
+        @Path("tabId") tabId: String,
+        @Path("carouselId") carouselId: String,
+        @Query("categoryId") categoryId: String,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Header("X-Device-Latitude") deviceLatitude: Double? = null,
+        @Header("X-Device-Longitude") deviceLongitude: Double? = null,
+    ): Response<BaseResponse<HomeCurationCardsResponse>>
 
     @GET("/api/v1/screen/home/section/list")
     suspend fun getHomeListSection(

@@ -8,6 +8,7 @@ import com.threedollar.common.sdui.model.element.SDTextModel
 
 enum class SDCardType {
     IMAGE_PREVIEW_CARD,
+    ADMOB_CARD,
     UNKNOWN
 }
 
@@ -38,6 +39,15 @@ data class ImagePreviewCardModel(
         val storeId: String?,
         val storeType: String?
     )
+}
+
+data class SDAdMobCardModel(
+    override val cardId: String,
+    val height: Int,
+    val clickLog: SDLogModel? = null,
+    val impressionLog: SDLogModel? = null
+) : SDCardModel {
+    override val type: SDCardType get() = SDCardType.ADMOB_CARD
 }
 
 data class SDUnknownCardModel(

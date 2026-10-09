@@ -1,8 +1,11 @@
 package com.threedollar.common.serverdriven.model
 
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+
 enum class HomeScreenSectionType {
     HOME_FILTER,
     HOME_MAP_CONTROL,
+    HOME_BOTTOM_SHEET_TAB,
     UNKNOWN;
 
     companion object {
@@ -72,6 +75,11 @@ sealed interface HomeScreenSection {
     data class HomeMapControlSectionModel(
         override val type: HomeScreenSectionType,
         val controls: List<HomeMapControl> = emptyList(),
+    ) : HomeScreenSection
+
+    data class HomeBottomSheetTabSectionModel(
+        override val type: HomeScreenSectionType,
+        val tabs: SDHomeBottomSheetTabsModel,
     ) : HomeScreenSection
 
     data class Unknown(

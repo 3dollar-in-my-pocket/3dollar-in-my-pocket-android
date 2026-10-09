@@ -9,6 +9,14 @@ import com.threedollar.common.analytics.LogObjectId
 import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.SDClickLogger
+import com.threedollar.common.analytics.SDLogSender
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.element.SDActionEvent
+import com.threedollar.common.sdui.model.element.SDLink
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.data.AdAndStoreItem
@@ -48,6 +56,11 @@ import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeMapControlItem
 import com.zion830.threedollars.ui.home.data.HomeMapControlResolver
 import com.zion830.threedollars.ui.home.data.HomeUIState
+import com.zion830.threedollars.ui.home.data.HomeCurationUiState
+import com.zion830.threedollars.ui.home.data.HomeCurationStateReducer
+import com.zion830.threedollars.ui.home.data.HomeCurationRequestLocation
+import com.zion830.threedollars.ui.home.data.HomeCurationQueryPolicy
+import com.zion830.threedollars.ui.home.data.HomeCurationQuerySnapshot
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
 import com.zion830.threedollars.ui.home.data.withStorePreviewFavoriteOverride
@@ -62,6 +75,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
 import javax.inject.Inject
 
 @HiltViewModel
@@ -112,6 +127,17 @@ class HomeViewModel @Inject constructor(
 
     private val _homeListSection = MutableStateFlow(HomeListSectionModel())
     val homeListSection: StateFlow<HomeListSectionModel> = _homeListSection.asStateFlow()
+
+    private val _curationState = MutableStateFlow(HomeCurationUiState())
+    val curationState: StateFlow<HomeCurationUiState> = _curationState.asStateFlow()
+    private val _curationLink = MutableSharedFlow<SDLink>(extraBufferCapacity = 1)
+    val curationLink: SharedFlow<SDLink> = _curationLink.asSharedFlow()
+    private var curationSectionJob: Job? = null
+    private val curationCategoryJobs = mutableMapOf<String, Job>()
+    private var curationRequestSerial = 0L
+    private var curationQuery: HomeCurationQuerySnapshot? = null
+    private var curationRequestedRevision: Long? = null
+    private var hasDeviceLocation = false
 
     private val _selectedStoreScreen = MutableStateFlow<StoreScreenModel?>(null)
     val selectedStoreScreen: StateFlow<StoreScreenModel?> = _selectedStoreScreen.asStateFlow()
@@ -173,8 +199,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun updateCurrentLocation(latLng: LatLng) {
+    fun updateCurrentLocation(latLng: LatLng, deviceLocationAvailable: Boolean = true) {
         _uiState.update { it.copy(userLocation = latLng) }
+        hasDeviceLocation = deviceLocationAvailable
     }
 
     fun updateDistanceM(distanceM: Double) {
@@ -192,15 +219,17 @@ class HomeViewModel @Inject constructor(
 
     fun updateUserLocation(latLng: LatLng) {
         _uiState.update { it.copy(userLocation = latLng) }
+        hasDeviceLocation = true
     }
 
-    fun fetchAroundStores() {
-        fetchAroundStores(uiState.value)
+    fun fetchAroundStores(refreshCuration: Boolean = false) {
+        fetchAroundStores(uiState.value, refreshCuration)
     }
 
     fun fetchAroundStores(
         mapPosition: LatLng,
         userLocation: LatLng = mapPosition,
+        deviceLocationAvailable: Boolean = true,
     ) {
         val state = uiState.value.copy(
             mapPosition = mapPosition,
@@ -208,11 +237,23 @@ class HomeViewModel @Inject constructor(
         )
         _uiState.value = state
         savedStateHandle[KEY_MAP_POSITION] = mapPosition
-        fetchAroundStores(state)
+        hasDeviceLocation = deviceLocationAvailable
+        fetchAroundStores(state, refreshCuration = true)
     }
 
-    private fun fetchAroundStores(state: HomeUIState) {
+    private fun fetchAroundStores(state: HomeUIState, refreshCuration: Boolean = false) {
+        curationQuery = HomeCurationQueryPolicy.commit(
+            previous = curationQuery,
+            location = HomeCurationRequestLocation(
+                mapLatitude = state.mapPosition.latitude,
+                mapLongitude = state.mapPosition.longitude,
+                deviceLatitude = state.userLocation.latitude.takeIf { hasDeviceLocation },
+                deviceLongitude = state.userLocation.longitude.takeIf { hasDeviceLocation },
+            ),
+            refresh = refreshCuration,
+        )
         fetchHomeListSection(state = state, cursor = null, append = false)
+        requestHomeCurationSection(forceRefresh = refreshCuration)
     }
 
     fun refreshHomeListSectionAfterStoreUpdate() {
@@ -222,6 +263,110 @@ class HomeViewModel @Inject constructor(
             append = false,
             preserveSelectedStore = true,
         )
+        requestHomeCurationSection(forceRefresh = true)
+    }
+
+    fun selectCurationTab(tab: SDHomeBottomSheetTabModel) {
+        if (_curationState.value.tabs.none { it.tabId == tab.tabId }) return
+        SDLogSender.sendClick(tab.clickLog)
+        _curationState.update { HomeCurationStateReducer.selectTab(it, tab.tabId) }
+        requestHomeCurationSection()
+    }
+
+    fun retryHomeCurationSection() = requestHomeCurationSection(forceRefresh = true)
+
+    private fun requestHomeCurationSection(forceRefresh: Boolean = false) {
+        val snapshot = curationQuery ?: return
+        val current = _curationState.value
+        val tab = current.tabs.firstOrNull { it.tabId == current.selectedTabId && it.viewType == "CURATION" } ?: return
+        val location = snapshot.location
+        if (!forceRefresh && HomeCurationQueryPolicy.canReuse(current, snapshot, curationRequestedRevision, tab.tabId)) return
+
+        curationSectionJob?.cancel()
+        curationCategoryJobs.values.forEach { it.cancel() }
+        curationCategoryJobs.clear()
+        val requestId = ++curationRequestSerial
+        curationRequestedRevision = snapshot.revision
+        _curationState.update { HomeCurationStateReducer.startSectionLoad(it, tab.tabId, location, requestId) }
+        curationSectionJob = viewModelScope.launch {
+            try {
+                screenRepository.getHomeCurationSection(
+                    tabId = tab.tabId,
+                    mapLatitude = location.mapLatitude,
+                    mapLongitude = location.mapLongitude,
+                    deviceLatitude = location.deviceLatitude,
+                    deviceLongitude = location.deviceLongitude,
+                ).collect { response ->
+                    val section = response.data
+                    _curationState.update {
+                        if (response.ok && section != null) HomeCurationStateReducer.applySection(it, section, requestId)
+                        else HomeCurationStateReducer.failSection(it, response.message.orEmpty(), requestId)
+                    }
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _curationState.update { HomeCurationStateReducer.failSection(it, "", requestId) }
+            }
+        }
+    }
+
+    fun selectCurationCategory(carousel: SDHomeCurationItemModel.Carousel, category: SDHomeCurationCategoryFilterModel) {
+        SDLogSender.sendClick(category.clickLog)
+        requestCurationCategory(carousel.carouselId, category.categoryId)
+    }
+
+    fun retryCurationCarousel(carouselId: String) {
+        val categoryId = _curationState.value.carousels[carouselId]?.pendingCategoryId ?: return
+        requestCurationCategory(carouselId, categoryId)
+    }
+
+    private fun requestCurationCategory(carouselId: String, categoryId: String) {
+        val current = _curationState.value
+        val carousel = current.section?.items?.filterIsInstance<SDHomeCurationItemModel.Carousel>()
+            ?.firstOrNull { it.carouselId == carouselId } ?: return
+        if (current.isLoading || carousel.categoryFilters.none { it.categoryId == categoryId }) return
+        val tabId = current.sectionTabId ?: return
+        val location = current.requestLocation ?: return
+        curationCategoryJobs.remove(carouselId)?.cancel()
+        val requestId = ++curationRequestSerial
+        val sectionRequestId = current.sectionRequestId
+        _curationState.update { HomeCurationStateReducer.startCategoryLoad(it, carouselId, categoryId, requestId) }
+        curationCategoryJobs[carouselId] = viewModelScope.launch {
+            try {
+                screenRepository.getHomeCurationCards(
+                    tabId = tabId,
+                    carouselId = carouselId,
+                    categoryId = categoryId,
+                    mapLatitude = location.mapLatitude,
+                    mapLongitude = location.mapLongitude,
+                    deviceLatitude = location.deviceLatitude,
+                    deviceLongitude = location.deviceLongitude,
+                ).collect { response ->
+                    val cards = response.data
+                    _curationState.update {
+                        if (response.ok && cards != null) HomeCurationStateReducer.applyCategory(it, carouselId, requestId, sectionRequestId, cards)
+                        else HomeCurationStateReducer.failCategory(it, carouselId, requestId, sectionRequestId, response.message.orEmpty())
+                    }
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _curationState.update { HomeCurationStateReducer.failCategory(it, carouselId, requestId, sectionRequestId, "") }
+            }
+        }
+    }
+
+    fun openCurationCard(card: ImagePreviewCardModel) {
+        val link = card.link?.takeIf { !it.link.isNullOrBlank() } ?: return
+        SDLogSender.sendClick(card.clickLog)
+        _curationLink.tryEmit(link)
+    }
+
+    fun onCurationHeaderAction(action: SDActionEvent) {
+        val link = action.link?.takeIf { !it.link.isNullOrBlank() } ?: return
+        SDLogSender.sendClick(action.clickLog)
+        _curationLink.tryEmit(link)
     }
 
     fun fetchNextHomeListSection() {
@@ -590,6 +735,10 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
+                    val tabs = screen.sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
+                        .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
+                    _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs) }
+                    requestHomeCurationSection()
                     applyServerSelectionDefaults()
                     updateFilterCells()
                     updateMapControlItems()
