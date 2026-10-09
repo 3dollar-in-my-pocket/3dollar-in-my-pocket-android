@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
@@ -154,6 +155,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private var isFirstLoad = true
 
     private var homeBottomSheetFullListTopPx by mutableIntStateOf(0)
+    private var homeBottomSheetVisibleHeightPx = 0
 
     private val homeBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
@@ -298,7 +300,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         }
         
         naverMapFragment.currentPosition.observe(viewLifecycleOwner) {
-            viewModel.updateCurrentLocation(it)
+            viewModel.updateCurrentLocation(it, deviceLocationAvailable = isLocationAvailable())
         }
 
         naverMapFragment.mapPosition.observe(viewLifecycleOwner) {
@@ -371,6 +373,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.homeBottomSheetComposeView.setContent {
             AppTheme {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
+                val curationState = viewModel.curationState.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
@@ -387,6 +390,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
+                    curationState = curationState,
+                    onCurationTabClick = viewModel::selectCurationTab,
+                    onCurationCategoryClick = viewModel::selectCurationCategory,
+                    onCurationCardClick = viewModel::openCurationCard,
+                    onRetryCuration = viewModel::retryHomeCurationSection,
+                    onRetryCurationCarousel = viewModel::retryCurationCarousel,
+                    onCurationHeaderAction = viewModel::onCurationHeaderAction,
                     storeScreen = storeScreen,
                     onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
@@ -442,6 +452,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     }
 
     private fun initHomeBottomSheetBehavior() {
+        homeBottomSheetVisibleHeightPx = SizeUtils.dpToPx(HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP)
         binding.homeBottomSheetComposeView.apply {
             isVisible = true
             elevation = SizeUtils.dpToPx(10f).toFloat()
@@ -451,22 +462,48 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         binding.homeFullListTopBackgroundView.isVisible = false
         binding.root.doOnLayout { updateHomeBottomSheetFullListTop() }
         binding.filterComposeView.doOnLayout { updateHomeBottomSheetFullListTop() }
+        binding.mapControlComposeView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateMapControlsVisibility()
+        }
+        binding.writeButtonComposeView.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            updateMapControlsVisibility()
+        }
     }
 
     private fun updateHomeBottomSheetFullListTop() {
         homeBottomSheetFullListTopPx = binding.filterComposeView.bottom
             .takeIf { it > 0 }
             ?: SizeUtils.dpToPx(188f)
+        updateMapControlsVisibility()
     }
 
     private fun updateMapControlBottomMargin(sheetVisibleHeightPx: Int) {
+        homeBottomSheetVisibleHeightPx = sheetVisibleHeightPx
         val bottomMarginPx = sheetVisibleHeightPx +
             SizeUtils.dpToPx(HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP - HomeSheetLayout.MAP_CONTROL_SHADOW_INSET_DP)
         val params = binding.mapControlComposeView.layoutParams as ViewGroup.MarginLayoutParams
-        if (params.bottomMargin == bottomMarginPx) return
-        binding.mapControlComposeView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
-            bottomMargin = bottomMarginPx
+        if (params.bottomMargin != bottomMarginPx) {
+            binding.mapControlComposeView.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = bottomMarginPx
+            }
         }
+        updateMapControlsVisibility()
+    }
+
+    private fun updateMapControlsVisibility() {
+        val visible = HomeMapControlsVisibilityPolicy.isVisible(
+            sheetTopPx = binding.homeBottomSheetComposeView.height - homeBottomSheetVisibleHeightPx,
+            headerBottomPx = binding.filterComposeView.bottom,
+            controlsHeightPx = maxOf(binding.mapControlComposeView.height, binding.writeButtonComposeView.height),
+            gapFromSheetPx = SizeUtils.dpToPx(
+                HomeSheetLayout.LOCATION_BUTTON_GAP_FROM_SHEET_DP - HomeSheetLayout.MAP_CONTROL_SHADOW_INSET_DP,
+            ),
+            isStorePreviewShowing = viewModel.selectedStoreScreen.value != null,
+        )
+        // 실측 높이를 유지해야 드래그 중 숨김/복원이 같은 경계에서 결정된다.
+        val visibility = if (visible) View.VISIBLE else View.INVISIBLE
+        binding.mapControlComposeView.visibility = visibility
+        binding.writeButtonComposeView.visibility = visibility
     }
 
     private fun initButton() {
@@ -483,7 +520,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             findNavController().navigate(R.id.action_home_to_home_list_view)
         }
         binding.tvRetrySearch.onSingleClick {
-            viewModel.fetchAroundStores()
+            viewModel.fetchAroundStores(refreshCuration = true)
             viewModel.getAdvertisement(latLng = naverMapFragment.getMapCenterLatLng())
             binding.tvRetrySearch.isVisible = false
         }
@@ -514,6 +551,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
+                    viewModel.curationLink.collect { link -> handleCurationLink(link) }
+                }
+                launch {
                     viewModel.homeListSection.collect { section ->
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
                         if (cards.isEmpty()) {
@@ -537,8 +577,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
-                        binding.mapControlComposeView.isVisible = screen == null
-                        binding.writeButtonComposeView.isVisible = screen == null
+                        updateMapControlsVisibility()
                     }
                 }
                 launch {
@@ -632,6 +671,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         } else {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
+    }
+
+    private fun handleCurationLink(link: com.threedollar.common.sdui.model.element.SDLink) {
+        val url = link.link?.takeIf { it.isNotBlank() } ?: return
+        if (link.type == com.threedollar.common.sdui.model.element.SDLinkType.APP_SCHEME && url.substringBefore('?') == "/store") {
+            val route = HomeStorePreviewRoute.fromLink(url) ?: return
+            startActivityForResult(StoreDetailSduiActivity.getIntent(requireContext(), route.storeId.toString()), Constants.SHOW_STORE_BY_CATEGORY)
+        } else {
+            val type = link.type?.name ?: return
+            handleFilterDeepLink(SDLinkModel(type = type, link = url))
         }
     }
 
@@ -821,12 +871,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
      * 마지막으로 확인된 위치가 있으면 그 위치를, 없으면 기본 위치(서울 중심)를 쓴다.
      */
     private fun useDefaultLocation() {
-        val fallbackLocation = naverMapFragment.getCachedUserLocation() ?: NaverMapUtils.DEFAULT_LOCATION
+        val cachedLocation = naverMapFragment.getCachedUserLocation()
+        val fallbackLocation = cachedLocation ?: NaverMapUtils.DEFAULT_LOCATION
         naverMapFragment.moveCamera(fallbackLocation)
 
         viewModel.fetchAroundStores(
             mapPosition = fallbackLocation,
             userLocation = fallbackLocation,
+            deviceLocationAvailable = cachedLocation != null && isLocationAvailable(),
         )
         viewModel.getAdvertisement(latLng = fallbackLocation)
     }
