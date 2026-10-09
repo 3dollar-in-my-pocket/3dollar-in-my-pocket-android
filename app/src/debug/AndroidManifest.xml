@@ -7,5 +7,10 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/DesignVerificationTheme" />
+        <activity
+            android:name=".ui.home.design.HomeCurationDesignActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/DesignVerificationTheme" />
     </application>
 </manifest>
