@@ -3,6 +3,8 @@ package com.threedollar.data.screen.datasource
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
+import com.threedollar.network.data.screen.HomeCurationCardsResponse
+import com.threedollar.network.data.screen.HomeCurationSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
@@ -55,5 +57,27 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
 
     override fun getHomeFilterScreen(preset: String?): Flow<BaseResponse<HomeFilterScreenResponse>> = flow {
         emit(apiResult(serverApi.getHomeFilterScreen(preset = preset)))
+    }
+
+    override fun getHomeCurationSection(
+        tabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeCurationSectionResponse>> = flow {
+        emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude)))
+    }
+
+    override fun getHomeCurationCards(
+        tabId: String,
+        carouselId: String,
+        categoryId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeCurationCardsResponse>> = flow {
+        emit(apiResult(serverApi.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude)))
     }
 }

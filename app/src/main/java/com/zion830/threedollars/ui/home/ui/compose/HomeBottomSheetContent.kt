@@ -116,6 +116,18 @@ import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
+import com.zion830.threedollars.ui.home.data.HomeCurationUiState
+import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
+import com.threedollar.common.sdui.model.component.SDAdMobCardModel
+import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.element.SDActionEvent
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
+import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.zion830.threedollars.core.ui.sdui.section.home.SDHomeCurationView
+import com.zion830.threedollars.core.ui.sdui.section.home.SDHomeCurationDefaults
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiDefaults
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -168,6 +180,13 @@ fun HomeBottomSheetContent(
     storeDetailContent: (@Composable (isDisplayed: Boolean, placeholderHeader: @Composable () -> Unit) -> Unit)? = null,
     storeDetailNavigationBar: (@Composable (Modifier) -> Unit)? = null,
     storePreview: (@Composable (showHeaderButtons: Boolean) -> Unit)? = null,
+    curationState: HomeCurationUiState = HomeCurationUiState(),
+    onCurationTabClick: (SDHomeBottomSheetTabModel) -> Unit = {},
+    onCurationCategoryClick: (SDHomeCurationItemModel.Carousel, SDHomeCurationCategoryFilterModel) -> Unit = { _, _ -> },
+    onCurationCardClick: (ImagePreviewCardModel) -> Unit = {},
+    onRetryCuration: () -> Unit = {},
+    onRetryCurationCarousel: (String) -> Unit = {},
+    onCurationHeaderAction: (SDActionEvent) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -200,7 +219,36 @@ fun HomeBottomSheetContent(
             )
         }
         val coroutineScope = rememberCoroutineScope()
-        val listState = rememberLazyListState()
+        val nearbyListState = rememberLazyListState()
+        val curationListState = rememberLazyListState()
+        val curationViewportWidthDp = maxWidth.value.toInt()
+        val curationCarouselWidthDp = (maxWidth - SDHomeCurationDefaults.HorizontalPadding * 2).value.toInt()
+        val curationAds = curationState.section?.items.orEmpty().flatMap { item ->
+            when (item) {
+                is SDHomeCurationItemModel.AdMob -> listOf(item.card to curationViewportWidthDp)
+                is SDHomeCurationItemModel.Carousel ->
+                    (curationState.carousels[item.carouselId]?.cards?.cards ?: item.cards)
+                        .filterIsInstance<SDAdMobCardModel>().map { it to curationCarouselWidthDp }
+                is SDHomeCurationItemModel.Unknown -> emptyList()
+            }
+        }
+        val curationAdIds = curationAds.map { it.first.cardId }.toSet()
+        var failedCurationAdIds by remember { mutableStateOf<Set<String>>(emptySet()) }
+        LaunchedEffect(curationAdIds) {
+            failedCurationAdIds = failedCurationAdIds.intersect(curationAdIds)
+        }
+        val hiddenCurationAdIds = failedCurationAdIds + curationAds.mapNotNull { (card, availableWidth) ->
+            card.cardId.takeIf { HomeCurationAdPolicy.dimensions(card.height, availableWidth) == null }
+        }
+        val isCurationTab = curationState.tabs.firstOrNull { it.tabId == curationState.selectedTabId }?.viewType == "CURATION"
+        val listState = if (isCurationTab) curationListState else nearbyListState
+        val carouselListStates = remember(curationState.sectionRequestId, curationState.section) {
+            curationState.section?.items.orEmpty().filterIsInstance<SDHomeCurationItemModel.Carousel>()
+                .associate { it.carouselId to LazyListState() }
+        }
+        LaunchedEffect(curationState.sectionRequestId) {
+            if (curationState.sectionRequestId > 0) curationListState.scrollToItem(0)
+        }
         val isListAtTop = remember(listState) {
             derivedStateOf {
                 listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
@@ -373,7 +421,7 @@ fun HomeBottomSheetContent(
             }
         }
 
-        val listNestedScrollConnection = remember(anchors, storeScreen) {
+        val listNestedScrollConnection = remember(anchors, storeScreen, listState) {
             object : NestedScrollConnection {
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (storeScreen != null) return Offset.Zero
@@ -515,12 +563,52 @@ fun HomeBottomSheetContent(
                         }
                     }
                 } else {
-                    HomeListContent(
-                        homeListSection = homeListSection,
-                        listState = listState,
-                        onCardClick = onCardClick,
-                        onLoadNextPage = onLoadNextPage,
-                        onAdMobClick = onAdMobClick,
+                    val sectionStateContent: (@Composable () -> Unit)? = when {
+                        curationState.isLoading -> { { HomeCurationStatus(isLoading = true, modifier = Modifier.fillMaxSize()) } }
+                        curationState.errorMessage != null -> { { HomeCurationStatus(onRetry = onRetryCuration, modifier = Modifier.fillMaxSize()) } }
+                        else -> null
+                    }
+                    SDHomeCurationView(
+                        tabs = SDHomeBottomSheetTabsModel(curationState.tabs),
+                        selectedTabId = curationState.selectedTabId,
+                        section = curationState.section ?: SDHomeCurationSectionModel(),
+                        selectedCategoryIds = curationState.carousels.mapValues { it.value.selectedCategoryId },
+                        cardsByCarousel = curationState.carousels.mapValues { it.value.cards },
+                        onTabClick = onCurationTabClick,
+                        onCategoryClick = onCurationCategoryClick,
+                        onCardClick = onCurationCardClick,
+                        onHeaderAction = onCurationHeaderAction,
+                        adMobCardWidth = 320.dp,
+                        hiddenAdCardIds = hiddenCurationAdIds,
+                        adMobContent = { card ->
+                            HomeCurationAdMobCard(
+                                card = card,
+                                availableWidthDp = curationViewportWidthDp,
+                                onLoadFailed = { failedId -> failedCurationAdIds = failedCurationAdIds + failedId },
+                            )
+                        },
+                        listState = curationListState,
+                        carouselListStates = carouselListStates,
+                        sectionStateContent = sectionStateContent,
+                        carouselStateContent = { carousel ->
+                            val state = curationState.carousels[carousel.carouselId]
+                            if (state?.isLoading == true) {
+                                HomeCurationStatus(isLoading = true)
+                            } else if (state?.errorMessage != null) {
+                                HomeCurationStatus(onRetry = { onRetryCurationCarousel(carousel.carouselId) })
+                            }
+                        },
+                        emptyContent = { HomeCurationStatus(isEmpty = true) },
+                        nearbyContent = {
+                            HomeListContent(
+                                homeListSection = homeListSection,
+                                listState = nearbyListState,
+                                onCardClick = onCardClick,
+                                onLoadNextPage = onLoadNextPage,
+                                onAdMobClick = onAdMobClick,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        },
                         modifier = Modifier
                             .weight(1f)
                             .nestedScroll(listNestedScrollConnection),
