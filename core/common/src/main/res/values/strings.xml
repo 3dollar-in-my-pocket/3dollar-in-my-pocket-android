@@ -218,7 +218,6 @@
     <string name="add_store_food_category">음식 카테고리</string>
     <string name="add_store_menu_suffix">메뉴</string>
     <string name="add_store_menu_format">메뉴%d</string>
-    <string name="add_store_menu_with_name">%s 메뉴</string>
     <string name="menu_extraction_banner_title">사진 한 장으로\n메뉴를 쉽게 등록할 수 있어요.</string>
     <string name="menu_extraction_banner_button">메뉴 등록</string>
     <string name="menu_extraction_add_by_image">이미지로 메뉴 추가</string>

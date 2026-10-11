@@ -137,10 +137,14 @@ private fun MenuDetailScreenContent(
             }
         }
         stickyHeader {
-            MenuCategoryTabRow(
+            MenuCategoryStickyHeader(
                 categories = selectCategoryList,
-                selectedCategoryId = selectedCategoryId,
+                selectedCategory = selectedCategory,
                 onSelect = onSelectCategory,
+                onAddMenu = { categoryId ->
+                    markMenuAdding()
+                    onAddMenu(categoryId)
+                },
                 onFilterClick = onCategoryClick,
             )
         }
@@ -148,10 +152,6 @@ private fun MenuDetailScreenContent(
             val categoryId = category.menuType.categoryId
             menuCategoryEditorItems(
                 selectCategory = category,
-                onAddMenu = {
-                    markMenuAdding()
-                    onAddMenu(categoryId)
-                },
                 onRemoveMenu = { menuIndex -> onRemoveMenu(categoryId, menuIndex) },
                 onUpdateMenu = { menuIndex, name, price, count ->
                     onUpdateMenu(categoryId, menuIndex, name, price, count)

@@ -1,13 +1,14 @@
 name: Play Release (Internal Testing)
 
-# release/** 브랜치를 푸시하면 release AAB 를 내부 테스트 트랙에 바로 배포한다.
+# 릴리즈 브랜치가 develop 에 머지되면(= 그 버전을 스토어에 내보낼 때) release AAB 를 내부 테스트 트랙에 배포한다.
+# 피처 PR 은 release/** 로 머지되며 그때마다 Firebase 개발 배포만 나간다(firebase-distribution.yml).
 # 테스터가 플레이스토어에서 확인한 뒤 "Play Promote to Production" 워크플로로 같은 빌드(같은 versionCode)를
 # 프로덕션 초안으로 옮기고, 심사 제출은 콘솔에서 한다.
 
 on:
   push:
     branches:
-      - 'release/**'
+      - develop
 
 permissions:
   contents: read

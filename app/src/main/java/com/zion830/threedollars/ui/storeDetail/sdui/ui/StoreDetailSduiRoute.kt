@@ -7,9 +7,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -17,6 +21,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.Pink
 import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreTabSectionDefaults
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailAdLoadPolicy
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -46,8 +51,17 @@ fun StoreDetailSduiRoute(
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    // 홈 시트 tip 에서는 상세를 뒤에 미리 그려 두므로, 상세가 보인 뒤에만 광고를 로드한다. 가게가 바뀌면 다시 막는다.
+    var canLoadAd by remember(state.storeId) { mutableStateOf(StoreDetailAdLoadPolicy.initial(isDisplayed)) }
+    LaunchedEffect(state.storeId, isDisplayed) {
+        canLoadAd = StoreDetailAdLoadPolicy.next(canLoad = canLoadAd, isDisplayed = isDisplayed)
+    }
+    val currentCanLoadAd = rememberUpdatedState(canLoadAd)
     val slots = remember(viewModel) {
-        storeDetailSduiSlots(onAdClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnAdClick(it)) })
+        storeDetailSduiSlots(
+            onAdClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnAdClick(it)) },
+            canLoadAd = { currentCanLoadAd.value },
+        )
     }
 
     if (collectEffects) {
