@@ -62,7 +62,6 @@ import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.Gray80
 import base.compose.Pink
@@ -79,7 +78,7 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
-import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryTabRow
+import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryStickyHeader
 import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 
 /**
@@ -296,7 +295,8 @@ private fun MenuPhotoSourceDialog(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(180.dp),
+                    .height(180.dp)
+                    .clip(RoundedCornerShape(12.dp)),
             )
             Spacer(modifier = Modifier.height(20.dp))
             PhotoSourceButton(
@@ -333,7 +333,7 @@ private fun PhotoSourceButton(
         Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
-            tint = Gray50,
+            tint = Gray70,
             modifier = Modifier.size(18.dp),
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -342,7 +342,7 @@ private fun PhotoSourceButton(
             fontSize = 14.sp,
             fontWeight = FontWeight.W600,
             fontFamily = PretendardFontFamily,
-            color = Gray50,
+            color = Gray70,
         )
     }
 }
@@ -425,20 +425,20 @@ private fun MenuExtractionResultScreen(
                 )
             }
             stickyHeader {
-                MenuCategoryTabRow(
+                MenuCategoryStickyHeader(
                     categories = state.categories,
-                    selectedCategoryId = state.selectedCategoryId,
+                    selectedCategory = selectedCategory,
                     onSelect = onSelectCategory,
+                    onAddMenu = { categoryId ->
+                        markMenuAdding()
+                        onAddMenu(categoryId)
+                    },
                 )
             }
             selectedCategory?.let { category ->
                 val categoryId = category.menuType.categoryId
                 menuCategoryEditorItems(
                     selectCategory = category,
-                    onAddMenu = {
-                        markMenuAdding()
-                        onAddMenu(categoryId)
-                    },
                     onRemoveMenu = { index -> onRemoveMenu(categoryId, index) },
                     onUpdateMenu = { index, name, price, count -> onUpdateMenu(categoryId, index, name, price, count) },
                 )

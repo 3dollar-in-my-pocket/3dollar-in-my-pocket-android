@@ -56,7 +56,7 @@ import com.threedollar.domain.home.data.store.UserStoreMenuModel
 import com.zion830.threedollars.ui.dialog.category.StoreCategory
 import com.zion830.threedollars.ui.edit.viewModel.EditStoreContract
 import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
-import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryTabRow
+import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryStickyHeader
 import com.zion830.threedollars.ui.write.ui.compose.MenuImageAddButton
 import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 import kotlinx.coroutines.launch
@@ -149,11 +149,15 @@ fun EditMenuScreen(
                         }
                     }
                     stickyHeader {
-                        MenuCategoryTabRow(
+                        MenuCategoryStickyHeader(
                             categories = currentCategoryList,
-                            selectedCategoryId = state.selectedCategoryId,
+                            selectedCategory = selectedCategory,
                             onSelect = { categoryId ->
                                 onIntent(EditStoreContract.Intent.SetSelectedCategoryId(categoryId))
+                            },
+                            onAddMenu = { categoryId ->
+                                markMenuAdding()
+                                onIntent(EditStoreContract.Intent.AddMenuToCategory(categoryId))
                             },
                             onFilterClick = {
                                 scope.launch { bottomSheetState.show() }
@@ -165,10 +169,6 @@ fun EditMenuScreen(
                         val categoryId = selectCategory.menuType.categoryId
                         menuCategoryEditorItems(
                             selectCategory = selectCategory,
-                            onAddMenu = {
-                                markMenuAdding()
-                                onIntent(EditStoreContract.Intent.AddMenuToCategory(categoryId))
-                            },
                             onRemoveMenu = { menuIndex ->
                                 onIntent(EditStoreContract.Intent.RemoveMenuFromCategory(categoryId, menuIndex))
                             },
