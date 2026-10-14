@@ -61,6 +61,7 @@ import com.threedollar.common.sdui.model.section.SDSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreTabSectionModel
+import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.component.SDActionBarRow
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSection
@@ -178,6 +179,14 @@ fun StoreDetailSduiContent(
                         } else {
                             item(key = key, contentType = section.type) {
                                 SectionImpressionEffect(key = key, section = section, isDisplayed = isDisplayed, onImpression = onImpression)
+                                var isThreadPostRendered by remember(key) { mutableStateOf(false) }
+                                ThreadPostImpressionEffect(
+                                    key = key,
+                                    section = section,
+                                    isRendered = isThreadPostRendered,
+                                    isDisplayed = isDisplayed,
+                                    onImpression = onImpression,
+                                )
                                 SDStoreSection(
                                     section = section,
                                     onAction = onAction,
@@ -186,6 +195,7 @@ fun StoreDetailSduiContent(
                                     previewActionBarsModifier = Modifier.onGloballyPositioned {
                                         actionBarBottom = it.boundsInWindow().bottom
                                     },
+                                    onThreadPostRendered = { isThreadPostRendered = true },
                                 )
                             }
                         }
@@ -226,6 +236,18 @@ private fun SectionImpressionEffect(
         else -> null
     } ?: return
     LaunchedEffect(key, isDisplayed) { if (isDisplayed) onImpression(key, log) }
+}
+
+@Composable
+private fun ThreadPostImpressionEffect(
+    key: String,
+    section: SDSectionModel,
+    isRendered: Boolean,
+    isDisplayed: Boolean,
+    onImpression: (String, SDLogModel?) -> Unit,
+) {
+    val log = (section as? SDStoreThreadPostSectionModel)?.impressionLog ?: return
+    LaunchedEffect(key, isRendered, isDisplayed) { if (isRendered && isDisplayed) onImpression(key, log) }
 }
 
 /**

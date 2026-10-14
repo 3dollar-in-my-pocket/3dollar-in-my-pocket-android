@@ -48,6 +48,7 @@ fun storeDetailSduiSlots(
 ): SDStoreSectionSlots = SDStoreSectionSlots(
     mapContent = { latitude, longitude, modifier -> StoreLocationMap(latitude, longitude, modifier) },
     adContent = { card, modifier -> StoreDetailBanner(card, canLoadAd(), onAdClick, modifier) },
+    canLoadThreadPost = canLoadAd,
 )
 
 /**
