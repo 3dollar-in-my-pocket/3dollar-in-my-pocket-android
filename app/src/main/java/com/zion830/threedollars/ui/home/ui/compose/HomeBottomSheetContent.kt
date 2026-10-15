@@ -41,10 +41,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -187,6 +189,7 @@ fun HomeBottomSheetContent(
     onRetryCuration: () -> Unit = {},
     onRetryCurationCarousel: (String) -> Unit = {},
     onCurationHeaderAction: (SDActionEvent) -> Unit = {},
+    nearbyListResetRevision: Long = 0L,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -220,6 +223,13 @@ fun HomeBottomSheetContent(
         }
         val coroutineScope = rememberCoroutineScope()
         val nearbyListState = rememberLazyListState()
+        var consumedNearbyListResetRevision by rememberSaveable { mutableLongStateOf(nearbyListResetRevision) }
+        LaunchedEffect(nearbyListResetRevision) {
+            if (nearbyListResetRevision != consumedNearbyListResetRevision) {
+                consumedNearbyListResetRevision = nearbyListResetRevision
+                if (nearbyListResetRevision > 0L) nearbyListState.requestScrollToItem(0)
+            }
+        }
         val curationListState = rememberLazyListState()
         val curationViewportWidthDp = maxWidth.value.toInt()
         val curationCarouselWidthDp = (maxWidth - SDHomeCurationDefaults.HorizontalPadding * 2).value.toInt()

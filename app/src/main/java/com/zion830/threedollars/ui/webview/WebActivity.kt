@@ -5,12 +5,15 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.core.view.WindowCompat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -58,6 +62,7 @@ class WebActivity : BaseComposeActivity<WebViewModel>() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
         setContent {
             MaterialTheme {
                 WebViewScreen(
@@ -100,9 +105,10 @@ fun WebViewTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .background(Color.White)
+            .statusBarsPadding()
             .height(56.dp)
             .shadow(elevation = 1.dp)
-            .background(Color.White)
     ) {
         IconButton(
             onClick = onClose,
@@ -175,32 +181,41 @@ fun WebViewScreen(
         ) {
             AndroidView(
                 factory = { context ->
-                    WebView(context).apply {
-                        settings.apply {
-                            javaScriptEnabled = true
-                            domStorageEnabled = true
-                            setSupportZoom(true)
-                            builtInZoomControls = false
-                            loadWithOverviewMode = true
-                            useWideViewPort = true
-                        }
+                    FrameLayout(context).apply {
+                        // A native parent preserves WebView's scrolling/compositing hierarchy.
+                        addView(
+                            WebView(context).apply {
+                                settings.apply {
+                                    javaScriptEnabled = true
+                                    domStorageEnabled = true
+                                    setSupportZoom(true)
+                                    builtInZoomControls = false
+                                    loadWithOverviewMode = true
+                                    useWideViewPort = true
+                                }
 
-                        webViewClient = WebViewClient()
+                                webViewClient = WebViewClient()
 
-                        webChromeClient = object : WebChromeClient() {
-                            override fun onReceivedTitle(view: WebView?, title: String?) {
-                                super.onReceivedTitle(view, title)
-                                title?.let { viewModel.updateTitle(it) }
-                            }
-                        }
+                                webChromeClient = object : WebChromeClient() {
+                                    override fun onReceivedTitle(view: WebView?, title: String?) {
+                                        super.onReceivedTitle(view, title)
+                                        title?.let { viewModel.updateTitle(it) }
+                                    }
+                                }
 
-                        webView = this
-                        viewModel.updateCurrentUrl(url)
-                        loadUrl(url)
+                                webView = this
+                                viewModel.updateCurrentUrl(url)
+                                loadUrl(url)
+                            },
+                            FrameLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                            ),
+                        )
                     }
                 },
                 update = { view ->
-                    view.url?.let { viewModel.updateCurrentUrl(it) }
+                    (view.getChildAt(0) as WebView).url?.let { viewModel.updateCurrentUrl(it) }
                 },
                 modifier = Modifier.fillMaxSize()
             )

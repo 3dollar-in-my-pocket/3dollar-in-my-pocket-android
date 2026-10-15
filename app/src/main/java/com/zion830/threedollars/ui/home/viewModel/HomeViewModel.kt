@@ -128,6 +128,9 @@ class HomeViewModel @Inject constructor(
     private val _homeListSection = MutableStateFlow(HomeListSectionModel())
     val homeListSection: StateFlow<HomeListSectionModel> = _homeListSection.asStateFlow()
 
+    private val _nearbyListResetRevision = MutableStateFlow(0L)
+    val nearbyListResetRevision: StateFlow<Long> = _nearbyListResetRevision.asStateFlow()
+
     private val _curationState = MutableStateFlow(HomeCurationUiState())
     val curationState: StateFlow<HomeCurationUiState> = _curationState.asStateFlow()
     private val _curationLink = MutableSharedFlow<SDLink>(extraBufferCapacity = 1)
@@ -415,6 +418,7 @@ class HomeViewModel @Inject constructor(
                     _homeListSection.value = section.copy(cards = nextCards)
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
+                        if (!preserveSelectedStore) _nearbyListResetRevision.update { it + 1L }
                         section.focusBounds?.let { _focusBounds.tryEmit(it) }
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
                         val selectedCardId = if (preserveSelectedStore) {

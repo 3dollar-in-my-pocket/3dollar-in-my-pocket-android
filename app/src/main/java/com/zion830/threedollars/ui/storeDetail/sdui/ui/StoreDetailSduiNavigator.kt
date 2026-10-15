@@ -55,6 +55,14 @@ class StoreDetailSduiNavigator(
     private val onClose: () -> Unit,
 ) {
 
+    init {
+        activity.supportFragmentManager.setFragmentResultListener(AddReviewDialog.REVIEW_SUBMITTED_RESULT_KEY, activity) { _, result ->
+            val storeId = result.getString(AddReviewDialog.RESULT_STORE_ID) ?: return@setFragmentResultListener
+            val contents = result.getString(AddReviewDialog.RESULT_CONTENTS) ?: return@setFragmentResultListener
+            dispatch(StoreDetailSduiUiIntent.OnReviewSubmit(storeId, contents, result.getInt(AddReviewDialog.RESULT_RATING)))
+        }
+    }
+
     fun handleEffect(effect: StoreDetailSduiUiEffect) {
         when (effect) {
             is StoreDetailSduiUiEffect.ShowToast -> showToast(effect.messageRes, effect.message)
@@ -79,7 +87,7 @@ class StoreDetailSduiNavigator(
                 FullScreenMapActivity.getIntent(activity, destination.latitude, destination.longitude, destination.storeName)
             )
 
-            is StoreDetailDestination.WriteReview -> writeReview()
+            is StoreDetailDestination.WriteReview -> writeReview(destination.storeId)
             is StoreDetailDestination.AddImage -> pickImages()
             is StoreDetailDestination.ShowImages -> ReviewPhotoDialog
                 .getInstance(destination.imageUrls.map { ImageModel(imageUrl = it, width = 0, height = 0, ratio = 0) }, destination.startIndex)
@@ -157,10 +165,8 @@ class StoreDetailSduiNavigator(
             .show(activity.supportFragmentManager, StorePhotoDialog::class.java.name)
     }
 
-    private fun writeReview() {
-        AddReviewDialog.newInstance { contents, rating ->
-            dispatch(StoreDetailSduiUiIntent.OnReviewSubmit(contents, rating))
-        }.show(activity.supportFragmentManager, AddReviewDialog::class.java.name)
+    private fun writeReview(storeId: String) {
+        AddReviewDialog.newInstance(storeId).show(activity.supportFragmentManager, AddReviewDialog::class.java.name)
     }
 
     private fun pickImages() {
