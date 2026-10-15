@@ -56,6 +56,7 @@ fun HomeListSectionResponse.asModel(): HomeListSectionModel = HomeListSectionMod
     cards = cards.orEmpty().mapNotNull { it.asHomeListCardModelOrNull() },
     cursor = cursor?.asModel(),
     focusBounds = focusBounds?.asModelOrNull(),
+    impressionLog = impressionLog?.asModel(),
 )
 
 private fun SDLocationBoundsResponse.asModelOrNull(): SDLocationBoundsModel? {

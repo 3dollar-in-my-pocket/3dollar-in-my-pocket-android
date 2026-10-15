@@ -5,6 +5,7 @@ import com.threedollar.common.sdui.model.element.SDChipModel
 import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 import com.threedollar.common.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDLogModel
 
 data class SDStorePreviewSectionModel(
     override val sectionId: String?,
@@ -15,7 +16,8 @@ data class SDStorePreviewSectionModel(
     val images: List<SDImageModel>?,
     val bodies: List<Body>?,
     val additionalInfos: AdditionalInfos?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.PREVIEW
 

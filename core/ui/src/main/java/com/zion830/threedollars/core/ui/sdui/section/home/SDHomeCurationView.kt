@@ -51,6 +51,7 @@ fun SDHomeCurationView(
     sectionStateContent: @Composable (() -> Unit)? = null,
     carouselStateContent: @Composable (SDHomeCurationItemModel.Carousel) -> Unit = {},
     onHeaderAction: (SDActionEvent) -> Unit = {},
+    onCardVisible: (carouselId: String, card: ImagePreviewCardModel) -> Unit = { _, _ -> },
 ) {
     val supportedTabs = tabs.tabs.filter { it.viewType == "CURATION" || it.viewType == "STORE_LIST" }
     val selectedTab = supportedTabs.firstOrNull { it.tabId == selectedTabId }
@@ -106,6 +107,7 @@ fun SDHomeCurationView(
                             cardImageContentScale = cardImageContentScale,
                             emptyContent = emptyContent,
                             stateContent = { carouselStateContent(item) },
+                            onCardVisible = { onCardVisible(item.carouselId, it) },
                         )
                         is SDHomeCurationItemModel.AdMob -> adMobContent?.let { adContent ->
                             Box(modifier = Modifier.fillMaxWidth().height(item.card.height.coerceAtLeast(0).dp)) {

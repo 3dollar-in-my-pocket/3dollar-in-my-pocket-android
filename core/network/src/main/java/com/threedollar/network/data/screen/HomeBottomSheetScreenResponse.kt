@@ -11,6 +11,8 @@ data class HomeListSectionResponse(
     val cursor: SDCursorResponse? = null,
     @SerializedName("focusBounds")
     val focusBounds: SDLocationBoundsResponse? = null,
+    @SerializedName("impressionLog")
+    val impressionLog: SDImpressionLogResponse? = null,
 )
 
 data class SDLocationBoundsResponse(

@@ -41,6 +41,7 @@ interface SDSectionModel {
     val type: SDSectionType
     val sectionId: String? get() = null
     val style: SDSurfaceStyleModel? get() = null
+    val impressionLog: SDLogModel? get() = null
 }
 
 data class SDUnknownSectionModel(
@@ -54,7 +55,7 @@ data class SDRelatedStoresSectionModel(
     val cards: List<SDCardModel>,
     val reference: List<Reference>?,
     override val sectionId: String? = null,
-    val impressionLog: SDLogModel? = null,
+    override val impressionLog: SDLogModel? = null,
     override val style: SDSurfaceStyleModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.RELATED_STORES

@@ -11,7 +11,8 @@ data class SDStoreCouponSectionModel(
     override val sectionId: String?,
     val header: SDHeaderModel?,
     val cards: List<Card>?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.COUPON
 
