@@ -21,6 +21,7 @@ import com.threedollar.common.sdui.model.section.SDStorePostSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreReviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreTabSectionModel
+import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreVisitSectionModel
 import com.threedollar.common.sdui.model.section.SDUnknownSectionModel
 import java.lang.reflect.Type
@@ -62,6 +63,7 @@ class SDSectionDeserializer : JsonDeserializer<SDSectionModel> {
         SDSectionType.CALLOUT -> SDStoreCalloutSectionModel::class.java
         SDSectionType.AD_MOB -> SDStoreAdmobSectionModel::class.java
         SDSectionType.MARGIN -> SDStoreMarginSectionModel::class.java
+        SDSectionType.THREADS_POST -> SDStoreThreadPostSectionModel::class.java
         SDSectionType.UNKNOWN -> null
     }
 }

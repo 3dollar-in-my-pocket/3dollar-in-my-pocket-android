@@ -24,6 +24,7 @@ import com.threedollar.common.sdui.model.section.SDStorePostSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreReviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreTabSectionModel
+import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreVisitSectionModel
 import com.threedollar.common.sdui.model.section.SDUnknownSectionModel
 import com.zion830.threedollars.core.ui.sdui.component.SDSectionDefaults
@@ -37,6 +38,7 @@ import com.zion830.threedollars.core.ui.sdui.section.SDRelatedStoresSection
 data class SDStoreSectionSlots(
     val mapContent: @Composable (latitude: Double, longitude: Double, modifier: Modifier) -> Unit = { _, _, _ -> },
     val adContent: @Composable (card: SDStoreAdmobSectionModel.Card, modifier: Modifier) -> Unit = { _, _ -> },
+    val canLoadThreadPost: () -> Boolean = { true },
 )
 
 /**
@@ -54,6 +56,7 @@ fun SDStoreSection(
     selectedTabIndex: Int = 0,
     previewActionBarsModifier: Modifier = Modifier,
     slots: SDStoreSectionSlots = SDStoreSectionSlots(),
+    onThreadPostRendered: (SDStoreThreadPostSectionModel) -> Unit = {},
 ) {
     when (section) {
         is SDStorePreviewSectionModel -> SDStorePreviewSection(
@@ -82,6 +85,13 @@ fun SDStoreSection(
         is SDStoreReviewSectionModel -> SDStoreReviewSection(section, onAction, modifier, onImageClick)
         is SDStoreAdmobSectionModel -> SDStoreAdmobSection(section, modifier, slots.adContent)
         is SDStoreMarginSectionModel -> SDStoreMarginSection(section, modifier)
+        is SDStoreThreadPostSectionModel -> SDStoreThreadPostSection(
+            model = section,
+            onAction = onAction,
+            modifier = modifier,
+            canLoad = slots.canLoadThreadPost(),
+            onRendered = { onThreadPostRendered(section) },
+        )
         is SDRelatedStoresSectionModel -> SDRelatedStoresSection(
             model = section,
             onCardPressed = { card -> onAction(SDActionEvent(link = card.link, clickLog = card.clickLog)) },

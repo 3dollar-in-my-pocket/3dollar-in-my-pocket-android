@@ -26,6 +26,7 @@ enum class SDSectionType {
     CALLOUT,
     AD_MOB,
     MARGIN,
+    THREADS_POST,
     UNKNOWN;
 
     companion object {
