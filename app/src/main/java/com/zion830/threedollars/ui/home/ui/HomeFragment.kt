@@ -390,8 +390,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 )
                 val storePreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
+                val nearbyListResetRevision = viewModel.nearbyListResetRevision.collectAsStateWithLifecycle().value
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
+                    nearbyListResetRevision = nearbyListResetRevision,
                     curationState = curationState,
                     onCurationTabClick = viewModel::selectCurationTab,
                     onCurationCategoryClick = viewModel::selectCurationCategory,
