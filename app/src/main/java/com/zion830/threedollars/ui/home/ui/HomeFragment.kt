@@ -856,10 +856,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun checkLocationPermissionForButton(zoomLevel: Double?) {
         if (isLocationAvailable()) {
             naverMapFragment.enableLocationTracking()
-            val mapCenter = naverMapFragment.getMapCenterLatLng()
             naverMapFragment.moveToCurrentLocation(showAnim = true, zoomLevel = zoomLevel) { currentLocation ->
-                val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
-                if (distance > 100f) {
+                if (currentLocation != null) {
                     binding.tvRetrySearch.isVisible = true
                 }
             }
