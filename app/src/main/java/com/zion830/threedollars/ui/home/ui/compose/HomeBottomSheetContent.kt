@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -200,6 +201,7 @@ fun HomeBottomSheetContent(
     onCurationHeaderAction: (SDActionEvent) -> Unit = {},
     feedState: FeedListUiState = FeedListUiState(),
     onFeedIntent: (FeedListUiIntent) -> Unit = {},
+    nearbyListResetRevision: Long = 0L,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -237,6 +239,13 @@ fun HomeBottomSheetContent(
         }
         val coroutineScope = rememberCoroutineScope()
         val nearbyListState = rememberLazyListState()
+        var consumedNearbyListResetRevision by rememberSaveable { mutableLongStateOf(nearbyListResetRevision) }
+        LaunchedEffect(nearbyListResetRevision) {
+            if (nearbyListResetRevision != consumedNearbyListResetRevision) {
+                consumedNearbyListResetRevision = nearbyListResetRevision
+                if (nearbyListResetRevision > 0L) nearbyListState.requestScrollToItem(0)
+            }
+        }
         val curationListState = rememberLazyListState()
         val newsListState = rememberLazyListState()
         val curationViewportWidthDp = maxWidth.value.toInt()
