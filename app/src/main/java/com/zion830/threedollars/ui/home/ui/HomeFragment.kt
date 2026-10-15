@@ -635,7 +635,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     searchViewModel.searchResultLocation.collect {
-                        naverMapFragment.moveCamera(it)
+                        naverMapFragment.moveCamera(it, viewModel.initialMapZoomLevel.value)
+                        binding.tvRetrySearch.isVisible = false
+                        viewModel.updateMapPosition(it)
+                        naverMapFragment.currentViewportDistanceM()?.let(viewModel::updateDistanceM)
+                        viewModel.fetchAroundStores(refreshCuration = true)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
