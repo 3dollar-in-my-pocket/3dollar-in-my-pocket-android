@@ -22,7 +22,7 @@ class StoreDetailSectionImpressionsTest {
         val logs = StoreDetailSectionImpressions.logs("3-MARGIN", section)
 
         // Then
-        assertEquals(listOf("3-MARGIN" to sectionLog), logs)
+        assertEquals(listOf("MARGIN" to sectionLog), logs)
     }
 
     // TH-1467 TC4
@@ -53,6 +53,33 @@ class StoreDetailSectionImpressionsTest {
         val logs = StoreDetailSectionImpressions.logs("2-AD_MOB", section)
 
         // Then
-        assertEquals(listOf("2-AD_MOB" to sectionLog, "2-AD_MOB-admob-card" to adCardLog), logs)
+        assertEquals(listOf("AD_MOB_TOP" to sectionLog, "AD_MOB_TOP-admob-card" to adCardLog), logs)
+    }
+
+    // TH-1467 TC4
+    @Test
+    fun `TH1467_TC4_섹션위치가바뀌어도_같은섹션은_같은중복방지키를쓴다`() {
+        // Given
+        val section = SDStoreMarginSectionModel(sectionId = "COUPON", height = 8, style = null, impressionLog = sectionLog)
+
+        // When
+        val before = StoreDetailSectionImpressions.logs("4-COUPON", section)
+        val afterShift = StoreDetailSectionImpressions.logs("5-COUPON", section)
+
+        // Then
+        assertEquals(before.map { it.first }, afterShift.map { it.first })
+    }
+
+    // TH-1467 TC4
+    @Test
+    fun `TH1467_TC4_섹션아이디가없으면_목록키를_중복방지키로쓴다`() {
+        // Given
+        val section = SDStoreMarginSectionModel(sectionId = null, height = 8, style = null, impressionLog = sectionLog)
+
+        // When
+        val logs = StoreDetailSectionImpressions.logs("3-MARGIN", section)
+
+        // Then
+        assertEquals(listOf("3-MARGIN" to sectionLog), logs)
     }
 }

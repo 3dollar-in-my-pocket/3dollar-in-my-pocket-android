@@ -4,13 +4,12 @@ class PendingSectionImpression<T : Any> {
     private var pending: T? = null
 
     fun offer(log: T?, isVisible: Boolean): T? {
-        if (log == null) return null
-        if (isVisible) {
-            pending = null
-            return log
+        if (!isVisible) {
+            pending = log
+            return null
         }
-        pending = log
-        return null
+        pending = null
+        return log
     }
 
     fun flush(isVisible: Boolean): T? {

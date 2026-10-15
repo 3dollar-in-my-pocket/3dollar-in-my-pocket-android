@@ -107,8 +107,8 @@ fun SDHomeCurationCarousel(
             val currentCards by rememberUpdatedState(visibleCards)
             val currentOnCardVisible by rememberUpdatedState(onCardVisible)
             LaunchedEffect(listState) {
-                snapshotFlow { listState.layoutInfo.visibleItemsInfo.map { it.key } }
-                    .collect { keys ->
+                snapshotFlow { currentCards to listState.layoutInfo.visibleItemsInfo.map { it.key } }
+                    .collect { (_, keys) ->
                         keys.forEach { key ->
                             (currentCards.firstOrNull { it.cardId == key } as? ImagePreviewCardModel)?.let(currentOnCardVisible)
                         }

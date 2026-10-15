@@ -6,9 +6,10 @@ import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 
 object StoreDetailSectionImpressions {
     fun logs(key: String, section: SDSectionModel): List<Pair<String, SDLogModel>> = buildList {
-        section.impressionLog?.let { add(key to it) }
+        val logKey = section.sectionId?.takeIf { it.isNotBlank() } ?: key
+        section.impressionLog?.let { add(logKey to it) }
         if (section is SDStoreAdmobSectionModel) {
-            section.cards?.firstOrNull()?.impressionLog?.let { add("$key-admob-card" to it) }
+            section.cards?.firstOrNull()?.impressionLog?.let { add("$logKey-admob-card" to it) }
         }
     }
 }

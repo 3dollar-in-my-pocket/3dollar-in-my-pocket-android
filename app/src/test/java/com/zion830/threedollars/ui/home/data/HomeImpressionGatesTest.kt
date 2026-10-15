@@ -69,6 +69,20 @@ class HomeImpressionGatesTest {
         assertNull(gate.flush(isVisible = true))
     }
 
+    // TH-1467 TC2
+    @Test
+    fun `TH1467_TC2_안보일때_로그없는응답이오면_이전보류로그를_버린다`() {
+        // Given
+        val gate = PendingSectionImpression<String>()
+        gate.offer("home_list", isVisible = false)
+
+        // When
+        gate.offer(null, isVisible = false)
+
+        // Then
+        assertNull(gate.flush(isVisible = true))
+    }
+
     // TH-1467 TC3
     @Test
     fun `TH1467_TC3_같은캐러셀의같은카드는_한번만보낸다`() {
