@@ -396,6 +396,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onCurationTabClick = viewModel::selectCurationTab,
                     onCurationCategoryClick = viewModel::selectCurationCategory,
                     onCurationCardClick = viewModel::openCurationCard,
+                    onCurationCardVisible = viewModel::onCurationCardVisible,
                     onRetryCuration = viewModel::retryHomeCurationSection,
                     onRetryCurationCarousel = viewModel::retryCurationCarousel,
                     onCurationHeaderAction = viewModel::onCurationHeaderAction,

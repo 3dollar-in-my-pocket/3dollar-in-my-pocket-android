@@ -190,7 +190,7 @@ private fun DetailLinkRow(
         modifier = Modifier
             .fillMaxWidth()
             .height(SDStoreInfoV2SectionDefaults.DetailRowHeight)
-            .sdClickable(event = SDActionEvent(link = row.link), onAction = onAction),
+            .sdClickable(event = SDActionEvent(link = row.link, clickLog = row.clickLog), onAction = onAction),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(modifier = Modifier.width(SDStoreInfoV2SectionDefaults.DetailLabelWidth)) {

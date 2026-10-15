@@ -15,6 +15,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
@@ -62,6 +66,7 @@ fun SDHomeCurationCarousel(
     cardImageContentScale: (ImagePreviewCardModel) -> ContentScale = { ContentScale.Crop },
     emptyContent: @Composable () -> Unit = {},
     stateContent: @Composable () -> Unit = {},
+    onCardVisible: (ImagePreviewCardModel) -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxWidth().background(ColorWhite).drawBehind {
@@ -99,6 +104,16 @@ fun SDHomeCurationCarousel(
                 emptyContent()
             }
         } else {
+            val currentCards by rememberUpdatedState(visibleCards)
+            val currentOnCardVisible by rememberUpdatedState(onCardVisible)
+            LaunchedEffect(listState) {
+                snapshotFlow { listState.layoutInfo.visibleItemsInfo.map { it.key } }
+                    .collect { keys ->
+                        keys.forEach { key ->
+                            (currentCards.firstOrNull { it.cardId == key } as? ImagePreviewCardModel)?.let(currentOnCardVisible)
+                        }
+                    }
+            }
             LazyRow(
                 state = listState,
                 contentPadding = PaddingValues(start = SDHomeCurationDefaults.HorizontalPadding, end = SDHomeCurationDefaults.HorizontalPadding, bottom = 12.dp),
