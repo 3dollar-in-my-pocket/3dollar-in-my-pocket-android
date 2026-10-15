@@ -26,7 +26,8 @@ data class ImagePreviewCardModel(
     val link: SDLink?,
     val style: Style?,
     val refs: List<Ref>?,
-    val clickLog: SDLogModel? = null
+    val clickLog: SDLogModel? = null,
+    val impressionLog: SDLogModel? = null
 ) : SDCardModel {
     override val type: SDCardType get() = SDCardType.IMAGE_PREVIEW_CARD
 

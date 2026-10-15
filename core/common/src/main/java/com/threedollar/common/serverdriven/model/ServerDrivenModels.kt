@@ -174,6 +174,7 @@ data class HomeListSectionModel(
     val cards: List<HomeListCardModel> = emptyList(),
     val cursor: SDCursorModel? = null,
     val focusBounds: SDLocationBoundsModel? = null,
+    val impressionLog: SDImpressionLogModel? = null,
 )
 
 sealed interface HomeListCardModel {

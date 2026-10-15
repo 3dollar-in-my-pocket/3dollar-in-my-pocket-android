@@ -6,7 +6,8 @@ import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 data class SDStoreAdmobSectionModel(
     override val sectionId: String?,
     val cards: List<Card>?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.AD_MOB
 

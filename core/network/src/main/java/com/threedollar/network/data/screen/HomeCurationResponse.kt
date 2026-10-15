@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName
 data class HomeCurationSectionResponse(
     @SerializedName("items")
     val items: List<HomeCurationItemResponse>? = emptyList(),
+    @SerializedName("impressionLog")
+    val impressionLog: SDImpressionLogResponse? = null,
 )
 
 data class HomeCurationItemResponse(
