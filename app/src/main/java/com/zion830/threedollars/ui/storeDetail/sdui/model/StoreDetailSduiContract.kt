@@ -69,7 +69,7 @@ sealed interface StoreDetailSduiUiIntent {
 
     data class OnReviewReportSubmit(val reviewId: Long, val request: ReportReviewModelRequest) : StoreDetailSduiUiIntent
 
-    data class OnReviewSubmit(val contents: String, val rating: Int) : StoreDetailSduiUiIntent
+    data class OnReviewSubmit(val storeId: String, val contents: String, val rating: Int) : StoreDetailSduiUiIntent
 
     data class OnImagesSelected(val images: List<MultipartBody.Part>) : StoreDetailSduiUiIntent
 
