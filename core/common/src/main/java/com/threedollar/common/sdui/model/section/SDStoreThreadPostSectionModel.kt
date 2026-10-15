@@ -8,7 +8,7 @@ data class SDStoreThreadPostSectionModel(
     override val sectionId: String?,
     val header: SDHeaderModel?,
     val cards: List<Card>?,
-    val impressionLog: SDLogModel?,
+    override val impressionLog: SDLogModel?,
     override val style: SDSurfaceStyleModel?,
     @Transient val embeds: List<Embed>? = null,
 ) : SDSectionModel {
