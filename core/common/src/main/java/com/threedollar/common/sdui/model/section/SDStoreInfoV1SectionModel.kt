@@ -4,13 +4,15 @@ import com.threedollar.common.sdui.model.component.SDHeaderModel
 import com.threedollar.common.sdui.model.element.SDChipModel
 import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 import com.threedollar.common.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDLogModel
 
 data class SDStoreInfoV1SectionModel(
     override val sectionId: String?,
     val header: SDHeaderModel?,
     val informationCard: InformationCard?,
     val menuCard: MenuCard?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.INFO_V1
 

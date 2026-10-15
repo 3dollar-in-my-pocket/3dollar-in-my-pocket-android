@@ -396,6 +396,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onCurationTabClick = viewModel::selectCurationTab,
                     onCurationCategoryClick = viewModel::selectCurationCategory,
                     onCurationCardClick = viewModel::openCurationCard,
+                    onCurationCardVisible = viewModel::onCurationCardVisible,
                     onRetryCuration = viewModel::retryHomeCurationSection,
                     onRetryCurationCarousel = viewModel::retryCurationCarousel,
                     onCurationHeaderAction = viewModel::onCurationHeaderAction,
@@ -635,7 +636,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 }
                 launch {
                     searchViewModel.searchResultLocation.collect {
-                        naverMapFragment.moveCamera(it)
+                        naverMapFragment.moveCamera(it, viewModel.initialMapZoomLevel.value)
+                        binding.tvRetrySearch.isVisible = false
+                        viewModel.updateMapPosition(it)
+                        naverMapFragment.currentViewportDistanceM()?.let(viewModel::updateDistanceM)
+                        viewModel.fetchAroundStores(refreshCuration = true)
                         binding.tvAddress.text =
                             getCurrentLocationName(it) ?: getString(CommonR.string.location_no_address)
                     }
@@ -856,10 +861,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun checkLocationPermissionForButton(zoomLevel: Double?) {
         if (isLocationAvailable()) {
             naverMapFragment.enableLocationTracking()
-            val mapCenter = naverMapFragment.getMapCenterLatLng()
             naverMapFragment.moveToCurrentLocation(showAnim = true, zoomLevel = zoomLevel) { currentLocation ->
-                val distance = NaverMapUtils.calculateDistance(mapCenter, currentLocation)
-                if (distance > 100f) {
+                if (currentLocation != null) {
                     binding.tvRetrySearch.isVisible = true
                 }
             }

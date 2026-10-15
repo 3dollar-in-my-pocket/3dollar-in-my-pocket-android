@@ -13,6 +13,7 @@ import com.threedollar.common.analytics.SDLogSender
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.element.SDLink
+import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
@@ -30,6 +31,7 @@ import com.threedollar.common.serverdriven.model.HomeScreenSection
 import com.threedollar.common.serverdriven.model.SDBorderModel
 import com.threedollar.common.serverdriven.model.SDChipModel
 import com.threedollar.common.serverdriven.model.SDClickLogModel
+import com.threedollar.common.serverdriven.model.SDImpressionLogModel
 import com.threedollar.common.serverdriven.model.SDViewLogModel
 import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDImageStyleModel
@@ -61,6 +63,8 @@ import com.zion830.threedollars.ui.home.data.HomeCurationStateReducer
 import com.zion830.threedollars.ui.home.data.HomeCurationRequestLocation
 import com.zion830.threedollars.ui.home.data.HomeCurationQueryPolicy
 import com.zion830.threedollars.ui.home.data.HomeCurationQuerySnapshot
+import com.zion830.threedollars.ui.home.data.HomeCurationCardImpressionDedup
+import com.zion830.threedollars.ui.home.data.PendingSectionImpression
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
 import com.zion830.threedollars.ui.home.data.withStorePreviewFavoriteOverride
@@ -134,6 +138,9 @@ class HomeViewModel @Inject constructor(
     val curationLink: SharedFlow<SDLink> = _curationLink.asSharedFlow()
     private var curationSectionJob: Job? = null
     private val curationCategoryJobs = mutableMapOf<String, Job>()
+    private val curationSectionImpression = PendingSectionImpression<SDLogModel>()
+    private val homeListSectionImpression = PendingSectionImpression<SDImpressionLogModel>()
+    private val curationCardImpressionDedup = HomeCurationCardImpressionDedup()
     private var curationRequestSerial = 0L
     private var curationQuery: HomeCurationQuerySnapshot? = null
     private var curationRequestedRevision: Long? = null
@@ -271,6 +278,7 @@ class HomeViewModel @Inject constructor(
         SDLogSender.sendClick(tab.clickLog)
         _curationState.update { HomeCurationStateReducer.selectTab(it, tab.tabId) }
         requestHomeCurationSection()
+        flushSectionImpressions()
     }
 
     fun retryHomeCurationSection() = requestHomeCurationSection(forceRefresh = true)
@@ -287,6 +295,7 @@ class HomeViewModel @Inject constructor(
         curationCategoryJobs.clear()
         val requestId = ++curationRequestSerial
         curationRequestedRevision = snapshot.revision
+        curationSectionImpression.clear()
         _curationState.update { HomeCurationStateReducer.startSectionLoad(it, tab.tabId, location, requestId) }
         curationSectionJob = viewModelScope.launch {
             try {
@@ -301,6 +310,10 @@ class HomeViewModel @Inject constructor(
                     _curationState.update {
                         if (response.ok && section != null) HomeCurationStateReducer.applySection(it, section, requestId)
                         else HomeCurationStateReducer.failSection(it, response.message.orEmpty(), requestId)
+                    }
+                    if (response.ok && section != null && _curationState.value.sectionRequestId == requestId) {
+                        curationCardImpressionDedup.resetAll()
+                        SDLogSender.sendImpression(curationSectionImpression.offer(section.impressionLog, isCurationTabSelected()))
                     }
                 }
             } catch (cancelled: CancellationException) {
@@ -348,6 +361,7 @@ class HomeViewModel @Inject constructor(
                         if (response.ok && cards != null) HomeCurationStateReducer.applyCategory(it, carouselId, requestId, sectionRequestId, cards)
                         else HomeCurationStateReducer.failCategory(it, carouselId, requestId, sectionRequestId, response.message.orEmpty())
                     }
+                    if (response.ok && cards != null) curationCardImpressionDedup.reset(carouselId)
                 }
             } catch (cancelled: CancellationException) {
                 throw cancelled
@@ -355,6 +369,23 @@ class HomeViewModel @Inject constructor(
                 _curationState.update { HomeCurationStateReducer.failCategory(it, carouselId, requestId, sectionRequestId, "") }
             }
         }
+    }
+
+    fun onCurationCardVisible(carouselId: String, card: ImagePreviewCardModel) {
+        val impressionLog = card.impressionLog ?: return
+        if (!curationCardImpressionDedup.shouldSend(carouselId, card.cardId)) return
+        SDLogSender.sendImpression(impressionLog)
+    }
+
+    private fun isCurationTabSelected(): Boolean {
+        val state = _curationState.value
+        return state.tabs.firstOrNull { it.tabId == state.selectedTabId }?.viewType == "CURATION"
+    }
+
+    private fun flushSectionImpressions() {
+        val isCuration = isCurationTabSelected()
+        SDLogSender.sendImpression(curationSectionImpression.flush(isVisible = isCuration))
+        homeListSectionImpression.flush(isVisible = !isCuration)?.let { SDClickLogger.send(it) }
     }
 
     fun openCurationCard(card: ImagePreviewCardModel) {
@@ -432,6 +463,8 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     sendHomeListImpressionLogs(section.cards)
+                    homeListSectionImpression.offer(section.impressionLog, isVisible = !isCurationTabSelected())
+                        ?.let { SDClickLogger.send(it) }
                 } else {
                     _serverError.emit(response.message)
                 }

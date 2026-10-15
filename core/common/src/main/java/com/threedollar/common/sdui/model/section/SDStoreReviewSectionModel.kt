@@ -17,7 +17,8 @@ data class SDStoreReviewSectionModel(
     val summary: Summary?,
     val cards: List<Card>?,
     val more: SDActionBarModel?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.REVIEW
 

@@ -7,6 +7,7 @@ import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.element.SDLink
 import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 import com.threedollar.common.sdui.model.element.SDTextModel
+import com.threedollar.common.sdui.model.element.SDLogModel
 
 data class SDStoreInfoV2SectionModel(
     override val sectionId: String?,
@@ -15,7 +16,8 @@ data class SDStoreInfoV2SectionModel(
     val detailCard: DetailCard?,
     val accountCards: List<AccountCard>?,
     val menuListCard: MenuListCard?,
-    override val style: SDSurfaceStyleModel?
+    override val style: SDSurfaceStyleModel?,
+    override val impressionLog: SDLogModel? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.INFO_V2
 
@@ -40,7 +42,8 @@ data class SDStoreInfoV2SectionModel(
         val value: SDTextModel?,
         val link: SDLink?,
         val title: SDTextModel?,
-        val body: SDTextModel?
+        val body: SDTextModel?,
+        val clickLog: SDLogModel? = null
     )
 
     data class AccountCard(

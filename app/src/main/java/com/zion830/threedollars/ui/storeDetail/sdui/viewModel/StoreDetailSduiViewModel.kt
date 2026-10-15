@@ -11,6 +11,7 @@ import com.threedollar.domain.home.request.ReportReasonsGroupType
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.store.model.StoreNotExistsException
 import com.threedollar.domain.store.repository.StoreRepository
+import com.threedollar.domain.store.repository.ThreadsRepository
 import com.zion830.threedollars.ui.storeDetail.displayitem.StoreDisplayItemController
 import com.zion830.threedollars.ui.storeDetail.displayitem.StoreDisplayItemRequestPolicy
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailActionResolver
@@ -22,6 +23,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffec
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiState
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreThreadPostEmbedLoader
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,6 +49,7 @@ class StoreDetailSduiViewModel @Inject constructor(
     private val storeRepository: StoreRepository,
     private val homeRepository: HomeRepository,
     private val logger: StoreDetailSduiLogger,
+    threadsRepository: ThreadsRepository,
 ) : UdfViewModel<StoreDetailSduiUiIntent, StoreDetailSduiUiState, StoreDetailSduiUiEffect>() {
 
     private val stateStore = MutableStateFlow(StoreDetailSduiUiState())
@@ -73,6 +76,7 @@ class StoreDetailSduiViewModel @Inject constructor(
     private val sentImpressionKeys = mutableSetOf<String>()
     private var displayItemRequestedStoreId: String? = null
     private var showsDisplayItems = false
+    private val threadPostEmbedLoader = StoreThreadPostEmbedLoader(threadsRepository)
 
     private val displayItemController = StoreDisplayItemController(
         scope = viewModelScope,
@@ -190,7 +194,9 @@ class StoreDetailSduiViewModel @Inject constructor(
             if (version != loadVersion) return@launch
             result
                 .onSuccess { screen ->
-                    val sections = screen.sections.orEmpty().filter { it.type != SDSectionType.UNKNOWN }
+                    val sections = threadPostEmbedLoader.applyEmbeds(
+                        screen.sections.orEmpty().filter { it.type != SDSectionType.UNKNOWN }
+                    )
                     val preview = sections.filterIsInstance<SDStorePreviewSectionModel>().firstOrNull()
                     viewLog = screen.viewLog
                     stateStore.update {
@@ -207,6 +213,7 @@ class StoreDetailSduiViewModel @Inject constructor(
                         pendingFragment = null
                         scrollToFragment(it)
                     }
+                    resolveThreadPostEmbeds()
                 }
                 .onFailure { throwable ->
                     stateStore.update { it.copy(isLoading = false) }
@@ -216,6 +223,13 @@ class StoreDetailSduiViewModel @Inject constructor(
                         sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(StoreDetailErrorMessage.from(throwable)))
                     }
                 }
+        }
+    }
+
+    private fun resolveThreadPostEmbeds() {
+        viewModelScope.launch {
+            if (!threadPostEmbedLoader.fetchPendingEmbeds(stateStore.value.sections)) return@launch
+            stateStore.update { it.copy(sections = threadPostEmbedLoader.applyEmbeds(it.sections)) }
         }
     }
 

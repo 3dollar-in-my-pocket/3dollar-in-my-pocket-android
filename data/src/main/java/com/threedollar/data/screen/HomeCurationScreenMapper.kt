@@ -41,6 +41,7 @@ import com.threedollar.network.data.screen.SDTextResponse
 
 fun HomeCurationSectionResponse.asCurationModel(): SDHomeCurationSectionModel = SDHomeCurationSectionModel(
     items = items.orEmpty().map { it.asCurationItemModel() },
+    impressionLog = impressionLog?.asSduiLogModel(),
 )
 
 fun HomeCurationCardsResponse.asCurationCardsModel(): SDHomeCurationCardsModel = SDHomeCurationCardsModel(
@@ -109,6 +110,7 @@ private fun HomeCurationCardResponse.asCurationCardModelOrNull(): SDCardModel? =
         style = style?.let { ImagePreviewCardModel.Style(backgroundColor = it.backgroundColor.orEmpty()) },
         refs = refs.orEmpty().map { ImagePreviewCardModel.Ref(type = it.type, storeId = it.storeId, storeType = it.storeType) },
         clickLog = clickLog?.asSduiLogModel(),
+        impressionLog = impressionLog?.asSduiLogModel(),
     )
 
     "ADMOB_CARD" -> SDAdMobCardModel(

@@ -27,7 +27,8 @@ data class SDHomeTabAppearanceModel(
 )
 
 data class SDHomeCurationSectionModel(
-    val items: List<SDHomeCurationItemModel> = emptyList()
+    val items: List<SDHomeCurationItemModel> = emptyList(),
+    val impressionLog: SDLogModel? = null
 )
 
 sealed interface SDHomeCurationItemModel {

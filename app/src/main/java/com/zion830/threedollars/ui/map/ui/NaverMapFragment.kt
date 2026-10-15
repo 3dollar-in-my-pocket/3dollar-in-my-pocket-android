@@ -590,6 +590,11 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         naverMap?.moveCamera(cameraUpdateForMove(position, zoomLevel))
     }
 
+    fun currentViewportDistanceM(): Double? {
+        val bounds = naverMap?.contentBounds ?: return null
+        return calculateDistance(bounds.northWest, bounds.southEast).toDouble()
+    }
+
     fun moveCameraWithAnim(position: LatLng, zoomLevel: Double? = null) {
         if (naverMap == null) {
             return

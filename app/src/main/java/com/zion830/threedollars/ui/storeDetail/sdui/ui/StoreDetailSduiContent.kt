@@ -56,11 +56,10 @@ import com.threedollar.common.sdui.model.element.SDActionBarModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.element.SDLogModel
-import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
-import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreTabSectionModel
+import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.component.SDActionBarRow
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSection
@@ -68,6 +67,7 @@ import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSectionSlots
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSkeletonSection
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreTabSectionDefaults
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailScrollSpec
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSectionImpressions
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiState
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -173,11 +173,20 @@ fun StoreDetailSduiContent(
                         val key = "$index-${section.type}"
                         if (section is SDStoreTabSectionModel) {
                             stickyHeader(key = key, contentType = section.type) {
+                                SectionImpressionEffect(key = key, section = section, isDisplayed = isDisplayed, onImpression = onImpression)
                                 SDStoreSection(section = section, onAction = onAction, selectedTabIndex = selectedTab)
                             }
                         } else {
                             item(key = key, contentType = section.type) {
                                 SectionImpressionEffect(key = key, section = section, isDisplayed = isDisplayed, onImpression = onImpression)
+                                var isThreadPostRendered by remember(key) { mutableStateOf(false) }
+                                ThreadPostImpressionEffect(
+                                    key = key,
+                                    section = section,
+                                    isRendered = isThreadPostRendered,
+                                    isDisplayed = isDisplayed,
+                                    onImpression = onImpression,
+                                )
                                 SDStoreSection(
                                     section = section,
                                     onAction = onAction,
@@ -186,6 +195,7 @@ fun StoreDetailSduiContent(
                                     previewActionBarsModifier = Modifier.onGloballyPositioned {
                                         actionBarBottom = it.boundsInWindow().bottom
                                     },
+                                    onThreadPostRendered = { isThreadPostRendered = true },
                                 )
                             }
                         }
@@ -220,12 +230,23 @@ private fun SectionImpressionEffect(
     isDisplayed: Boolean,
     onImpression: (String, SDLogModel?) -> Unit,
 ) {
-    val log = when (section) {
-        is SDRelatedStoresSectionModel -> section.impressionLog
-        is SDStoreAdmobSectionModel -> section.cards?.firstOrNull()?.impressionLog
-        else -> null
-    } ?: return
-    LaunchedEffect(key, isDisplayed) { if (isDisplayed) onImpression(key, log) }
+    val logs = StoreDetailSectionImpressions.logs(key, section)
+    if (logs.isEmpty()) return
+    LaunchedEffect(key, isDisplayed) {
+        if (isDisplayed) logs.forEach { (logKey, log) -> onImpression(logKey, log) }
+    }
+}
+
+@Composable
+private fun ThreadPostImpressionEffect(
+    key: String,
+    section: SDSectionModel,
+    isRendered: Boolean,
+    isDisplayed: Boolean,
+    onImpression: (String, SDLogModel?) -> Unit,
+) {
+    val log = (section as? SDStoreThreadPostSectionModel)?.impressionLog ?: return
+    LaunchedEffect(key, isRendered, isDisplayed) { if (isRendered && isDisplayed) onImpression(key, log) }
 }
 
 /**
