@@ -59,6 +59,7 @@ import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.domain.home.data.store.PaymentType
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
+import com.zion830.threedollars.utils.TimeUtils
 
 @Composable
 fun StoreDetailScreen(
@@ -450,8 +451,6 @@ fun TimePickerBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        val confirmHourFormat = stringResource(CommonR.string.time_hour_format)
-        val confirmMinuteFormat = stringResource(CommonR.string.time_minute_format)
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -459,11 +458,10 @@ fun TimePickerBottomSheet(
                 .clip(RoundedCornerShape(8.dp))
                 .background(Pink)
                 .clickable {
-                    val period = periodOptions[selectedPeriodIndex]
-                    val hour = hourOptions[selectedHourIndex]
-                    val minute = minuteOptions[selectedMinuteIndex]
-                    val timeString = "$period ${String.format(confirmHourFormat, hour)} ${String.format(confirmMinuteFormat, minute)}"
-                    onTimeSelected(timeString)
+                    val hour12 = hourOptions[selectedHourIndex]
+                    val isPm = selectedPeriodIndex == 1
+                    val hourOfDay = (hour12 % 12) + if (isPm) 12 else 0
+                    onTimeSelected(TimeUtils.formatOpeningHour(hourOfDay, minuteOptions[selectedMinuteIndex]))
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -488,17 +486,12 @@ private data class ParsedTime(
 
 private fun parseTimeString(timeString: String?): ParsedTime {
     if (timeString.isNullOrBlank()) return ParsedTime()
+    val time = TimeUtils.parse(timeString) ?: return ParsedTime()
 
-    val regex = Regex("(오전|오후)\\s*(\\d+)시(?:\\s*(\\d+)분)?")
-    val matchResult = regex.find(timeString) ?: return ParsedTime()
-
-    val period = matchResult.groupValues[1]
-    val hour = matchResult.groupValues[2].toIntOrNull() ?: 12
-    val minute = matchResult.groupValues.getOrNull(3)?.toIntOrNull() ?: 0
-
-    val periodIndex = if (period == "오전") 0 else 1
-    val hourIndex = (hour - 1).coerceIn(0, 11)
-    val minuteIndex = (minute / 10).coerceIn(0, 5)
+    val periodIndex = if (time.hour < 12) 0 else 1
+    val hour12 = if (time.hour % 12 == 0) 12 else time.hour % 12
+    val hourIndex = (hour12 - 1).coerceIn(0, 11)
+    val minuteIndex = (time.minute / 10).coerceIn(0, 5)
 
     return ParsedTime(periodIndex, hourIndex, minuteIndex)
 }

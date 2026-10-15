@@ -161,8 +161,8 @@ class EditStoreViewModel @Inject constructor(
         }
 
         val openingHours = com.threedollar.domain.home.request.OpeningHourRequest(
-            startTime = store.openingHoursModel.startTime,
-            endTime = store.openingHoursModel.endTime
+            startTime = TimeUtils.toDisplayOpeningHour(store.openingHoursModel.startTime),
+            endTime = TimeUtils.toDisplayOpeningHour(store.openingHoursModel.endTime)
         )
 
         _state.update {
@@ -198,6 +198,10 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun initWithStoreData(intent: EditStoreContract.Intent.InitWithStoreData) {
+        val openingHours = intent.openingHours.copy(
+            startTime = TimeUtils.toDisplayOpeningHour(intent.openingHours.startTime),
+            endTime = TimeUtils.toDisplayOpeningHour(intent.openingHours.endTime)
+        )
         _state.update {
             it.copy(
                 storeId = intent.storeId,
@@ -209,7 +213,7 @@ class EditStoreViewModel @Inject constructor(
                 selectCategoryList = intent.categories,
                 selectedPaymentMethods = intent.paymentMethods,
                 selectedDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
-                openingHours = intent.openingHours,
+                openingHours = openingHours,
                 isInitialized = true,
                 pendingPhotos = emptyList(),
                 isPhotoUploading = false,
@@ -222,7 +226,7 @@ class EditStoreViewModel @Inject constructor(
                     address = intent.address,
                     paymentMethods = intent.paymentMethods,
                     appearanceDays = intent.appearanceDays.sortedBy { it.ordinal }.toCollection(linkedSetOf()),
-                    openingHours = intent.openingHours,
+                    openingHours = openingHours,
                     categories = intent.categories
                 )
             )
