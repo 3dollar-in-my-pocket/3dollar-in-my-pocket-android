@@ -2,6 +2,7 @@ package com.threedollar.network.sdui
 
 import com.threedollar.common.sdui.model.screen.SDStoreScreenModel
 import com.threedollar.common.sdui.model.section.SDSectionType
+import com.threedollar.common.sdui.model.section.SDSnsPostPlatform
 import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.threedollar.common.sdui.model.section.SDUnknownSectionModel
 import com.threedollar.network.sdui.core.gson.SDUIGson
@@ -27,6 +28,33 @@ class SDStoreThreadPostParsingTest {
             }
           ],
           "impressionLog": { "screenName": "store_detail", "objectType": "carousel", "objectId": "threads_post", "extraParameters": { "store_id": "12806182" } }
+        }
+    """.trimIndent()
+
+    private val snsPostSectionJson = """
+        {
+          "type": "THREADS_POST",
+          "sectionId": "SNS_POST",
+          "style": { "backgroundColor": "#FFFFFF" },
+          "header": { "title": { "text": "SNS에서 발견한 이 가게", "isHtml": false, "fontColor": "#0F0F0F" } },
+          "cards": [
+            {
+              "platform": "THREADS",
+              "permalink": "https://www.threads.com/@gyeol_jeong84/post/DdN8dCMGHR9",
+              "clickLog": { "screenName": "store_detail", "objectType": "card", "objectId": "sns_post", "extraParameters": { "store_id": "12806182", "store_type": "USER_STORE", "sns_platform": "THREADS" }, "eventType": "CLICK" }
+            },
+            {
+              "platform": "INSTAGRAM",
+              "permalink": "https://www.instagram.com/p/DPaaa",
+              "clickLog": { "screenName": "store_detail", "objectType": "card", "objectId": "sns_post", "extraParameters": { "store_id": "12806182", "store_type": "USER_STORE", "sns_platform": "INSTAGRAM" }, "eventType": "CLICK" }
+            },
+            {
+              "platform": "TIKTOK",
+              "permalink": "https://www.tiktok.com/@someone/video/1",
+              "clickLog": { "screenName": "store_detail", "objectType": "card", "objectId": "sns_post", "extraParameters": { "store_id": "12806182", "store_type": "USER_STORE", "sns_platform": "TIKTOK" }, "eventType": "CLICK" }
+            }
+          ],
+          "impressionLog": { "screenName": "store_detail", "objectType": "carousel", "objectId": "sns_post", "extraParameters": { "store_id": "12806182", "store_type": "USER_STORE" }, "eventType": "IMPRESSION" }
         }
     """.trimIndent()
 
@@ -67,5 +95,55 @@ class SDStoreThreadPostParsingTest {
         // Then
         assertTrue(sections[0] is SDUnknownSectionModel)
         assertTrue(sections[1] is SDStoreThreadPostSectionModel)
+    }
+
+    // TH-1512 TC1
+    @Test
+    fun `TH1512_TC1_카드의_platform이_THREADS와_INSTAGRAM이면_각_플랫폼으로_파싱된다`() {
+        // Given
+        val json = snsPostSectionJson
+
+        // When
+        val section = parse(json).sections.orEmpty().single() as SDStoreThreadPostSectionModel
+
+        // Then
+        assertEquals(
+            listOf(SDSnsPostPlatform.THREADS, SDSnsPostPlatform.INSTAGRAM),
+            section.supportedCards.map { it.snsPlatform }
+        )
+        assertEquals(listOf("https://www.threads.com/@gyeol_jeong84/post/DdN8dCMGHR9"), section.threadsPermalinks)
+        assertEquals("INSTAGRAM", section.supportedCards[1].clickLog?.extraParameters?.get("sns_platform"))
+    }
+
+    // TH-1512 TC2
+    @Test
+    fun `TH1512_TC2_알수없는_platform값이면_해당카드만_빠지고_섹션은_파싱된다`() {
+        // Given
+        val json = snsPostSectionJson
+
+        // When
+        val section = parse(json).sections.orEmpty().single() as SDStoreThreadPostSectionModel
+
+        // Then
+        assertEquals(3, section.cards?.size)
+        assertNull(section.cards?.get(2)?.snsPlatform)
+        assertEquals(
+            listOf("https://www.threads.com/@gyeol_jeong84/post/DdN8dCMGHR9", "https://www.instagram.com/p/DPaaa"),
+            section.permalinks
+        )
+    }
+
+    // TH-1512 TC3
+    @Test
+    fun `TH1512_TC3_platform필드가_없는_카드는_쓰레드로_본다`() {
+        // Given
+        val json = threadPostSectionJson
+
+        // When
+        val section = parse(json).sections.orEmpty().single() as SDStoreThreadPostSectionModel
+
+        // Then
+        assertEquals(SDSnsPostPlatform.THREADS, section.cards?.single()?.snsPlatform)
+        assertEquals(listOf("https://www.threads.com/@gyeol_jeong84/post/DOaaa"), section.threadsPermalinks)
     }
 }

@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.storeDetail.sdui.model
 
 import com.threedollar.common.sdui.model.section.SDSectionModel
+import com.threedollar.common.sdui.model.section.SDSnsPostPlatform
 import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 import com.threedollar.domain.store.repository.ThreadsRepository
 import kotlinx.coroutines.async
@@ -19,7 +20,7 @@ class StoreThreadPostEmbedLoader(private val repository: ThreadsRepository) {
         val pendingPermalinks = sections
             .filterIsInstance<SDStoreThreadPostSectionModel>()
             .filter { it.embeds == null }
-            .flatMap { it.permalinks }
+            .flatMap { it.threadsPermalinks }
             .filter { it !in htmls && it !in failedPermalinks }
             .distinct()
         if (pendingPermalinks.isEmpty()) return false
@@ -34,12 +35,31 @@ class StoreThreadPostEmbedLoader(private val repository: ThreadsRepository) {
     }
 
     private fun SDStoreThreadPostSectionModel.resolved(): SDStoreThreadPostSectionModel {
-        val isResolved = permalinks.all { it in htmls || it in failedPermalinks }
+        val isResolved = threadsPermalinks.all { it in htmls || it in failedPermalinks }
         if (!isResolved) return this
-        val clickLogs = cards.orEmpty().associate { it.permalink to it.clickLog }
-        val embeds = permalinks.mapNotNull { permalink ->
-            htmls[permalink]?.let { SDStoreThreadPostSectionModel.Embed(permalink, it, clickLogs[permalink]) }
+        val embeds = supportedCards.mapNotNull { card ->
+            val permalink = card.permalink ?: return@mapNotNull null
+            val html = when (card.snsPlatform) {
+                SDSnsPostPlatform.THREADS -> htmls[permalink]
+                SDSnsPostPlatform.INSTAGRAM -> instagramEmbedHtml(permalink)
+                null -> null
+            }
+            html?.let { SDStoreThreadPostSectionModel.Embed(permalink, it, card.clickLog) }
         }
         return copy(embeds = embeds)
+    }
+
+    private fun instagramEmbedHtml(permalink: String): String {
+        val escapedPermalink = permalink
+            .replace("&", "&amp;")
+            .replace("\"", "&quot;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+        return """<blockquote class="instagram-media" data-instgrm-permalink="$escapedPermalink" data-instgrm-version="14"></blockquote>""" +
+            """<script async src="$INSTAGRAM_EMBED_SCRIPT_URL"></script>"""
+    }
+
+    private companion object {
+        const val INSTAGRAM_EMBED_SCRIPT_URL = "https://platform.instagram.com/en_US/embeds.js"
     }
 }
