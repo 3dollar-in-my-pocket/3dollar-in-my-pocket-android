@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.ext.isRunning
@@ -33,6 +34,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionLog
 import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
 import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
@@ -90,10 +93,11 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.SetStartTime -> setStartTime(intent.time)
             is AddStoreContract.Intent.SetEndTime -> setEndTime(intent.time)
             is AddStoreContract.Intent.SubmitNewStore -> submitNewStore()
-            is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails()
+            is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails(intent.isMenuAddition)
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
             is AddStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
+            is AddStoreContract.Intent.MarkMenuExtractionUsed -> markMenuExtractionUsed()
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
             is AddStoreContract.Intent.ResetState -> resetState()
         }
@@ -466,6 +470,11 @@ class AddStoreViewModel @Inject constructor(
                                 createdStoreInfo = data
                             )
                         }
+                        LogManager.sendPageView(
+                            ScreenName.WRITE_DETAIL_COMPLETE,
+                            MenuExtractionLog.WRITE_DETAIL_COMPLETE_CLASS_NAME,
+                            MenuExtractionLog.writeDetailCompleteParameters(_state.value.isMenuExtractionUsed),
+                        )
                         _effect.emit(AddStoreContract.Effect.StoreCreated(data.storeId, data))
                     }
                 } else {
@@ -480,7 +489,7 @@ class AddStoreViewModel @Inject constructor(
         }
     }
 
-    private fun updateStoreWithDetails() {
+    private fun updateStoreWithDetails(isMenuAddition: Boolean) {
         val currentState = _state.value
         val storeId = currentState.createdStoreId ?: return
         val location = currentState.selectedLocation ?: return
@@ -514,6 +523,15 @@ class AddStoreViewModel @Inject constructor(
                     it.data?.let { data ->
                         _state.update { state -> state.copy(isLoading = false, createdStoreInfo = data) }
                     }
+                    if (isMenuAddition) {
+                        LogManager.sendEvent(
+                            MenuExtractionLog.editStoreCompleteEvent(
+                                menuExtractionUsed = _state.value.isMenuExtractionUsed,
+                                editedMenu = true,
+                                flow = MenuExtractionFlow.AFTER_CREATE,
+                            )
+                        )
+                    }
                     _effect.emit(AddStoreContract.Effect.StoreUpdated)
                 } else {
                     _state.update { state -> state.copy(isLoading = false, error = it.message) }
@@ -537,6 +555,10 @@ class AddStoreViewModel @Inject constructor(
                 selectedCategoryId = merged.firstExtractedCategoryId(list),
             )
         }
+    }
+
+    private fun markMenuExtractionUsed() {
+        _state.update { it.copy(isMenuExtractionUsed = true) }
     }
 
     private fun checkNearStore(location: LatLng) {

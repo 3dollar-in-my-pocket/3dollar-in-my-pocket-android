@@ -56,6 +56,7 @@ import base.compose.Gray70
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.zion830.threedollars.core.designsystem.R
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionHost
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
 import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
@@ -143,6 +144,7 @@ fun AddStoreFlowScreen(
     MenuExtractionHost(
         viewModel = menuExtractionViewModel,
         screenTitle = stringResource(CommonR.string.title_add_store),
+        flow = if (currentRoute == AddStoreRoute.COMPLETION_MENU_DETAIL) MenuExtractionFlow.AFTER_CREATE else MenuExtractionFlow.CREATE,
         onCompleted = { categories ->
             viewModel.processIntent(AddStoreContract.Intent.ApplyExtractedMenus(categories))
             if (currentRoute == AddStoreRoute.MENU_CATEGORY) {
@@ -254,7 +256,7 @@ fun AddStoreFlowScreen(
                                         enabled = state.selectCategoryList.isNotEmpty(),
                                         showSkipButton = false,
                                         onClick = {
-                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
+                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails(isMenuAddition = true))
                                         }
                                     )
                                 }
@@ -264,7 +266,7 @@ fun AddStoreFlowScreen(
                                         enabled = true,
                                         showSkipButton = false,
                                         onClick = {
-                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails)
+                                            viewModel.processIntent(AddStoreContract.Intent.UpdateStoreWithDetails(isMenuAddition = false))
                                         }
                                     )
                                 }
