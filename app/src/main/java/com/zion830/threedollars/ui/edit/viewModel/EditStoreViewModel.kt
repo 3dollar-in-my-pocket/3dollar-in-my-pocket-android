@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.edit.viewModel
 
 import androidx.lifecycle.viewModelScope
 import com.naver.maps.geometry.LatLng
+import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseViewModel
 import com.threedollar.common.base.BaseResponse
@@ -38,6 +39,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionLog
 import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
 import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 
@@ -56,6 +59,7 @@ class EditStoreViewModel @Inject constructor(
     private var pendingStoreUpdateRetry = false
     private var pendingPhotoUploadRetry = false
     private var lastSubmitRequest: UserStoreModelRequest? = null
+    private var isMenuEditConfirmed = false
 
     init {
         loadAvailableCategories()
@@ -84,6 +88,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
             is EditStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
+            is EditStoreContract.Intent.MarkMenuExtractionUsed -> markMenuExtractionUsed()
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
             is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
             is EditStoreContract.Intent.RemoveCategory -> removeCategory(intent.category)
@@ -263,6 +268,10 @@ class EditStoreViewModel @Inject constructor(
                 selectedCategoryId = merged.firstExtractedCategoryId(list),
             )
         }
+    }
+
+    private fun markMenuExtractionUsed() {
+        _state.update { it.copy(isMenuExtractionUsed = true) }
     }
 
     private fun setSelectCategoryList(list: List<SelectCategoryModel>) {
@@ -595,6 +604,14 @@ class EditStoreViewModel @Inject constructor(
                     submitErrorMessage = null,
                 )
             }
+            LogManager.sendEvent(
+                MenuExtractionLog.editStoreCompleteEvent(
+                    menuExtractionUsed = nextState.isMenuExtractionUsed,
+                    editedMenu = isMenuEditConfirmed,
+                    flow = MenuExtractionFlow.EDIT,
+                )
+            )
+            isMenuEditConfirmed = false
             _effect.emit(EditStoreContract.Effect.StoreUpdated)
             return
         }
@@ -926,6 +943,7 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun confirmMenuChanges() {
+        isMenuEditConfirmed = true
         _state.update { currentState ->
             val newState = currentState.copy(
                 selectCategoryList = currentState.tempSelectCategoryList ?: currentState.selectCategoryList,
