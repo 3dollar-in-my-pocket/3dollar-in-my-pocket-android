@@ -162,6 +162,14 @@ private fun Context.designFixture(scenario: String): HomeCurationDesignFixture {
     return when (scenario) {
         "empty", "empty_sections" -> HomeCurationDesignFixture(section.copy(items = emptyList()), emptyMap())
         "empty_cards" -> HomeCurationDesignFixture(section, cards.mapValues { (_, value) -> value.copy(cards = emptyList()) })
+        "empty_categories" -> HomeCurationDesignFixture(
+            section.copy(items = section.items.mapIndexed { index, item ->
+                if (index == 0 && item is SDHomeCurationItemModel.Carousel) {
+                    item.copy(defaultCategoryId = "", categoryFilters = emptyList())
+                } else item
+            }),
+            cards,
+        )
         "admob" -> HomeCurationDesignFixture(
             section.copy(items = section.items + SDHomeCurationItemModel.AdMob(SDAdMobCardModel(cardId = "design-section-ad", height = 80))),
             cards.mapValues { (carouselId, _) ->

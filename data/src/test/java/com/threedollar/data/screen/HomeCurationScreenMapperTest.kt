@@ -160,4 +160,55 @@ class HomeCurationScreenMapperTest {
         assertNull(firstCard.link?.type)
         assertNull(firstCard.metricLabel?.first()?.imageAlignment)
     }
+    // TH-1517 TC3
+    @Test
+    fun `TH1517_TC3_카테고리가빈배열이면_빈카테고리캐러셀로_카드는보존한다`() {
+        // Given
+        val response = gson.fromJson(carouselJson(""""defaultCategoryId": "", "categoryFilters": [],"""), HomeCurationSectionResponse::class.java)
+
+        // When
+        val carousel = response.asCurationModel().items.single() as SDHomeCurationItemModel.Carousel
+
+        // Then
+        assertTrue(carousel.categoryFilters.isEmpty())
+        assertEquals(listOf("S:1"), carousel.cards.map { it.cardId })
+    }
+
+    @Test
+    fun `TH1517_TC3_카테고리필드가없어도_캐러셀과카드를_보존한다`() {
+        // Given
+        val response = gson.fromJson(carouselJson(""), HomeCurationSectionResponse::class.java)
+
+        // When
+        val carousel = response.asCurationModel().items.single() as SDHomeCurationItemModel.Carousel
+
+        // Then
+        assertTrue(carousel.categoryFilters.isEmpty())
+        assertEquals("", carousel.defaultCategoryId)
+        assertEquals(listOf("S:1"), carousel.cards.map { it.cardId })
+    }
+
+    private fun carouselJson(categoryFields: String) = """
+        {
+          "items": [
+            {
+              "type": "CAROUSEL",
+              "carouselId": "SNS_STORES",
+              "header": { "title": { "text": "SNS에 나온 가게", "isHtml": false, "fontColor": "#0F0F0F" } },
+              $categoryFields
+              "cards": [
+                {
+                  "type": "IMAGE_PREVIEW_CARD",
+                  "cardId": "S:1",
+                  "image": { "url": "https://example.com/a.png", "style": { "width": 100.0, "height": 100.0 } },
+                  "title": { "text": "가게", "isHtml": false, "fontColor": "#0F0F0F" },
+                  "metricLabel": [],
+                  "contextLabel": [],
+                  "link": { "type": "APP_SCHEME", "link": "/store?storeId=1&storeType=USER_STORE" }
+                }
+              ]
+            }
+          ]
+        }
+    """.trimIndent()
 }
