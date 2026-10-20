@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.zion830.threedollars.MainActivity
 import com.zion830.threedollars.R
@@ -20,6 +21,8 @@ import com.zion830.threedollars.ui.write.viewModel.AddStoreContract
 import com.zion830.threedollars.ui.write.viewModel.AddStoreViewModel
 import com.zion830.threedollars.utils.navigateSafe
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
 
 @AndroidEntryPoint
@@ -64,6 +67,18 @@ class AddStoreDetailFragment : Fragment() {
                     )
                 }
             }
+        }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeMenuExtractionUsage()
+    }
+
+    private fun observeMenuExtractionUsage() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            menuExtractionViewModel.isAvailable.first { !it }
+            viewModel.processIntent(AddStoreContract.Intent.MarkMenuExtractionUsed)
         }
     }
 

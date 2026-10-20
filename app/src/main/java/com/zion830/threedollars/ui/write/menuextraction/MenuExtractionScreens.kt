@@ -90,6 +90,7 @@ import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 fun MenuExtractionHost(
     viewModel: MenuExtractionViewModel,
     screenTitle: String,
+    flow: MenuExtractionFlow,
     onCompleted: (List<SelectCategoryModel>) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (openPhotoSource: (() -> Unit)?) -> Unit,
@@ -149,7 +150,12 @@ fun MenuExtractionHost(
                     onAddMenu = viewModel::addMenu,
                     onRemoveMenu = viewModel::removeMenu,
                     onUpdateMenu = viewModel::updateMenu,
-                    onRegister = viewModel::register,
+                    onRegister = {
+                        if (state.categories.findMenuInputError() == null) {
+                            LogManager.sendEvent(MenuExtractionLog.registerClickEvent(state, flow))
+                        }
+                        viewModel.register()
+                    },
                 )
             }
             MenuExtractionState.Phase.IDLE -> Unit
