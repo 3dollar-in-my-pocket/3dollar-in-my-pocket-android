@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -47,6 +48,7 @@ object SDHomeCurationDefaults {
     val CardSpacing = 8.dp
     val SectionPadding = 20.dp
     val CategorySpacing = 6.dp
+    val CategoryVerticalPadding = 12.dp
 }
 
 /** 조회·로그·광고 SDK는 호출부에 두고 원본 모델을 콜백과 슬롯에 전달한다. */
@@ -87,13 +89,18 @@ fun SDHomeCurationCarousel(
         if (model.categoryFilters.isNotEmpty()) {
             LazyRow(
                 modifier = Modifier.fillMaxWidth().selectableGroup(),
-                contentPadding = PaddingValues(horizontal = SDHomeCurationDefaults.HorizontalPadding, vertical = 12.dp),
+                contentPadding = PaddingValues(
+                    horizontal = SDHomeCurationDefaults.HorizontalPadding,
+                    vertical = SDHomeCurationDefaults.CategoryVerticalPadding,
+                ),
                 horizontalArrangement = Arrangement.spacedBy(SDHomeCurationDefaults.CategorySpacing),
             ) {
                 items(model.categoryFilters, key = { it.categoryId }) { category ->
                     SDHomeCurationCategoryChip(category, category.categoryId == selectedCategoryId, onCategoryClick)
                 }
             }
+        } else {
+            Spacer(modifier = Modifier.height(SDHomeCurationDefaults.CategoryVerticalPadding))
         }
         stateContent()
         val visibleCards = cards.filter {
