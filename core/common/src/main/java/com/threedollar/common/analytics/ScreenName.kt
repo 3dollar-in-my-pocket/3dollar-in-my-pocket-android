@@ -43,7 +43,8 @@ enum class ScreenName(val value: String) {
     FEED_LIST("feed_list"),
     WRITE_DETAIL_MENU("write_detail_menu"),
     WRITE_DETAIL_MENU_PHOTO_POPUP("write_detail_menu_photo_popup"),
-    WRITE_DETAIL_MENU_EXTRACTION_RESULT("write_detail_menu_extraction_result");
+    WRITE_DETAIL_MENU_EXTRACTION_RESULT("write_detail_menu_extraction_result"),
+    WRITE_DETAIL_COMPLETE("write_detail_complete");
 
     override fun toString(): String = value
 }

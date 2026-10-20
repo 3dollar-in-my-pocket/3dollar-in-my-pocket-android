@@ -64,6 +64,10 @@ fun List<SelectCategoryModel>.firstExtractedCategoryId(extracted: List<SelectCat
     extracted.firstOrNull { category -> any { it.menuType.categoryId == category.menuType.categoryId } }?.menuType?.categoryId
         ?: firstOrNull()?.menuType?.categoryId
 
+fun List<SelectCategoryModel>.filledMenuCount(): Int = sumOf { category ->
+    category.menuDetail.orEmpty().count { !it.isBlankInput() }
+}
+
 private fun MutableList<UserStoreMenuModel>.addIfNotDuplicate(menu: UserStoreMenuModel) {
     if (none { it.isSameMenu(menu) }) add(menu)
 }

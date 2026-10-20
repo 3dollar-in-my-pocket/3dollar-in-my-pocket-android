@@ -26,7 +26,12 @@ enum class ParameterName(val value: String) {
     EXPERIMENT_KEY("experiment_key"),
     EXPERIMENT_TYPE("experiment_type"),
     EXPERIMENT_VARIANT("experiment_variant"),
-    REASON_TYPE("reason_type");
+    REASON_TYPE("reason_type"),
+    MENU_EXTRACTION_USED("menu_extraction_used"),
+    EDITED_MENU("edited_menu"),
+    FLOW("flow"),
+    RECOGNIZED_MENU_COUNT("recognized_menu_count"),
+    FINAL_MENU_COUNT("final_menu_count");
 
     override fun toString(): String = value
 }

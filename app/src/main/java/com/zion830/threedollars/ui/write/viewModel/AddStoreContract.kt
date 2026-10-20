@@ -27,7 +27,8 @@ object AddStoreContract {
         val createdStoreId: Int? = null,
         val createdStoreInfo: PostUserStoreModel? = null,
         val isLoading: Boolean = false,
-        val error: String? = null
+        val error: String? = null,
+        val isMenuExtractionUsed: Boolean = false,
     ) {
         val isRequiredInfoValid: Boolean
             get() = storeName.isNotBlank() && storeType != null && selectedLocation != null
@@ -70,12 +71,13 @@ object AddStoreContract {
         data class SetStartTime(val time: String) : Intent()
         data class SetEndTime(val time: String) : Intent()
         object SubmitNewStore : Intent()
-        object UpdateStoreWithDetails : Intent()
+        data class UpdateStoreWithDetails(val isMenuAddition: Boolean) : Intent()
         object ClearError : Intent()
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent()
 
         /** AI 메뉴 인식 결과를 선택 카테고리·입력 메뉴에 합친다 (같은 이름은 수량·가격 갱신, 카테고리 최대 10개). */
         data class ApplyExtractedMenus(val list: List<SelectCategoryModel>) : Intent()
+        object MarkMenuExtractionUsed : Intent()
         data class CheckNearStore(val location: LatLng) : Intent()
         object ResetState : Intent()
     }
