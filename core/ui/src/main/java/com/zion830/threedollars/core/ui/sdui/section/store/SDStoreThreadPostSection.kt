@@ -68,6 +68,8 @@ object SDStoreThreadPostSectionDefaults {
 private const val EMBED_BASE_URL = "https://threedollars.co.kr"
 private const val JS_BRIDGE_NAME = "ThreeDollarsThreads"
 private val THREADS_ORIGINS = listOf("https://www.threads.com", "https://www.threads.net")
+private val INSTAGRAM_ORIGINS = listOf("https://www.instagram.com", "https://instagram.com")
+private val INSTAGRAM_RENDERED_MESSAGE_TYPES = listOf("MOUNTED", "MEASURE")
 
 @Composable
 fun SDStoreThreadPostSection(
@@ -294,12 +296,17 @@ private class ExternalWindowChromeClient(private val onOpenUrl: (String) -> Unit
 
 private fun embedDocument(body: String): String {
     val origins = THREADS_ORIGINS.joinToString(", ") { "'$it'" }
+    val instagramOrigins = INSTAGRAM_ORIGINS.joinToString(", ") { "'$it'" }
+    val instagramRenderedTypes = INSTAGRAM_RENDERED_MESSAGE_TYPES.joinToString(", ") { "'$it'" }
     return """
     <!doctype html>
     <html>
     <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <style>html, body { margin: 0; padding: 0; background: transparent; }</style>
+    <style>
+    html, body { margin: 0; padding: 0; background: transparent; }
+    .instagram-media { width: calc(100% - 2px) !important; min-width: 0 !important; max-width: 540px !important; margin: 0 !important; }
+    </style>
     </head>
     <body>
     <div id="root">$body</div>
@@ -307,13 +314,27 @@ private fun embedDocument(body: String): String {
     (function() {
         var root = document.getElementById('root');
         var threadsOrigins = [$origins];
+        var instagramOrigins = [$instagramOrigins];
+        var instagramRenderedTypes = [$instagramRenderedTypes];
         var isEmbedRendered = false;
+        var isInstagramRendered = function(data) {
+            try {
+                var message = typeof data === 'string' ? JSON.parse(data) : data;
+                return !!message && instagramRenderedTypes.indexOf(message.type) >= 0;
+            } catch (e) {
+                return false;
+            }
+        };
+        var isRenderedMessage = function(event) {
+            if (threadsOrigins.indexOf(event.origin) >= 0) { return true; }
+            return instagramOrigins.indexOf(event.origin) >= 0 && isInstagramRendered(event.data);
+        };
         var report = function() {
             if (!isEmbedRendered) { return; }
             window.$JS_BRIDGE_NAME.onHeight(Math.ceil(root.getBoundingClientRect().height));
         };
         window.addEventListener('message', function(event) {
-            if (threadsOrigins.indexOf(event.origin) < 0) { return; }
+            if (!isRenderedMessage(event)) { return; }
             isEmbedRendered = true;
             requestAnimationFrame(report);
         });

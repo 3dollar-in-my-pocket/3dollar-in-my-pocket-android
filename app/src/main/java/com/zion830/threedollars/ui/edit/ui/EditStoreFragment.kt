@@ -33,7 +33,9 @@ import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.UUID
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionHost
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionViewModel
 import androidx.compose.ui.res.stringResource
@@ -82,6 +84,7 @@ class EditStoreFragment : Fragment() {
                         MenuExtractionHost(
                             viewModel = menuExtractionViewModel,
                             screenTitle = stringResource(CommonR.string.edit_store_section_menu),
+                            flow = MenuExtractionFlow.EDIT,
                             onCompleted = { categories ->
                                 editStoreViewModel.processIntent(EditStoreContract.Intent.ApplyExtractedMenus(categories))
                             },
@@ -104,6 +107,7 @@ class EditStoreFragment : Fragment() {
         initializeStoreData()
         observeState()
         observeEffects()
+        observeMenuExtractionUsage()
     }
 
     override fun onDestroyView() {
@@ -164,6 +168,13 @@ class EditStoreFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun observeMenuExtractionUsage() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            menuExtractionViewModel.isAvailable.first { !it }
+            editStoreViewModel.processIntent(EditStoreContract.Intent.MarkMenuExtractionUsed)
         }
     }
 

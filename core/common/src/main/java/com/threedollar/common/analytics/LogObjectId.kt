@@ -62,7 +62,8 @@ enum class LogObjectId(val value: String) {
     FEED("feed"),
     MY_PAGE("my_page"),
     SELECT_PHOTO("select_photo"),
-    TAKE_PHOTO("take_photo");
+    TAKE_PHOTO("take_photo"),
+    REGISTER("register");
 
     override fun toString(): String = value
 }

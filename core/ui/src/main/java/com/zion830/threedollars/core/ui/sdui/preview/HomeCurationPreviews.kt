@@ -67,6 +67,14 @@ private fun CarouselPreview() {
     }
 }
 
+@Preview(name = "Carousel without categories", group = "home-curation/section", showBackground = true, widthDp = 393)
+@Composable
+private fun CarouselWithoutCategoriesPreview() {
+    val carousel = (HomeCurationPreviewFixtures.section.items.first() as SDHomeCurationItemModel.Carousel)
+        .copy(defaultCategoryId = "", categoryFilters = emptyList())
+    AppTheme { SDHomeCurationCarousel(carousel, null, {}, {}) }
+}
+
 @Preview(name = "Curation sheet", group = "home-curation/screen", showBackground = true, widthDp = 393, heightDp = 688)
 @Preview(name = "Small width", group = "home-curation/screen", showBackground = true, widthDp = 320, heightDp = 640)
 @Composable
