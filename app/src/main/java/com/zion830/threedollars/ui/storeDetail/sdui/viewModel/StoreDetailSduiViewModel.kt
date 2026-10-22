@@ -360,7 +360,7 @@ class StoreDetailSduiViewModel @Inject constructor(
     }
 
     private fun postReview(intent: StoreDetailSduiUiIntent.OnReviewSubmit) {
-        val storeId = stateStore.value.storeId.toIntOrNull() ?: return
+        val storeId = intent.storeId.toIntOrNull() ?: return
         launch {
             val response = homeRepository.postStoreReview(intent.contents, intent.rating, storeId).first()
             if (response.ok) {

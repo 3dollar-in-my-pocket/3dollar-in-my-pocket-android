@@ -16,14 +16,22 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -49,6 +57,7 @@ import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
+import kotlinx.coroutines.launch
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 @Composable
@@ -61,6 +70,7 @@ fun HomeFilterChipsRow(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(horizontal = 0.dp),
 ) {
+    var pendingRadioReveal by remember { mutableStateOf<PendingRadioChipReveal?>(null) }
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -71,12 +81,21 @@ fun HomeFilterChipsRow(
             key = { it.stableHomeFilterKey() },
             contentType = { it.homeFilterContentType() },
         ) { cell ->
+            val radioAction = (cell as? HomeFilterCellType.Chip)?.action as? ChipAction.SelectRadio
+            val shouldReveal = pendingRadioReveal?.let { pending ->
+                radioAction?.paramKey == pending.paramKey && cell.stableHomeFilterKey() != pending.previousKey
+            } == true
             HomeFilterCell(
                 cell = cell,
                 onCategoryClick = onCategoryClick,
-                onRadioClick = onRadioClick,
+                onRadioClick = { paramKey, optionIndex ->
+                    pendingRadioReveal = PendingRadioChipReveal(paramKey, cell.stableHomeFilterKey())
+                    onRadioClick(paramKey, optionIndex)
+                },
                 onActionClick = onActionClick,
                 onCloseSelectedCategoryClick = onCloseSelectedCategoryClick,
+                revealAfterPlacement = shouldReveal,
+                onRevealRequested = { pendingRadioReveal = null },
             )
         }
     }
@@ -89,10 +108,14 @@ private fun HomeFilterCell(
     onRadioClick: (paramKey: String, optionIndex: Int) -> Unit,
     onActionClick: (SDLinkModel) -> Unit,
     onCloseSelectedCategoryClick: () -> Unit,
+    revealAfterPlacement: Boolean,
+    onRevealRequested: () -> Unit,
 ) {
     when (cell) {
         is HomeFilterCellType.Chip -> HomeFilterActionChip(
             chip = cell.chip,
+            revealAfterPlacement = revealAfterPlacement,
+            onRevealRequested = onRevealRequested,
             onClick = {
                 when (val action = cell.action) {
                     ChipAction.OpenCategoryFilter -> onCategoryClick()
@@ -120,12 +143,26 @@ private fun HomeFilterCell(
 @Composable
 private fun HomeFilterActionChip(
     chip: SDChipModel,
+    revealAfterPlacement: Boolean,
+    onRevealRequested: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    var hasRequestedReveal by remember { mutableStateOf(false) }
     HomeFilterChipSurface(
         style = chip.style,
         contentDescription = chip.accessibilityText(),
-        modifier = Modifier.clickable(role = Role.Button, onClick = onClick),
+        modifier = Modifier
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .onGloballyPositioned {
+                if (revealAfterPlacement && !hasRequestedReveal) {
+                    hasRequestedReveal = true
+                    onRevealRequested()
+                    coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
+                }
+            }
+            .clickable(role = Role.Button, onClick = onClick),
     ) {
         HomeFilterChipContent(chip = chip)
     }
@@ -264,6 +301,11 @@ private fun SDChipModel.accessibilityText(): String {
     return listOfNotNull(mainText.takeIf { it.isNotBlank() }, additional?.takeIf { it.isNotBlank() })
         .joinToString(" ")
 }
+
+private data class PendingRadioChipReveal(
+    val paramKey: String,
+    val previousKey: String,
+)
 
 private fun HomeFilterCellType.stableHomeFilterKey(): String = when (this) {
     is HomeFilterCellType.Chip -> when (val action = action) {

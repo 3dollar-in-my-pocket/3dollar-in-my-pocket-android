@@ -6,8 +6,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.threedollar.common.base.BaseBottomSheetDialogFragment
@@ -21,18 +23,15 @@ import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-interface OnReviewEditCallback {
-    fun onReviewEdited(updatedReview: ReviewContentModel)
-}
-
 @AndroidEntryPoint
-class AddReviewDialog(
-    private val content: ReviewContentModel?,
-    private val storeId: Int?,
-    private val onEditCallback: OnReviewEditCallback? = null,
-    private val onSubmit: ((contents: String, rating: Int) -> Unit)? = null
-) : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
+class AddReviewDialog : BaseBottomSheetDialogFragment<DialogAddReviewBinding>() {
     private val viewModel: StoreDetailViewModel by activityViewModels()
+    private val storeId: Int? by lazy {
+        arguments?.takeIf { it.containsKey(ARG_STORE_ID) }?.getInt(ARG_STORE_ID)
+    }
+    private val reviewId: Long? by lazy {
+        arguments?.takeIf { it.containsKey(ARG_REVIEW_ID) }?.getLong(ARG_REVIEW_ID)
+    }
     override val screenName: ScreenName = ScreenName.REVIEW_BOTTOM_SHEET
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,9 +53,9 @@ class AddReviewDialog(
 
         initButton()
 
-        if (content != null) {
-            binding.rating.rating = content.review.rating.toFloat()
-            binding.etContent.setText(content.review.contents)
+        if (reviewId != null) {
+            binding.rating.rating = arguments?.getFloat(ARG_RATING) ?: 0f
+            binding.etContent.setText(arguments?.getString(ARG_CONTENTS))
         }
     }
 
@@ -69,13 +68,22 @@ class AddReviewDialog(
                 showToast(CommonR.string.over_rating_1)
                 return@onSingleClick
             }
-            onSubmit?.let { submit ->
-                submit(binding.etContent.text.toString(), binding.rating.rating.toInt())
+            arguments?.getString(ARG_RESULT_KEY)?.let { resultKey ->
+                val submitStoreId = arguments?.getString(ARG_SUBMIT_STORE_ID) ?: return@onSingleClick
+                setFragmentResult(
+                    resultKey,
+                    bundleOf(
+                        RESULT_STORE_ID to submitStoreId,
+                        RESULT_CONTENTS to binding.etContent.text.toString(),
+                        RESULT_RATING to binding.rating.rating.toInt(),
+                    ),
+                )
                 dismiss()
                 return@onSingleClick
             }
             viewModel.sendClickWriteReviewSubmit(binding.rating.rating.toInt())
-            if (content == null) {
+            val editingReviewId = reviewId
+            if (editingReviewId == null) {
                 viewModel.postStoreReview(
                     binding.etContent.text.toString(),
                     binding.rating.rating.toInt(),
@@ -83,15 +91,7 @@ class AddReviewDialog(
                 )
                 dismiss()
             } else {
-                viewModel.putStoreReview(content.review.reviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
-                // 수정된 리뷰 데이터 생성 후 콜백 호출
-                val updatedReview = content.copy(
-                    review = content.review.copy(
-                        contents = binding.etContent.text.toString(),
-                        rating = binding.rating.rating
-                    )
-                )
-                onEditCallback?.onReviewEdited(updatedReview)
+                viewModel.putStoreReview(editingReviewId, binding.etContent.text.toString(), binding.rating.rating.toInt())
                 dismiss()
             }
         }
@@ -101,13 +101,39 @@ class AddReviewDialog(
     }
 
     companion object {
-        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null, onEditCallback: OnReviewEditCallback? = null) = 
-            AddReviewDialog(content, storeId, onEditCallback)
+        const val REVIEW_SUBMITTED_RESULT_KEY = "review_submitted"
+        const val RESULT_STORE_ID = "store_id"
+        const val RESULT_CONTENTS = "contents"
+        const val RESULT_RATING = "rating"
+
+        private const val ARG_STORE_ID = "store_id"
+        private const val ARG_REVIEW_ID = "review_id"
+        private const val ARG_CONTENTS = "review_contents"
+        private const val ARG_RATING = "review_rating"
+        private const val ARG_RESULT_KEY = "result_key"
+        private const val ARG_SUBMIT_STORE_ID = "submit_store_id"
+
+        fun getInstance(content: ReviewContentModel? = null, storeId: Int? = null) =
+            AddReviewDialog().apply {
+                arguments = Bundle().apply {
+                    storeId?.let { putInt(ARG_STORE_ID, it) }
+                    content?.review?.let { review ->
+                        putLong(ARG_REVIEW_ID, review.reviewId)
+                        putString(ARG_CONTENTS, review.contents)
+                        putFloat(ARG_RATING, review.rating)
+                    }
+                }
+            }
 
         /**
-         * 새 리뷰 작성 결과를 호출부가 처리한다(가게 상세 v2). 레거시 [StoreDetailViewModel]을 쓰지 않는다.
+         * 가게 상세 v2는 [REVIEW_SUBMITTED_RESULT_KEY] 결과를 받아 제출한다.
+         * 결과 전달 모드도 arguments에 저장해 Fragment 복원 후 레거시 경로로 바뀌지 않는다.
          */
-        fun newInstance(onSubmit: (contents: String, rating: Int) -> Unit) =
-            AddReviewDialog(content = null, storeId = null, onSubmit = onSubmit)
+        fun newInstance(storeId: String) = AddReviewDialog().apply {
+            arguments = bundleOf(
+                ARG_RESULT_KEY to REVIEW_SUBMITTED_RESULT_KEY,
+                ARG_SUBMIT_STORE_ID to storeId,
+            )
+        }
     }
 }
