@@ -169,4 +169,135 @@ class HomeSheetStateCalculatorTest {
 
         assertEquals(0f, HomeSheetStateCalculator.fullListProgress(588f, anchors), 0f)
     }
+
+    private val minimizedPeekHeightPx = HomeSheetLayout.minimizedPeekHeightDp(hasTabs = true).toInt()
+    private val threeStepAnchors = HomeSheetStateCalculator.anchors(
+        containerHeightPx = 812,
+        fullListTopPx = 188,
+        collapsedPeekHeightPx = collapsedPeekHeightPx,
+        minimizedPeekHeightPx = minimizedPeekHeightPx,
+    )
+
+    // TH-1535 TC1
+    @Test
+    fun `TH1535_TC1_홈첫진입이면_시트는_기존_기본높이다`() {
+        // Given
+        val initialValue = HomeSheetStateCalculator.initialValue
+
+        // When
+        val visibleHeight = HomeSheetStateCalculator.visibleHeight(
+            containerHeightPx = 812,
+            currentOffset = threeStepAnchors.offsetOf(initialValue),
+        )
+
+        // Then
+        assertEquals(HomeSheetValue.Collapsed, initialValue)
+        assertEquals(collapsedPeekHeightPx.toFloat(), visibleHeight, 0f)
+    }
+
+    // TH-1535 TC2
+    @Test
+    fun `TH1535_TC2_기본높이에서_아래로_드래그하면_핸들과_탭만_보이는_접힘으로_멈춘다`() {
+        // Given
+        val draggedOffset = threeStepAnchors.collapsedOffset + DRAG_PX
+
+        // When
+        val settled = HomeSheetStateCalculator.settleValueAfterDrag(
+            currentOffset = draggedOffset,
+            anchors = threeStepAnchors,
+            totalDragY = DRAG_PX,
+            dragThresholdPx = DRAG_THRESHOLD_PX,
+        )
+        val flung = HomeSheetStateCalculator.settleValue(
+            currentOffset = draggedOffset,
+            anchors = threeStepAnchors,
+            velocityY = FLING_VELOCITY,
+        )
+
+        // Then
+        assertEquals(HomeSheetValue.Minimized, settled)
+        assertEquals(HomeSheetValue.Minimized, flung)
+        assertEquals(88f, HomeSheetLayout.minimizedPeekHeightDp(hasTabs = true), 0f)
+        assertEquals(20f, HomeSheetLayout.minimizedPeekHeightDp(hasTabs = false), 0f)
+    }
+
+    // TH-1535 TC3
+    @Test
+    fun `TH1535_TC3_접힘상태의_보이는높이는_접힘높이라_버튼이_시트를_따라_내려간다`() {
+        // Given
+        val minimizedOffset = threeStepAnchors.offsetOf(HomeSheetValue.Minimized)
+
+        // When
+        val visibleHeight = HomeSheetStateCalculator.visibleHeight(
+            containerHeightPx = 812,
+            currentOffset = minimizedOffset,
+        )
+
+        // Then
+        assertEquals(minimizedPeekHeightPx.toFloat(), visibleHeight, 0f)
+        assertEquals(minimizedOffset, threeStepAnchors.clamp(812f), 0f)
+    }
+
+    // TH-1535 TC4
+    @Test
+    fun `TH1535_TC4_접힘에서_위로_드래그하면_기본높이로_돌아온다`() {
+        // Given
+        val draggedOffset = threeStepAnchors.minimizedOffset - DRAG_PX
+
+        // When
+        val settled = HomeSheetStateCalculator.settleValueAfterDrag(
+            currentOffset = draggedOffset,
+            anchors = threeStepAnchors,
+            totalDragY = -DRAG_PX,
+            dragThresholdPx = DRAG_THRESHOLD_PX,
+        )
+        val flung = HomeSheetStateCalculator.settleValue(
+            currentOffset = draggedOffset,
+            anchors = threeStepAnchors,
+            velocityY = -FLING_VELOCITY,
+        )
+
+        // Then
+        assertEquals(HomeSheetValue.Collapsed, settled)
+        assertEquals(HomeSheetValue.Collapsed, flung)
+    }
+
+    // TH-1535 TC5
+    @Test
+    fun `TH1535_TC5_접힘에서_기본높이를_넘겨_크게_올리면_전체높이로_올라간다`() {
+        // Given
+        val largeDragY = -(threeStepAnchors.minimizedOffset - threeStepAnchors.collapsedOffset + DRAG_PX)
+        val draggedOffset = threeStepAnchors.minimizedOffset + largeDragY
+
+        // When
+        val settled = HomeSheetStateCalculator.settleValueAfterDrag(
+            currentOffset = draggedOffset,
+            anchors = threeStepAnchors,
+            totalDragY = largeDragY,
+            dragThresholdPx = DRAG_THRESHOLD_PX,
+        )
+
+        // Then
+        assertEquals(HomeSheetValue.FullList, settled)
+    }
+
+    // TH-1535 TC7
+    @Test
+    fun `TH1535_TC7_접힘에서_미리보기를_열었다_닫으면_접힘으로_복귀한다`() {
+        // Given
+        val previousListValue = HomeSheetValue.Minimized
+
+        // When
+        val restored = HomeSheetStateCalculator.restoreAfterPreview(previousListValue)
+
+        // Then
+        assertEquals(HomeSheetValue.Minimized, restored)
+        assertEquals(threeStepAnchors.minimizedOffset, threeStepAnchors.offsetOf(restored), 0f)
+    }
+
+    private companion object {
+        const val DRAG_PX = 40f
+        const val DRAG_THRESHOLD_PX = 24f
+        const val FLING_VELOCITY = 1_300f
+    }
 }
