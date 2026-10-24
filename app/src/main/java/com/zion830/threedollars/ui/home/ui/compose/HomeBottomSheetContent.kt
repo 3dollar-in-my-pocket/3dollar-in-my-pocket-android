@@ -118,6 +118,7 @@ import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
@@ -126,6 +127,7 @@ import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.zion830.threedollars.core.ui.sdui.component.card.SDAdListCard
 import com.zion830.threedollars.core.ui.sdui.section.home.SDHomeCurationView
 import com.zion830.threedollars.core.ui.sdui.section.home.SDHomeCurationDefaults
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiDefaults
@@ -169,6 +171,7 @@ fun HomeBottomSheetContent(
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
     onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
+    onAdCardClick: (SDAdCardModel) -> Unit = {},
     onStorePreviewClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
@@ -185,6 +188,7 @@ fun HomeBottomSheetContent(
     onCurationCategoryClick: (SDHomeCurationItemModel.Carousel, SDHomeCurationCategoryFilterModel) -> Unit = { _, _ -> },
     onCurationCardClick: (ImagePreviewCardModel) -> Unit = {},
     onCurationCardVisible: (carouselId: String, card: ImagePreviewCardModel) -> Unit = { _, _ -> },
+    onCurationAdCardVisible: (carouselId: String, card: SDAdCardModel) -> Unit = { _, _ -> },
     onRetryCuration: () -> Unit = {},
     onRetryCurationCarousel: (String) -> Unit = {},
     onCurationHeaderAction: (SDActionEvent) -> Unit = {},
@@ -600,6 +604,8 @@ fun HomeBottomSheetContent(
                         onCategoryClick = onCurationCategoryClick,
                         onCardClick = onCurationCardClick,
                         onCardVisible = onCurationCardVisible,
+                        onAdCardClick = onAdCardClick,
+                        onAdCardVisible = onCurationAdCardVisible,
                         onHeaderAction = onCurationHeaderAction,
                         adMobCardWidth = 320.dp,
                         hiddenAdCardIds = hiddenCurationAdIds,
@@ -629,6 +635,7 @@ fun HomeBottomSheetContent(
                                 onCardClick = onCardClick,
                                 onLoadNextPage = onLoadNextPage,
                                 onAdMobClick = onAdMobClick,
+                                onAdCardClick = onAdCardClick,
                                 modifier = Modifier.fillMaxSize(),
                             )
                         },
@@ -786,6 +793,7 @@ private fun HomeListContent(
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
     onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit,
+    onAdCardClick: (SDAdCardModel) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cards = homeListSection.cards
@@ -814,6 +822,7 @@ private fun HomeListContent(
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
                 is HomeListCardModel.AdMobCard -> HomeListAdMobCard(card = card, onClick = onAdMobClick)
+                is HomeListCardModel.AdCard -> SDAdListCard(model = card.card, onClick = onAdCardClick)
             }
         }
     }

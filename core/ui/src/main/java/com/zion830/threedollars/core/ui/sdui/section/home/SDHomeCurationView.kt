@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import base.compose.ColorWhite
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
@@ -52,6 +53,8 @@ fun SDHomeCurationView(
     carouselStateContent: @Composable (SDHomeCurationItemModel.Carousel) -> Unit = {},
     onHeaderAction: (SDActionEvent) -> Unit = {},
     onCardVisible: (carouselId: String, card: ImagePreviewCardModel) -> Unit = { _, _ -> },
+    onAdCardClick: (SDAdCardModel) -> Unit = {},
+    onAdCardVisible: (carouselId: String, card: SDAdCardModel) -> Unit = { _, _ -> },
 ) {
     val supportedTabs = tabs.tabs.filter { it.viewType == "CURATION" || it.viewType == "STORE_LIST" }
     val selectedTab = supportedTabs.firstOrNull { it.tabId == selectedTabId }
@@ -108,6 +111,8 @@ fun SDHomeCurationView(
                             emptyContent = emptyContent,
                             stateContent = { carouselStateContent(item) },
                             onCardVisible = { onCardVisible(item.carouselId, it) },
+                            onAdCardClick = onAdCardClick,
+                            onAdCardVisible = { onAdCardVisible(item.carouselId, it) },
                         )
                         is SDHomeCurationItemModel.AdMob -> adMobContent?.let { adContent ->
                             Box(modifier = Modifier.fillMaxWidth().height(item.card.height.coerceAtLeast(0).dp)) {

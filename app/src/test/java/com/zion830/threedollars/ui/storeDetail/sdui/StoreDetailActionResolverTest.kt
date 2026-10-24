@@ -1,10 +1,13 @@
 package com.zion830.threedollars.ui.storeDetail.sdui
 
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
+import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.element.SDCustomActionModel
 import com.threedollar.common.sdui.model.element.SDCustomActionType
 import com.threedollar.common.sdui.model.element.SDLink
 import com.threedollar.common.sdui.model.element.SDLinkType
+import com.threedollar.common.sdui.model.element.toActionEvent
 import com.zion830.threedollars.ui.storeDetail.sdui.StoreDetailSduiFixtures.INFO_INDEX
 import com.zion830.threedollars.ui.storeDetail.sdui.StoreDetailSduiFixtures.STORE_ID
 import com.zion830.threedollars.ui.storeDetail.sdui.StoreDetailSduiFixtures.appLink
@@ -271,4 +274,51 @@ class StoreDetailActionResolverTest {
         assertEquals(Resolution.Navigate(StoreDetailDestination.CopyText("카카오뱅크 3333-01-1234567")), copy)
         assertEquals(Resolution.Ignore, ignored)
     }
+
+    // TH-1529 TC8
+    @Test
+    fun `TH1529_TC8_WEB링크_광고카드를_탭하면_클릭로그를_싣고_링크페이지를_연다`() {
+        // Given
+        val link = SDLink(type = SDLinkType.WEB, link = "https://web.threedollars.co.kr/")
+        val card = SDAdCardModel(cardId = "AD:108", link = link, clickLog = adClickLog)
+
+        // When
+        val event = card.toActionEvent()
+        val resolution = resolve(event)
+
+        // Then
+        assertEquals(adClickLog, event.clickLog)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(link)), resolution)
+    }
+
+    // TH-1529 TC9
+    @Test
+    fun `TH1529_TC9_APP_SCHEME링크_광고카드를_탭하면_앱내_화면으로_이동한다`() {
+        // Given
+        val link = SDLink(type = SDLinkType.APP_SCHEME, link = "dollars-dev://store?storeId=12806246&storeType=USER_STORE")
+        val card = SDAdCardModel(cardId = "AD:108", link = link, clickLog = adClickLog)
+
+        // When
+        val resolution = resolve(card.toActionEvent())
+
+        // Then
+        assertEquals(Resolution.Navigate(StoreDetailDestination.OpenLink(link)), resolution)
+    }
+
+    // TH-1529 TC14
+    @Test
+    fun `TH1529_TC14_링크없는_광고카드를_탭하면_이동없이_클릭로그만_남는다`() {
+        // Given
+        val card = SDAdCardModel(cardId = "AD:108", link = null, clickLog = adClickLog)
+
+        // When
+        val event = card.toActionEvent()
+        val resolution = resolve(event)
+
+        // Then
+        assertEquals(adClickLog, event.clickLog)
+        assertEquals(Resolution.Ignore, resolution)
+    }
+
+    private val adClickLog = SDLogModel(eventType = "CLICK", screenName = "store_detail", objectType = "card", objectId = "advertisement")
 }
