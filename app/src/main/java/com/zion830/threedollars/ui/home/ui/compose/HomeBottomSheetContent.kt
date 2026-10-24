@@ -43,8 +43,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -195,6 +195,9 @@ fun HomeBottomSheetContent(
         val textMeasurer = rememberTextMeasurer()
         val containerHeightPx = with(density) { maxHeight.toPx().roundToInt() }
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
+        val minimizedPeekHeightPx = with(density) {
+            HomeSheetLayout.minimizedPeekHeightDp(hasTabs = curationState.tabs.isNotEmpty()).dp.toPx().roundToInt()
+        }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
         val storeDetailFullOffsetPx = if (storeDetailNavigationBar != null) {
             with(density) { StoreDetailSduiDefaults.NavigationHeight.toPx() }
@@ -204,11 +207,12 @@ fun HomeBottomSheetContent(
         var measuredStorePreviewHeightPx by remember { mutableStateOf<Int?>(null) }
         val storePreviewHeightPx = measuredStorePreviewHeightPx
             ?: with(density) { StorePreviewDefaultHeight.toPx().roundToInt() }
-        val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx) {
+        val anchors = remember(containerHeightPx, fullListTopPx, collapsedPeekHeightPx, minimizedPeekHeightPx) {
             HomeSheetStateCalculator.anchors(
                 containerHeightPx = containerHeightPx,
                 fullListTopPx = fullListTopPx,
                 collapsedPeekHeightPx = collapsedPeekHeightPx,
+                minimizedPeekHeightPx = minimizedPeekHeightPx,
             )
         }
         val storePreviewOffsetPx = remember(containerHeightPx, storePreviewHeightPx, anchors) {
@@ -255,9 +259,9 @@ fun HomeBottomSheetContent(
                 listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
             }
         }
-        var sheetOffsetPx by remember { mutableFloatStateOf(anchors.collapsedOffset) }
-        var settledValue by remember { mutableStateOf(HomeSheetValue.Collapsed) }
-        var lastListSettledValue by remember { mutableStateOf(HomeSheetValue.Collapsed) }
+        var sheetOffsetPx by remember { mutableFloatStateOf(anchors.offsetOf(HomeSheetStateCalculator.initialValue)) }
+        var settledValue by remember { mutableStateOf(HomeSheetStateCalculator.initialValue) }
+        var lastListSettledValue by remember { mutableStateOf(HomeSheetStateCalculator.initialValue) }
         var isSheetInitialized by remember { mutableStateOf(false) }
         var animationJob by remember { mutableStateOf<Job?>(null) }
         var isShowingStoreDetail by remember { mutableStateOf(storeDetailExpanded) }
@@ -330,10 +334,15 @@ fun HomeBottomSheetContent(
         }
 
         fun settleSheet(velocityY: Float = 0f, totalDragY: Float = 0f) {
-            val value = when {
-                totalDragY <= -dragSettleThresholdPx -> HomeSheetValue.FullList
-                totalDragY >= dragSettleThresholdPx -> HomeSheetValue.Collapsed
-                else -> HomeSheetStateCalculator.settleValue(
+            val value = if (abs(totalDragY) >= dragSettleThresholdPx) {
+                HomeSheetStateCalculator.settleValueAfterDrag(
+                    currentOffset = sheetOffsetPx,
+                    anchors = anchors,
+                    totalDragY = totalDragY,
+                    dragThresholdPx = dragSettleThresholdPx,
+                )
+            } else {
+                HomeSheetStateCalculator.settleValue(
                     currentOffset = sheetOffsetPx,
                     anchors = anchors,
                     velocityY = velocityY,
@@ -353,7 +362,7 @@ fun HomeBottomSheetContent(
                 }
             } else {
                 isSheetInitialized = true
-                anchors.collapsedOffset
+                anchors.offsetOf(HomeSheetStateCalculator.initialValue)
             }
         }
 
@@ -424,20 +433,20 @@ fun HomeBottomSheetContent(
 
         val listNestedScrollConnection = remember(anchors, storeScreen, listState) {
             object : NestedScrollConnection {
+                private var userDragY = 0f
+
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (storeScreen != null) return Offset.Zero
 
                     val dragY = available.y
                     val shouldPullSheetDown = dragY > 0f &&
                         isListAtTop.value &&
-                        sheetOffsetPx < anchors.collapsedOffset
+                        sheetOffsetPx < pullDownLimit(source)
                     val shouldPushSheetUp = dragY < 0f && sheetOffsetPx > anchors.fullListOffset
 
                     if (!shouldPullSheetDown && !shouldPushSheetUp) return Offset.Zero
 
-                    val previousOffset = sheetOffsetPx
-                    snapSheetBy(dragY)
-                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                    return moveSheet(dragY, source)
                 }
 
                 override fun onPostScroll(
@@ -450,13 +459,11 @@ fun HomeBottomSheetContent(
                     val dragY = available.y
                     val shouldPullSheetDown = dragY > 0f &&
                         isListAtTop.value &&
-                        sheetOffsetPx < anchors.collapsedOffset
+                        sheetOffsetPx < pullDownLimit(source)
 
                     if (!shouldPullSheetDown) return Offset.Zero
 
-                    val previousOffset = sheetOffsetPx
-                    snapSheetBy(dragY)
-                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                    return moveSheet(dragY, source)
                 }
 
                 override suspend fun onPreFling(available: Velocity): Velocity {
@@ -469,12 +476,26 @@ fun HomeBottomSheetContent(
                     return settleIfBetweenAnchors(available.y)
                 }
 
-                private fun settleIfBetweenAnchors(velocityY: Float): Velocity {
-                    val isBetweenAnchors = sheetOffsetPx > anchors.fullListOffset &&
-                        sheetOffsetPx < anchors.collapsedOffset
-                    if (!isBetweenAnchors) return Velocity.Zero
+                private fun pullDownLimit(source: NestedScrollSource): Float {
+                    return if (source == NestedScrollSource.UserInput) anchors.minimizedOffset else anchors.collapsedOffset
+                }
 
-                    settleSheet(velocityY = velocityY)
+                private fun moveSheet(dragY: Float, source: NestedScrollSource): Offset {
+                    val previousOffset = sheetOffsetPx
+                    snapSheetBy(dragY)
+                    if (dragY > 0f) sheetOffsetPx = sheetOffsetPx.coerceAtMost(pullDownLimit(source))
+                    val movedY = sheetOffsetPx - previousOffset
+                    if (source == NestedScrollSource.UserInput) userDragY += movedY
+                    return Offset(x = 0f, y = movedY)
+                }
+
+                private fun settleIfBetweenAnchors(velocityY: Float): Velocity {
+                    val dragY = userDragY
+                    userDragY = 0f
+                    if (anchors.isAtAnchor(sheetOffsetPx)) return Velocity.Zero
+
+                    val totalDragY = if (sheetOffsetPx > anchors.collapsedOffset) dragY else 0f
+                    settleSheet(velocityY = velocityY, totalDragY = totalDragY)
                     return Velocity(x = 0f, y = velocityY)
                 }
             }
@@ -613,6 +634,11 @@ fun HomeBottomSheetContent(
                         },
                         modifier = Modifier
                             .weight(1f)
+                            .homeSheetDragGesture(
+                                onDrag = ::snapSheetBy,
+                                onDragEnd = { totalDragY -> settleSheet(totalDragY = totalDragY) },
+                                enabled = !isFullListSettled,
+                            )
                             .nestedScroll(listNestedScrollConnection),
                     )
                 }
@@ -716,20 +742,8 @@ private fun HomeBottomSheetHandle(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(20.dp)
-            .pointerInput(onHandleDrag, onHandleDragEnd) {
-                var totalDragY = 0f
-                detectVerticalDragGestures(
-                    onDragStart = { totalDragY = 0f },
-                    onVerticalDrag = { change, dragAmount ->
-                        change.consume()
-                        totalDragY += dragAmount
-                        onHandleDrag(dragAmount)
-                    },
-                    onDragEnd = { onHandleDragEnd(totalDragY) },
-                    onDragCancel = { onHandleDragEnd(totalDragY) },
-                )
-            },
+            .height(HomeSheetLayout.HANDLE_HEIGHT_DP.dp)
+            .homeSheetDragGesture(onDrag = onHandleDrag, onDragEnd = onHandleDragEnd),
         contentAlignment = Alignment.Center,
     ) {
         Box(
@@ -737,6 +751,30 @@ private fun HomeBottomSheetHandle(
                 .size(width = 40.dp, height = 5.dp)
                 .clip(RoundedCornerShape(3.dp))
                 .background(Gray20),
+        )
+    }
+}
+
+@Composable
+private fun Modifier.homeSheetDragGesture(
+    onDrag: (Float) -> Unit,
+    onDragEnd: (Float) -> Unit,
+    enabled: Boolean = true,
+): Modifier {
+    val currentOnDrag by rememberUpdatedState(onDrag)
+    val currentOnDragEnd by rememberUpdatedState(onDragEnd)
+    return pointerInput(enabled) {
+        if (!enabled) return@pointerInput
+        var totalDragY = 0f
+        detectVerticalDragGestures(
+            onDragStart = { totalDragY = 0f },
+            onVerticalDrag = { change, dragAmount ->
+                change.consume()
+                totalDragY += dragAmount
+                currentOnDrag(dragAmount)
+            },
+            onDragEnd = { currentOnDragEnd(totalDragY) },
+            onDragCancel = { currentOnDragEnd(totalDragY) },
         )
     }
 }
