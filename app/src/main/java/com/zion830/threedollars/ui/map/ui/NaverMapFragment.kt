@@ -53,6 +53,7 @@ import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.R
 import com.zion830.threedollars.databinding.FragmentNaverMapBinding
 import com.zion830.threedollars.ui.dialog.MarkerClickDialog
+import com.zion830.threedollars.ui.home.ui.markerAlpha
 import com.zion830.threedollars.ui.home.ui.markerChipForSelection
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.NaverMapUtils.DEFAULT_DISTANCE_M
@@ -86,6 +87,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
     private val markers = arrayListOf<Marker>()
+
+    private val homeListMarkerImageTargets = mutableMapOf<Marker, CustomTarget<Bitmap>>()
 
     var listener: OnMapTouchListener? = null
 
@@ -225,6 +228,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             it.map = null
         }
         markers.clear()
+        homeListMarkerImageTargets.clear()
     }
 
     fun updateMarkerIcon(@DrawableRes drawableRes: Int, position: Int, markerModel: MarkerModel?, isSelected: Boolean) {
@@ -325,6 +329,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
         markers.forEach { it.map = null }
         markers.clear()
+        homeListMarkerImageTargets.clear()
 
         val newMarkers = list.map { item ->
             Marker().apply {
@@ -359,6 +364,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
         chip: SDChipModel?,
         @DrawableRes drawableRes: Int,
     ) {
+        marker.alpha = chip.markerAlpha()
+        homeListMarkerImageTargets.remove(marker)
         val image = chip?.image
         if (image != null) {
             loadMarkerImage(marker, image)
@@ -376,16 +383,19 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
     }
 
     private fun loadMarkerImage(marker: Marker, image: SDImageModel) {
+        val target = object : CustomTarget<Bitmap>() {
+            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                if (homeListMarkerImageTargets[marker] !== this) return
+                marker.icon = OverlayImage.fromBitmap(resource)
+            }
+
+            override fun onLoadCleared(placeholder: Drawable?) = Unit
+        }
+        homeListMarkerImageTargets[marker] = target
         Glide.with(requireContext())
             .asBitmap()
             .load(image.url)
-            .into(object : CustomTarget<Bitmap>() {
-                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                    marker.icon = OverlayImage.fromBitmap(resource)
-                }
-
-                override fun onLoadCleared(placeholder: Drawable?) = Unit
-            })
+            .into(target)
         image.style?.width?.let { marker.width = context?.convertDpToPx(it.toFloat())?.toInt() ?: marker.width }
         image.style?.height?.let { marker.height = context?.convertDpToPx(it.toFloat())?.toInt() ?: marker.height }
     }
