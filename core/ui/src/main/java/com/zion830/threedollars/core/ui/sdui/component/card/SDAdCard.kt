@@ -27,6 +27,7 @@ import base.compose.Gray10
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.element.SDChipModel
+import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.element.SDTextModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.element.SDChip
@@ -51,6 +52,14 @@ object SDAdCardDefaults {
     val ContentSpacing = 4.dp
     val ImageSpacing = 12.dp
     val DividerWidth = 1.dp
+    const val ListTitleFontSizeDp = 16
+    const val ListTitleLineHeightDp = 24
+    const val CurationTitleFontSizeDp = 14
+    const val CurationTitleLineHeightDp = 20
+    const val SubTitleFontSizeDp = 12
+    const val SubTitleLineHeightDp = 18
+    const val LabelFontSizeDp = 10
+    const val LabelLineHeightDp = 14
 }
 
 @Composable
@@ -79,12 +88,19 @@ fun SDAdListCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
             ) {
-                model.title?.let { AdTitle(it, fontSizeDp = 16, lineHeightDp = 24, modifier = Modifier.weight(1f, fill = false)) }
+                model.title?.let {
+                    AdTitle(
+                        model = it,
+                        fontSizeDp = SDAdCardDefaults.ListTitleFontSizeDp,
+                        lineHeightDp = SDAdCardDefaults.ListTitleLineHeightDp,
+                        modifier = Modifier.weight(1f, fill = false),
+                    )
+                }
                 SDAdLabels(labels)
             }
         }
         model.subTitle?.let { AdSubTitle(it) }
-        model.image?.let { image ->
+        model.image.displayableOrNull()?.let { image ->
             Spacer(modifier = Modifier.height(SDAdCardDefaults.ImageSpacing))
             SDImage(
                 model = image,
@@ -111,7 +127,7 @@ fun SDAdCurationCard(
             .noRippleClickable { onClick(model) },
         verticalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
     ) {
-        model.image?.let { image ->
+        model.image.displayableOrNull()?.let { image ->
             Box(
                 modifier = Modifier
                     .size(imageSize)
@@ -122,7 +138,13 @@ fun SDAdCurationCard(
                 SDImage(model = image, sizeFromStyle = false, modifier = Modifier.size(imageSize))
             }
         }
-        model.title?.let { AdTitle(it, fontSizeDp = 14, lineHeightDp = 20) }
+        model.title?.let {
+            AdTitle(
+                model = it,
+                fontSizeDp = SDAdCardDefaults.CurationTitleFontSizeDp,
+                lineHeightDp = SDAdCardDefaults.CurationTitleLineHeightDp,
+            )
+        }
         model.subTitle?.let { AdSubTitle(it) }
         SDAdLabels(model.labels.orEmpty())
     }
@@ -145,7 +167,7 @@ fun SDAdBannerCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ImageSpacing),
     ) {
-        model.image?.let { image ->
+        model.image.displayableOrNull()?.let { image ->
             SDImage(
                 model = image,
                 sizeFromStyle = false,
@@ -159,10 +181,16 @@ fun SDAdBannerCard(
             verticalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
         ) {
             SDAdLabels(model.labels.orEmpty())
-            model.title?.let { AdTitle(it, fontSizeDp = 16, lineHeightDp = 24) }
+            model.title?.let {
+                AdTitle(
+                    model = it,
+                    fontSizeDp = SDAdCardDefaults.ListTitleFontSizeDp,
+                    lineHeightDp = SDAdCardDefaults.ListTitleLineHeightDp,
+                )
+            }
             model.subTitle?.let { AdSubTitle(it) }
         }
-        model.trailingIcon?.let { icon ->
+        model.trailingIcon.displayableOrNull()?.let { icon ->
             SDImage(
                 model = icon,
                 sizeFromStyle = false,
@@ -183,8 +211,8 @@ fun SDAdLabels(labels: List<SDChipModel>, modifier: Modifier = Modifier) {
         labels.forEach { label ->
             SDChip(
                 model = label,
-                fontSize = dpToSp(10),
-                lineHeight = dpToSp(14),
+                fontSize = dpToSp(SDAdCardDefaults.LabelFontSizeDp),
+                lineHeight = dpToSp(SDAdCardDefaults.LabelLineHeightDp),
                 modifier = Modifier
                     .sdSurface(style = label.style, shape = SDAdCardDefaults.LabelShape)
                     .padding(
@@ -217,9 +245,11 @@ private fun AdTitle(
 private fun AdSubTitle(model: SDTextModel) {
     SDText(
         model = model,
-        fontSize = dpToSp(12),
-        lineHeight = dpToSp(18),
+        fontSize = dpToSp(SDAdCardDefaults.SubTitleFontSizeDp),
+        lineHeight = dpToSp(SDAdCardDefaults.SubTitleLineHeightDp),
         fontWeight = FontWeight.Medium,
         maxLines = 1,
     )
 }
+
+private fun SDImageModel?.displayableOrNull(): SDImageModel? = this?.takeIf { !it.url.isNullOrBlank() }

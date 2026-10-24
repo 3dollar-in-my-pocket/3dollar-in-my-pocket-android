@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.storeDetail.sdui
 
 import com.threedollar.common.sdui.model.component.SDAdCardModel
+import com.threedollar.common.sdui.model.component.SDUnknownCardModel
 import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDStoreAdSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
@@ -106,5 +107,23 @@ class StoreDetailSectionImpressionsTest {
 
         // Then
         assertEquals(listOf("AD" to sectionLog, "AD-ad-card" to firstCardLog), logs)
+    }
+
+    // TH-1529 TC13
+    @Test
+    fun `TH1529_TC13_그릴_광고카드가_없는_AD섹션은_노출로그를_보내지_않는다`() {
+        // Given
+        val section = SDStoreAdSectionModel(
+            sectionId = "AD",
+            cards = listOf(SDUnknownCardModel(cardId = "NEW:1")),
+            style = null,
+            impressionLog = sectionLog,
+        )
+
+        // When
+        val logs = StoreDetailSectionImpressions.logs("9-AD", section)
+
+        // Then
+        assertTrue(logs.isEmpty())
     }
 }

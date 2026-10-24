@@ -451,7 +451,7 @@ class HomeViewModel @Inject constructor(
                 if (response.ok) {
                     val section = response.data ?: HomeListSectionModel()
                     val nextCards = if (append) {
-                        _homeListSection.value.cards + section.cards
+                        (_homeListSection.value.cards + section.cards).distinctBy { it.cardId }
                     } else {
                         section.cards
                     }

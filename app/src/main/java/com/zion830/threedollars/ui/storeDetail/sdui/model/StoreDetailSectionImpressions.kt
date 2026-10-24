@@ -9,6 +9,7 @@ import com.threedollar.common.sdui.model.section.SDStoreThreadPostSectionModel
 object StoreDetailSectionImpressions {
     fun logs(key: String, section: SDSectionModel): List<Pair<String, SDLogModel>> = buildList {
         if (section is SDStoreThreadPostSectionModel) return@buildList
+        if (section is SDStoreAdSectionModel && section.firstAdCard == null) return@buildList
         val logKey = section.sectionId?.takeIf { it.isNotBlank() } ?: key
         section.impressionLog?.let { add(logKey to it) }
         if (section is SDStoreAdmobSectionModel) {
