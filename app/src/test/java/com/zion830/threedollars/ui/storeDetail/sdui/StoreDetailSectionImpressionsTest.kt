@@ -1,6 +1,8 @@
 package com.zion830.threedollars.ui.storeDetail.sdui
 
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.element.SDLogModel
+import com.threedollar.common.sdui.model.section.SDStoreAdSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreMarginSectionModel
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSectionImpressions
@@ -81,5 +83,28 @@ class StoreDetailSectionImpressionsTest {
 
         // Then
         assertEquals(listOf("3-MARGIN" to sectionLog), logs)
+    }
+
+    // TH-1529 TC11
+    @Test
+    fun `TH1529_TC11_AD섹션이_보이면_섹션과_첫광고카드_노출로그를_한건씩_만든다`() {
+        // Given
+        val firstCardLog = SDLogModel(screenName = "store_detail", objectType = "card", objectId = "advertisement")
+        val secondCardLog = SDLogModel(screenName = "store_detail", objectType = "card", objectId = "advertisement-2")
+        val section = SDStoreAdSectionModel(
+            sectionId = "AD",
+            cards = listOf(
+                SDAdCardModel(cardId = "AD:108", impressionLog = firstCardLog),
+                SDAdCardModel(cardId = "AD:109", impressionLog = secondCardLog),
+            ),
+            style = null,
+            impressionLog = sectionLog,
+        )
+
+        // When
+        val logs = StoreDetailSectionImpressions.logs("9-AD", section)
+
+        // Then
+        assertEquals(listOf("AD" to sectionLog, "AD-ad-card" to firstCardLog), logs)
     }
 }

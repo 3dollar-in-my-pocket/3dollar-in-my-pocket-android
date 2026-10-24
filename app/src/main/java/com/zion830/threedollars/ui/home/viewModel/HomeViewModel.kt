@@ -11,6 +11,7 @@ import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.SDClickLogger
 import com.threedollar.common.analytics.SDLogSender
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.element.SDLink
 import com.threedollar.common.sdui.model.element.SDLogModel
@@ -388,6 +389,18 @@ class HomeViewModel @Inject constructor(
         homeListSectionImpression.flush(isVisible = !isCuration)?.let { SDClickLogger.send(it) }
     }
 
+    fun onCurationAdCardVisible(carouselId: String, card: SDAdCardModel) {
+        val impressionLog = card.impressionLog ?: return
+        if (!curationCardImpressionDedup.shouldSend(carouselId, card.cardId)) return
+        SDLogSender.sendImpression(impressionLog)
+    }
+
+    fun openAdCard(card: SDAdCardModel) {
+        SDLogSender.sendClick(card.clickLog)
+        val link = card.link?.takeIf { !it.link.isNullOrBlank() } ?: return
+        _curationLink.tryEmit(link)
+    }
+
     fun openCurationCard(card: ImagePreviewCardModel) {
         val link = card.link?.takeIf { !it.link.isNullOrBlank() } ?: return
         SDLogSender.sendClick(card.clickLog)
@@ -694,6 +707,7 @@ class HomeViewModel @Inject constructor(
                 is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
                 is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
                 is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+                is HomeListCardModel.AdCard -> SDLogSender.sendImpression(card.card.impressionLog)
             }
         }
     }
