@@ -46,10 +46,13 @@ object SDAdCardDefaults {
     val BannerImageSize = 64.dp
     val BannerImageShape = RoundedCornerShape(12.dp)
     val BannerTrailingIconSize = 24.dp
-    val LabelShape = RoundedCornerShape(4.dp)
-    val LabelHorizontalPadding = 4.dp
+    val LabelShape = RoundedCornerShape(percent = 50)
+    val LabelHorizontalPadding = 6.dp
     val LabelVerticalPadding = 2.dp
     val ContentSpacing = 4.dp
+    val TitleLabelSpacing = 6.dp
+    val CurationImageSpacing = 8.dp
+    val BannerTextSpacing = 2.dp
     val ImageSpacing = 12.dp
     val DividerWidth = 1.dp
     const val ListTitleFontSizeDp = 16
@@ -86,7 +89,7 @@ fun SDAdListCard(
         if (model.title != null || labels.isNotEmpty()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
+                horizontalArrangement = Arrangement.spacedBy(SDAdCardDefaults.TitleLabelSpacing),
             ) {
                 model.title?.let {
                     AdTitle(
@@ -125,7 +128,6 @@ fun SDAdCurationCard(
         modifier = modifier
             .width(imageSize)
             .noRippleClickable { onClick(model) },
-        verticalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
     ) {
         model.image.displayableOrNull()?.let { image ->
             Box(
@@ -137,6 +139,7 @@ fun SDAdCurationCard(
             ) {
                 SDImage(model = image, sizeFromStyle = false, modifier = Modifier.size(imageSize))
             }
+            Spacer(modifier = Modifier.height(SDAdCardDefaults.CurationImageSpacing))
         }
         model.title?.let {
             AdTitle(
@@ -173,12 +176,13 @@ fun SDAdBannerCard(
                 sizeFromStyle = false,
                 modifier = Modifier
                     .size(SDAdCardDefaults.BannerImageSize)
+                    .border(width = SDAdCardDefaults.DividerWidth, color = Gray10, shape = SDAdCardDefaults.BannerImageShape)
                     .clip(SDAdCardDefaults.BannerImageShape),
             )
         }
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(SDAdCardDefaults.ContentSpacing),
+            verticalArrangement = Arrangement.spacedBy(SDAdCardDefaults.BannerTextSpacing),
         ) {
             SDAdLabels(model.labels.orEmpty())
             model.title?.let {
