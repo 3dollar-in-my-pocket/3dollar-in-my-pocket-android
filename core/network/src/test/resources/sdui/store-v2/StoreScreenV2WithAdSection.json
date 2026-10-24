@@ -1,0 +1,223 @@
+{
+  "sections": [
+    {
+      "type": "CTA",
+      "sectionId": "CTA",
+      "content": {
+        "title": {
+          "text": "<span style=\"font-size:14px; font-weight:600; color:#5A5A5A\">🧑‍🍳 혹시 이 가게 사장님이신가요?</span>",
+          "isHtml": true,
+          "fontColor": "#5A5A5A"
+        },
+        "subTitle": {
+          "text": "<span style=\"font-size:12px; font-weight:500; color:#969696\">가슴속 3천원 사장님앱으로 가게 정보를 직접 관리할 수 있습니다!</span>",
+          "isHtml": true,
+          "fontColor": "#969696"
+        },
+        "footerLeftButton": {
+          "text": {
+            "text": "<span style=\"font-size:12px; font-weight:500; color:#00C667\">사장님 앱 소개보기</span>",
+            "isHtml": true,
+            "fontColor": "#00C667"
+          },
+          "image": {
+            "url": "https://storage.threedollars.co.kr/app/chevron_green_right.png",
+            "style": {
+              "width": 12.0,
+              "height": 12.0,
+              "dimmed": false,
+              "alpha": 1.0
+            }
+          },
+          "imageAlignment": "END",
+          "link": {
+            "type": "WEB",
+            "link": "https://massive-iguana-121.notion.site/3-28c7ad52990e809caba2fb2040677a2a"
+          },
+          "clickLog": {
+            "screenName": "store_detail",
+            "objectType": "button",
+            "objectId": "boss_app_cta",
+            "extraParameters": {
+              "store_id": "12806244",
+              "store_type": "USER_STORE"
+            },
+            "eventType": "CLICK"
+          },
+          "style": {
+            "backgroundColor": "#FAFAFA"
+          }
+        }
+      },
+      "impressionLog": {
+        "screenName": "store_detail",
+        "objectType": "section",
+        "objectId": "store_section",
+        "extraParameters": {
+          "store_id": "12806244",
+          "store_type": "USER_STORE",
+          "section_type": "CTA",
+          "section_id": "CTA"
+        },
+        "eventType": "IMPRESSION"
+      },
+      "style": {
+        "backgroundColor": "#FAFAFA"
+      }
+    },
+    {
+      "type": "AD",
+      "sectionId": "AD",
+      "cards": [
+        {
+          "type": "AD_CARD",
+          "cardId": "AD:108",
+          "title": {
+            "text": "가3팀이 붕어빵을 판다?",
+            "isHtml": false,
+            "fontColor": "#0F0F0F"
+          },
+          "subTitle": {
+            "text": "익선동으로 많이 와주세요",
+            "isHtml": false,
+            "fontColor": "#969696"
+          },
+          "labels": [
+            {
+              "text": {
+                "text": "광고",
+                "isHtml": false,
+                "fontColor": "#FF8181"
+              },
+              "style": {
+                "backgroundColor": "#FFEFEF"
+              }
+            }
+          ],
+          "image": {
+            "url": "https://storage.dev.threedollars.co.kr/popup/v1-35b49c1a-468f-423a-a967-bbc2147e6876.png",
+            "style": {
+              "width": 64.0,
+              "height": 64.0,
+              "dimmed": false,
+              "alpha": 1.0
+            }
+          },
+          "trailingIcon": {
+            "url": "https://storage.threedollars.co.kr/app/chevron_right-2.png",
+            "style": {
+              "width": 24.0,
+              "height": 24.0,
+              "dimmed": false,
+              "alpha": 1.0
+            }
+          },
+          "link": {
+            "type": "WEB",
+            "link": "https://web.threedollars.co.kr/"
+          },
+          "adRef": {
+            "type": "AD",
+            "adId": 108,
+            "adGroupId": "test"
+          },
+          "clickLog": {
+            "screenName": "store_detail",
+            "objectType": "card",
+            "objectId": "advertisement",
+            "extraParameters": {
+              "store_id": "12806244",
+              "store_type": "USER_STORE",
+              "advertisement_id": "108",
+              "advertisement_group_id": "test",
+              "position": "1"
+            },
+            "eventType": "CLICK"
+          },
+          "impressionLog": {
+            "screenName": "store_detail",
+            "objectType": "card",
+            "objectId": "advertisement",
+            "extraParameters": {
+              "store_id": "12806244",
+              "store_type": "USER_STORE",
+              "advertisement_id": "108",
+              "advertisement_group_id": "test",
+              "position": "1"
+            },
+            "eventType": "IMPRESSION"
+          }
+        }
+      ],
+      "impressionLog": {
+        "screenName": "store_detail",
+        "objectType": "section",
+        "objectId": "store_section",
+        "extraParameters": {
+          "store_id": "12806244",
+          "store_type": "USER_STORE",
+          "section_type": "AD",
+          "section_id": "AD"
+        },
+        "eventType": "IMPRESSION"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    {
+      "type": "AD_MOB",
+      "sectionId": "AD_MOB",
+      "cards": [
+        {
+          "type": "ADMOB_CARD",
+          "cardId": "ADMOB:AD_MOB",
+          "clickLog": {
+            "screenName": "store_detail",
+            "objectType": "card",
+            "objectId": "admob",
+            "extraParameters": {
+              "store_id": "12806244",
+              "store_type": "USER_STORE"
+            },
+            "eventType": "CLICK"
+          },
+          "impressionLog": {
+            "screenName": "store_detail",
+            "objectType": "card",
+            "objectId": "admob",
+            "extraParameters": {
+              "store_id": "12806244",
+              "store_type": "USER_STORE"
+            },
+            "eventType": "IMPRESSION"
+          },
+          "height": 200
+        }
+      ],
+      "impressionLog": {
+        "screenName": "store_detail",
+        "objectType": "section",
+        "objectId": "store_section",
+        "extraParameters": {
+          "store_id": "12806244",
+          "store_type": "USER_STORE",
+          "section_type": "AD_MOB",
+          "section_id": "AD_MOB"
+        },
+        "eventType": "IMPRESSION"
+      },
+      "style": {
+        "backgroundColor": "#FFFFFF"
+      }
+    }
+  ],
+  "viewLog": {
+    "screenName": "store_detail",
+    "extraParameters": {
+      "store_id": "12806244",
+      "store_type": "USER_STORE"
+    },
+    "eventType": "PAGE_VIEW"
+  }
+}
