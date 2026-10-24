@@ -195,9 +195,8 @@ fun HomeBottomSheetContent(
         val textMeasurer = rememberTextMeasurer()
         val containerHeightPx = with(density) { maxHeight.toPx().roundToInt() }
         val collapsedPeekHeightPx = with(density) { collapsedPeekHeight.toPx().roundToInt() }
-        val hasSheetTabs = curationState.tabs.any { it.viewType == "CURATION" || it.viewType == "STORE_LIST" }
         val minimizedPeekHeightPx = with(density) {
-            HomeSheetLayout.minimizedPeekHeightDp(hasTabs = hasSheetTabs).dp.toPx().roundToInt()
+            HomeSheetLayout.minimizedPeekHeightDp(hasTabs = curationState.tabs.isNotEmpty()).dp.toPx().roundToInt()
         }
         val dragSettleThresholdPx = with(density) { 24.dp.toPx() }
         val storeDetailFullOffsetPx = if (storeDetailNavigationBar != null) {
@@ -434,20 +433,20 @@ fun HomeBottomSheetContent(
 
         val listNestedScrollConnection = remember(anchors, storeScreen, listState) {
             object : NestedScrollConnection {
+                private var userDragY = 0f
+
                 override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                     if (storeScreen != null) return Offset.Zero
 
                     val dragY = available.y
                     val shouldPullSheetDown = dragY > 0f &&
                         isListAtTop.value &&
-                        sheetOffsetPx < anchors.minimizedOffset
+                        sheetOffsetPx < pullDownLimit(source)
                     val shouldPushSheetUp = dragY < 0f && sheetOffsetPx > anchors.fullListOffset
 
                     if (!shouldPullSheetDown && !shouldPushSheetUp) return Offset.Zero
 
-                    val previousOffset = sheetOffsetPx
-                    snapSheetBy(dragY)
-                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                    return moveSheet(dragY, source)
                 }
 
                 override fun onPostScroll(
@@ -460,13 +459,11 @@ fun HomeBottomSheetContent(
                     val dragY = available.y
                     val shouldPullSheetDown = dragY > 0f &&
                         isListAtTop.value &&
-                        sheetOffsetPx < anchors.minimizedOffset
+                        sheetOffsetPx < pullDownLimit(source)
 
                     if (!shouldPullSheetDown) return Offset.Zero
 
-                    val previousOffset = sheetOffsetPx
-                    snapSheetBy(dragY)
-                    return Offset(x = 0f, y = sheetOffsetPx - previousOffset)
+                    return moveSheet(dragY, source)
                 }
 
                 override suspend fun onPreFling(available: Velocity): Velocity {
@@ -479,10 +476,26 @@ fun HomeBottomSheetContent(
                     return settleIfBetweenAnchors(available.y)
                 }
 
+                private fun pullDownLimit(source: NestedScrollSource): Float {
+                    return if (source == NestedScrollSource.UserInput) anchors.minimizedOffset else anchors.collapsedOffset
+                }
+
+                private fun moveSheet(dragY: Float, source: NestedScrollSource): Offset {
+                    val previousOffset = sheetOffsetPx
+                    snapSheetBy(dragY)
+                    if (dragY > 0f) sheetOffsetPx = sheetOffsetPx.coerceAtMost(pullDownLimit(source))
+                    val movedY = sheetOffsetPx - previousOffset
+                    if (source == NestedScrollSource.UserInput) userDragY += movedY
+                    return Offset(x = 0f, y = movedY)
+                }
+
                 private fun settleIfBetweenAnchors(velocityY: Float): Velocity {
+                    val dragY = userDragY
+                    userDragY = 0f
                     if (anchors.isAtAnchor(sheetOffsetPx)) return Velocity.Zero
 
-                    settleSheet(velocityY = velocityY)
+                    val totalDragY = if (sheetOffsetPx > anchors.collapsedOffset) dragY else 0f
+                    settleSheet(velocityY = velocityY, totalDragY = totalDragY)
                     return Velocity(x = 0f, y = velocityY)
                 }
             }
