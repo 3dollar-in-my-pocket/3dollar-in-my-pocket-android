@@ -25,6 +25,7 @@ enum class SDSectionType {
     REVIEW,
     CALLOUT,
     AD_MOB,
+    AD,
     MARGIN,
     THREADS_POST,
     UNKNOWN;

@@ -7,6 +7,7 @@ import com.google.gson.JsonParseException
 import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionType
+import com.threedollar.common.sdui.model.section.SDStoreAdSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAppearanceDaySectionModel
 import com.threedollar.common.sdui.model.section.SDStoreCalloutSectionModel
@@ -62,6 +63,7 @@ class SDSectionDeserializer : JsonDeserializer<SDSectionModel> {
         SDSectionType.REVIEW -> SDStoreReviewSectionModel::class.java
         SDSectionType.CALLOUT -> SDStoreCalloutSectionModel::class.java
         SDSectionType.AD_MOB -> SDStoreAdmobSectionModel::class.java
+        SDSectionType.AD -> SDStoreAdSectionModel::class.java
         SDSectionType.MARGIN -> SDStoreMarginSectionModel::class.java
         SDSectionType.THREADS_POST -> SDStoreThreadPostSectionModel::class.java
         SDSectionType.UNKNOWN -> null

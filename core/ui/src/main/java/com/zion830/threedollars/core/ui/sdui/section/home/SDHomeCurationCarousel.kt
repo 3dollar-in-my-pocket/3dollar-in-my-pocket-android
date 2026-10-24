@@ -33,6 +33,7 @@ import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.component.SDCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
@@ -40,6 +41,7 @@ import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilt
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.zion830.threedollars.core.ui.sdui.component.SDHeader
 import com.zion830.threedollars.core.ui.sdui.component.SDHomeCurationCategoryChip
+import com.zion830.threedollars.core.ui.sdui.component.card.SDAdCurationCard
 import com.zion830.threedollars.core.ui.sdui.component.card.SDImagePreviewCard
 
 object SDHomeCurationDefaults {
@@ -69,6 +71,8 @@ fun SDHomeCurationCarousel(
     emptyContent: @Composable () -> Unit = {},
     stateContent: @Composable () -> Unit = {},
     onCardVisible: (ImagePreviewCardModel) -> Unit = {},
+    onAdCardClick: (SDAdCardModel) -> Unit = {},
+    onAdCardVisible: (SDAdCardModel) -> Unit = {},
 ) {
     Column(
         modifier = modifier.fillMaxWidth().background(ColorWhite).drawBehind {
@@ -104,7 +108,7 @@ fun SDHomeCurationCarousel(
         }
         stateContent()
         val visibleCards = cards.filter {
-            it is ImagePreviewCardModel || (it is SDAdMobCardModel && adMobContent != null && it.cardId !in hiddenAdCardIds)
+            it is ImagePreviewCardModel || it is SDAdCardModel || (it is SDAdMobCardModel && adMobContent != null && it.cardId !in hiddenAdCardIds)
         }
         if (visibleCards.isEmpty()) {
             Box(modifier = Modifier.fillMaxWidth().padding(horizontal = SDHomeCurationDefaults.HorizontalPadding)) {
@@ -113,11 +117,16 @@ fun SDHomeCurationCarousel(
         } else {
             val currentCards by rememberUpdatedState(visibleCards)
             val currentOnCardVisible by rememberUpdatedState(onCardVisible)
+            val currentOnAdCardVisible by rememberUpdatedState(onAdCardVisible)
             LaunchedEffect(listState) {
                 snapshotFlow { currentCards to listState.layoutInfo.visibleItemsInfo.map { it.key } }
                     .collect { (_, keys) ->
                         keys.forEach { key ->
-                            (currentCards.firstOrNull { it.cardId == key } as? ImagePreviewCardModel)?.let(currentOnCardVisible)
+                            when (val card = currentCards.firstOrNull { it.cardId == key }) {
+                                is ImagePreviewCardModel -> currentOnCardVisible(card)
+                                is SDAdCardModel -> currentOnAdCardVisible(card)
+                                else -> Unit
+                            }
                         }
                     }
             }
@@ -134,6 +143,12 @@ fun SDHomeCurationCarousel(
                             imageSize = SDHomeCurationDefaults.CardSize,
                             imageContentScale = cardImageContentScale(card),
                             onPressed = onCardClick,
+                        )
+                        is SDAdCardModel -> SDAdCurationCard(
+                            model = card,
+                            imageSize = SDHomeCurationDefaults.CardSize,
+                            onClick = onAdCardClick,
+                            modifier = Modifier.clipToBounds(),
                         )
                         is SDAdMobCardModel -> adMobContent?.let { adContent ->
                             Box(modifier = Modifier.width(adMobCardWidth).height(card.height.coerceAtLeast(0).dp)) {

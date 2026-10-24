@@ -110,6 +110,22 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
             heightDp = SDAdMobSlotHeight.resolve(height),
         )
 
+        normalizedType == "AD_CARD" -> HomeListCardModel.AdCard(
+            type = type.orEmpty(),
+            cardId = cardId.orEmpty(),
+            card = sduiAdCardModel(
+                cardId = cardId,
+                title = title,
+                subTitle = subTitle,
+                labels = labels,
+                image = image,
+                trailingIcon = trailingIcon,
+                link = link,
+                clickLog = clickLog,
+                impressionLog = impressionLog,
+            ),
+        )
+
         else -> null
     }
 }
