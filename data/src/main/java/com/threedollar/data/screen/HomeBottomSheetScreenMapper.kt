@@ -209,6 +209,7 @@ private fun SDImageResponse.asModelOrNull(): SDImageModel? {
 private fun SDImageStyleResponse.asModel(): SDImageStyleModel = SDImageStyleModel(
     width = width,
     height = height,
+    alpha = alpha ?: SDImageStyleModel.DEFAULT_ALPHA,
 )
 
 private fun SDLinkResponse.asModel(): SDLinkModel = SDLinkModel(

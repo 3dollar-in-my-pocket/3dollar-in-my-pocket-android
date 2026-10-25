@@ -93,7 +93,12 @@ data class SDImageStyleModel(
     val width: Double? = null,
     val height: Double? = null,
     val dimmed: Boolean = false,
-)
+    val alpha: Double = DEFAULT_ALPHA,
+) {
+    companion object {
+        const val DEFAULT_ALPHA = 1.0
+    }
+}
 
 data class SDButtonModel(
     val text: SDTextModel,

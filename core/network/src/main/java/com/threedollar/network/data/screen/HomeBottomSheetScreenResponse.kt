@@ -194,6 +194,8 @@ data class SDImageStyleResponse(
     val height: Double? = null,
     @SerializedName("dimmed")
     val dimmed: Boolean? = null,
+    @SerializedName("alpha")
+    val alpha: Double? = null,
 )
 
 data class SDChipResponse(
