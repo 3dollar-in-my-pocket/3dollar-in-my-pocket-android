@@ -47,6 +47,16 @@ data class HomeListCardResponse(
     val impressionLog: SDImpressionLogResponse? = null,
     @SerializedName("height")
     val height: Int? = null,
+    @SerializedName("title")
+    val title: SDTextResponse? = null,
+    @SerializedName("subTitle")
+    val subTitle: SDTextResponse? = null,
+    @SerializedName("labels")
+    val labels: List<SDChipResponse>? = emptyList(),
+    @SerializedName("image")
+    val image: SDImageResponse? = null,
+    @SerializedName("trailingIcon")
+    val trailingIcon: SDImageResponse? = null,
 )
 
 data class HomeListCardHeaderResponse(

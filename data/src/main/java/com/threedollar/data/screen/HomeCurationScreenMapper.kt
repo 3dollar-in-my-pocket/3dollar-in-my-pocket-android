@@ -2,6 +2,7 @@ package com.threedollar.data.screen
 
 import com.google.gson.JsonElement
 import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
+import com.threedollar.common.sdui.model.component.SDAdCardModel
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.component.SDCardModel
 import com.threedollar.common.sdui.model.component.SDHeaderModel
@@ -120,8 +121,42 @@ private fun HomeCurationCardResponse.asCurationCardModelOrNull(): SDCardModel? =
         impressionLog = impressionLog?.asSduiLogModel(),
     )
 
+    "AD_CARD" -> sduiAdCardModel(
+        cardId = cardId,
+        title = title,
+        subTitle = subTitle,
+        labels = labels,
+        image = image,
+        trailingIcon = trailingIcon,
+        link = link,
+        clickLog = clickLog,
+        impressionLog = impressionLog,
+    )
+
     else -> null
 }
+
+internal fun sduiAdCardModel(
+    cardId: String?,
+    title: SDTextResponse?,
+    subTitle: SDTextResponse?,
+    labels: List<SDChipResponse>?,
+    image: SDImageResponse?,
+    trailingIcon: SDImageResponse?,
+    link: SDLinkResponse?,
+    clickLog: SDClickLogResponse?,
+    impressionLog: SDImpressionLogResponse?,
+): SDAdCardModel = SDAdCardModel(
+    cardId = cardId.orEmpty(),
+    title = title?.asSduiModel(),
+    subTitle = subTitle?.asSduiModel(),
+    labels = labels.orEmpty().map { it.asSduiModel() },
+    image = image?.takeIf { !it.url.isNullOrBlank() }?.asSduiModel(),
+    trailingIcon = trailingIcon?.takeIf { !it.url.isNullOrBlank() }?.asSduiModel(),
+    link = link?.takeIf { !it.link.isNullOrBlank() }?.asSduiModel(),
+    clickLog = clickLog?.asSduiLogModel(),
+    impressionLog = impressionLog?.asSduiLogModel(),
+)
 
 private fun SDHeaderResponse.asSduiModel(): SDHeaderModel = SDHeaderModel(
     title = title?.asSduiModel(),
