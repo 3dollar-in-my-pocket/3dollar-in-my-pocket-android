@@ -397,6 +397,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onCurationCategoryClick = viewModel::selectCurationCategory,
                     onCurationCardClick = viewModel::openCurationCard,
                     onCurationCardVisible = viewModel::onCurationCardVisible,
+                    onCurationAdCardVisible = viewModel::onCurationAdCardVisible,
                     onRetryCuration = viewModel::retryHomeCurationSection,
                     onRetryCurationCarousel = viewModel::retryCurationCarousel,
                     onCurationHeaderAction = viewModel::onCurationHeaderAction,
@@ -404,6 +405,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onAdMobClick = viewModel::sendClickAdMobCard,
+                    onAdCardClick = viewModel::openAdCard,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->

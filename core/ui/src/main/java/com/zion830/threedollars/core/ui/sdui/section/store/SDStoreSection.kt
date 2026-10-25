@@ -10,6 +10,7 @@ import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.section.SDRelatedStoresSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
+import com.threedollar.common.sdui.model.section.SDStoreAdSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreAppearanceDaySectionModel
 import com.threedollar.common.sdui.model.section.SDStoreCalloutSectionModel
@@ -84,6 +85,7 @@ fun SDStoreSection(
         is SDStoreCalloutSectionModel -> SDStoreCalloutSection(section, onAction, modifier)
         is SDStoreReviewSectionModel -> SDStoreReviewSection(section, onAction, modifier, onImageClick)
         is SDStoreAdmobSectionModel -> SDStoreAdmobSection(section, modifier, slots.adContent)
+        is SDStoreAdSectionModel -> SDStoreAdSection(section, onAction, modifier)
         is SDStoreMarginSectionModel -> SDStoreMarginSection(section, modifier)
         is SDStoreThreadPostSectionModel -> SDStoreThreadPostSection(
             model = section,
