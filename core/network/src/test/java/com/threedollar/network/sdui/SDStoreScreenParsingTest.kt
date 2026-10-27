@@ -194,4 +194,32 @@ class SDStoreScreenParsingTest {
         assertEquals(250, card.height)
         assertEquals(250, card.slotHeightDp)
     }
+
+    // TH-1537 TC8
+    @Test
+    fun `TH1537_TC8_미리보기응답의_단일가게마커_좌표를_지도이동위치로_파싱한다`() {
+        // Given
+        val fileName = "StorePreviewUserStoreWithMarker.json"
+
+        // When
+        val location = load(fileName).previewMarkerLocation
+
+        // Then
+        assertNotNull(location)
+        assertEquals(37.5508634, location?.latitude ?: 0.0, 0.0)
+        assertEquals(127.128835, location?.longitude ?: 0.0, 0.0)
+    }
+
+    // TH-1537 TC8
+    @Test
+    fun `TH1537_TC8_마커가없는_미리보기응답이면_지도이동위치가_null이다`() {
+        // Given
+        val fileName = "StorePreviewBossStore.json"
+
+        // When
+        val location = load(fileName).previewMarkerLocation
+
+        // Then
+        assertNull(location)
+    }
 }
