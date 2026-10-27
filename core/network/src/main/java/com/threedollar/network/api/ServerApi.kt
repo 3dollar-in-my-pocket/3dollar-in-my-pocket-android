@@ -283,6 +283,9 @@ interface ServerApi {
     @POST("/api/v2/store/visit")
     suspend fun postStoreVisit(@Body postStoreVisitRequest: PostStoreVisitRequest): Response<BaseResponse<String>>
 
+    @DELETE("/api/v2/store/visit/{visitId}")
+    suspend fun deleteStoreVisit(@Path("visitId") visitId: String): Response<BaseResponse<String>>
+
 
     // Device
     @PUT("/api/v2/device")

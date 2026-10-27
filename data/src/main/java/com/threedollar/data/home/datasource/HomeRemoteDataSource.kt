@@ -86,6 +86,8 @@ interface HomeRemoteDataSource {
 
     fun postStoreVisit(postStoreVisitRequest: PostStoreVisitRequest): Flow<BaseResponse<String>>
 
+    fun deleteStoreVisit(visitId: String): Flow<BaseResponse<String>>
+
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
     suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesResponse>>
