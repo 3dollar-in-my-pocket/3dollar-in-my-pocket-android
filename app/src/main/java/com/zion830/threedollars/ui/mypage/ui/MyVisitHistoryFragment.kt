@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.mypage.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -20,15 +21,19 @@ import com.threedollar.common.base.BaseFragment
 import com.threedollar.common.listener.OnBackPressedListener
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
+import com.threedollar.common.R as CommonR
 import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.model.MyVisitDeleteResult
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
+import com.zion830.threedollars.utils.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import zion830.com.common.base.onSingleClick
 
 @AndroidEntryPoint
 class MyVisitHistoryFragment :
@@ -56,15 +61,23 @@ class MyVisitHistoryFragment :
     }
 
     override fun initView() {
-        adapter = MyVisitHistoryRecyclerAdapter(object : OnItemClickListener<MyVisitHistoryV2> {
-            override fun onClick(item: MyVisitHistoryV2) {
-                sendClickStore(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
-                val storeId = item.store.storeId?.takeIf { it.isNotBlank() } ?: return
-                val intent = StoreDetailSduiActivity.getIntent(requireContext(), storeId)
-                startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
-            }
-        })
+        adapter = MyVisitHistoryRecyclerAdapter(
+            listener = object : OnItemClickListener<MyVisitHistoryV2> {
+                override fun onClick(item: MyVisitHistoryV2) {
+                    sendClickStore(item.store.storeId.orEmpty(), item.store.storeType.orEmpty())
+                    val storeId = item.store.storeId?.takeIf { it.isNotBlank() } ?: return
+                    val intent = StoreDetailSduiActivity.getIntent(requireContext(), storeId)
+                    startActivityForResult(intent, Constants.SHOW_STORE_DETAIL)
+                }
+            },
+            deleteListener = object : OnItemClickListener<MyVisitHistoryV2> {
+                override fun onClick(item: MyVisitHistoryV2) {
+                    showDeleteConfirmDialog(item)
+                }
+            },
+        )
         binding.rvVisitHistory.adapter = adapter
+        binding.tvEdit.onSingleClick { myVisitHistoryViewModel.toggleEditMode() }
         binding.btnBack.setOnClickListener {
             activity?.supportFragmentManager?.popBackStack()
             viewModel.updateUserInfo()
@@ -90,6 +103,34 @@ class MyVisitHistoryFragment :
         )
     }
 
+    private fun showDeleteConfirmDialog(item: MyVisitHistoryV2) {
+        AlertDialog.Builder(requireContext())
+            .setMessage(CommonR.string.my_visit_history_delete_confirm)
+            .setPositiveButton(CommonR.string.delete) { _, _ -> myVisitHistoryViewModel.deleteVisit(item) }
+            .setNegativeButton(CommonR.string.cancel, null)
+            .show()
+    }
+
+    private fun handleDeleteResult(result: MyVisitDeleteResult) {
+        when (result) {
+            is MyVisitDeleteResult.Deleted -> {
+                result.message?.let { showToast(it) }
+                adapter?.refresh()
+                myPageViewModel.getUserInfo()
+                myPageViewModel.getMyVisitsStore()
+            }
+
+            is MyVisitDeleteResult.Failed -> showToast(result.message ?: getString(CommonR.string.connection_failed))
+        }
+    }
+
+    private fun updateEmptyState() {
+        val isEmpty = adapter?.itemCount == 0
+        binding.emptyStateView.isVisible = isEmpty
+        binding.tvEdit.isVisible = !isEmpty
+        if (isEmpty) myVisitHistoryViewModel.exitEditMode()
+    }
+
     private fun observeUiData() {
         lifecycleScope.launch {
             viewLifecycleOwner.lifecycleScope.launch {
@@ -102,13 +143,20 @@ class MyVisitHistoryFragment :
                     launch {
                         adapter?.loadStateFlow?.collectLatest { loadState ->
                             when (loadState.refresh) {
-                                is LoadState.NotLoading, is LoadState.Error -> {
-                                    binding.emptyStateView.isVisible = adapter?.itemCount == 0
-                                }
+                                is LoadState.NotLoading, is LoadState.Error -> updateEmptyState()
 
                                 else -> {}
                             }
                         }
+                    }
+                    launch {
+                        myVisitHistoryViewModel.isEditMode.collect { isEditMode ->
+                            adapter?.setEditMode(isEditMode)
+                            binding.tvEdit.setText(if (isEditMode) CommonR.string.complete else CommonR.string.my_visit_history_edit)
+                        }
+                    }
+                    launch {
+                        myVisitHistoryViewModel.deleteResult.collect(::handleDeleteResult)
                     }
                 }
             }
