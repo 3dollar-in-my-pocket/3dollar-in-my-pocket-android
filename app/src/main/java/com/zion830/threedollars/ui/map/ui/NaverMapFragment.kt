@@ -90,6 +90,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private val homeListMarkerImageTargets = mutableMapOf<Marker, CustomTarget<Bitmap>>()
 
+    private var landingStoreMarker: Marker? = null
+
     var listener: OnMapTouchListener? = null
 
     private var isShowOverlay = true
@@ -221,6 +223,22 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 this.map = naverMap
             },
         )
+    }
+
+    /**
+     * 홈 목록 마커와 별개로 마커 하나를 [position] 에 둔다. 목록에 없는 가게로 랜딩했을 때 쓴다.
+     * null 이면 지운다.
+     */
+    fun updateLandingStoreMarker(@DrawableRes drawableRes: Int, position: LatLng?) {
+        if (position == null || naverMap == null) {
+            landingStoreMarker?.map = null
+            landingStoreMarker = null
+            return
+        }
+        val marker = landingStoreMarker ?: Marker().also { landingStoreMarker = it }
+        marker.position = position
+        marker.icon = OverlayImage.fromResource(drawableRes)
+        marker.map = naverMap
     }
 
     fun clearMarker() {

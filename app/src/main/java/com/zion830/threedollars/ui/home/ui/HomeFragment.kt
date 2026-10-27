@@ -62,6 +62,8 @@ import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStore
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.data.HomeStoreLanding
+import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
@@ -95,6 +97,7 @@ import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
@@ -581,6 +584,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
+                    combine(viewModel.storeLanding, viewModel.homeListSection) { landing, section ->
+                        landing?.takeIf { target ->
+                            section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
+                                .none { it.storePreviewStoreIdOrNull() == target.storeId }
+                        }?.location
+                    }.collect { position ->
+                        naverMapFragment.updateLandingStoreMarker(DesignSystemR.drawable.ic_mappin_focused_on, position)
+                    }
+                }
+                launch {
+                    viewModel.storeLandingMove.collect(::moveToStoreLanding)
+                }
+                launch {
+                    viewModel.storeLandingFailure.collect { storeId ->
+                        startActivityForResult(
+                            StoreDetailSduiActivity.getIntent(requireContext(), storeId.toString()),
+                            Constants.SHOW_STORE_BY_CATEGORY,
+                        )
+                    }
+                }
+                launch {
                     viewModel.selectedStoreScreen.collect { screen ->
                         homeBackPressedCallback.isEnabled = screen != null
                         updateMapControlsVisibility()
@@ -699,7 +723,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val intent = requireActivity().intent
         val storeId = intent.getLongExtra(DynamicLinkActivity.STORE_PREVIEW, 0L).takeIf { it > 0L } ?: return
         intent.removeExtra(DynamicLinkActivity.STORE_PREVIEW)
+        if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)) {
+            val expanded = intent.getBooleanExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED, true)
+            intent.removeExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)
+            viewModel.openStoreLanding(HomeStoreLandingRequest(storeId = storeId, expanded = expanded))
+            return
+        }
         viewModel.fetchStoreScreen(storeId)
+    }
+
+    private fun moveToStoreLanding(landing: HomeStoreLanding) {
+        naverMapFragment.moveCameraWithAnim(landing.location)
+        binding.tvRetrySearch.isVisible = false
+        viewModel.fetchAroundStoreLanding(landing)
     }
 
     private fun moveStorePreviewPhotoAdd() {
@@ -881,13 +917,19 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private fun useDefaultLocation() {
         val cachedLocation = naverMapFragment.getCachedUserLocation()
         val fallbackLocation = cachedLocation ?: NaverMapUtils.DEFAULT_LOCATION
-        naverMapFragment.moveCamera(fallbackLocation)
-
-        viewModel.fetchAroundStores(
-            mapPosition = fallbackLocation,
-            userLocation = fallbackLocation,
-            deviceLocationAvailable = cachedLocation != null && isLocationAvailable(),
-        )
+        val deviceLocationAvailable = cachedLocation != null && isLocationAvailable()
+        val landing = viewModel.storeLanding.value
+        if (landing != null) {
+            viewModel.updateCurrentLocation(fallbackLocation, deviceLocationAvailable = deviceLocationAvailable)
+            moveToStoreLanding(landing)
+        } else {
+            naverMapFragment.moveCamera(fallbackLocation)
+            viewModel.fetchAroundStores(
+                mapPosition = fallbackLocation,
+                userLocation = fallbackLocation,
+                deviceLocationAvailable = deviceLocationAvailable,
+            )
+        }
         viewModel.getAdvertisement(latLng = fallbackLocation)
     }
     
@@ -933,10 +975,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 return@moveToCurrentLocation
             }
 
-            viewModel.fetchAroundStores(
-                mapPosition = currentLocation,
-                userLocation = currentLocation,
-            )
+            val landing = viewModel.storeLanding.value
+            if (landing != null) {
+                viewModel.updateCurrentLocation(currentLocation)
+                moveToStoreLanding(landing)
+            } else {
+                viewModel.fetchAroundStores(
+                    mapPosition = currentLocation,
+                    userLocation = currentLocation,
+                )
+            }
             viewModel.getAdvertisement(latLng = currentLocation)
         }
     }
