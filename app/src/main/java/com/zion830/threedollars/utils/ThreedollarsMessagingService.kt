@@ -56,8 +56,7 @@ class ThreedollarsMessagingService : FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(
             this,
             0,
-            Intent(this, DynamicLinkActivity::class.java).apply {
-                putExtra("link", link)
+            DynamicLinkActivity.getExternalIntent(this, link).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             },
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT else PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_UPDATE_CURRENT
