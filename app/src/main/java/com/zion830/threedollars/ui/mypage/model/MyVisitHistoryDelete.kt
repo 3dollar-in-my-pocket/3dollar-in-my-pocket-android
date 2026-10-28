@@ -6,18 +6,44 @@ import com.threedollar.common.analytics.LogObjectType
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseResponse
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
-/** 방문 인증 삭제 결과. [message] 가 null 이면 화면이 기본 문구(실패는 공통 에러 안내)를 쓴다. */
+/**
+ * 방문 인증 삭제 가능 여부 (iOS 와 동일 기준).
+ * 서버 `visit.createdAt`(KST 로컬 시각)으로부터 24시간이 지나기 전까지만 삭제할 수 있고, 파싱에 실패하면 삭제할 수 없다.
+ */
+internal object MyVisitDeletePolicy {
+    private val SERVER_FORMAT: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+    private val SERVER_ZONE: ZoneId = ZoneId.of("Asia/Seoul")
+    private val DELETABLE_DURATION: Duration = Duration.ofHours(24)
+
+    fun isDeletable(createdAt: String?, now: Instant = Instant.now()): Boolean {
+        val createdAtInstant = try {
+            LocalDateTime.parse(createdAt ?: return false, SERVER_FORMAT).atZone(SERVER_ZONE).toInstant()
+        } catch (e: DateTimeParseException) {
+            return false
+        }
+        return Duration.between(createdAtInstant, now) < DELETABLE_DURATION
+    }
+
+    fun hasDeletable(createdAts: List<String?>, now: Instant = Instant.now()): Boolean =
+        createdAts.any { isDeletable(it, now) }
+}
+
+/** 방문 인증 삭제 결과. 성공은 고정 문구를 띄우고, 실패 [Failed.message] 가 null 이면 공통 에러 안내를 쓴다. */
 internal sealed interface MyVisitDeleteResult {
-    val message: String?
+    data object Deleted : MyVisitDeleteResult
 
-    data class Deleted(override val message: String?) : MyVisitDeleteResult
-
-    data class Failed(override val message: String?) : MyVisitDeleteResult
+    data class Failed(val message: String?) : MyVisitDeleteResult
 
     companion object {
         fun from(response: BaseResponse<String>): MyVisitDeleteResult = if (response.ok) {
-            Deleted(message = response.data.nonBlankOrNull() ?: response.message.nonBlankOrNull())
+            Deleted
         } else {
             Failed(message = response.message.nonBlankOrNull())
         }

@@ -26,6 +26,7 @@ import com.threedollar.network.data.visit_history.MyVisitHistoryV2
 import com.zion830.threedollars.UserInfoViewModel
 import com.zion830.threedollars.databinding.FragmentMyVisitHistoryBinding
 import com.zion830.threedollars.ui.mypage.adapter.MyVisitHistoryRecyclerAdapter
+import com.zion830.threedollars.ui.mypage.model.MyVisitDeletePolicy
 import com.zion830.threedollars.ui.mypage.model.MyVisitDeleteResult
 import com.zion830.threedollars.ui.mypage.viewModel.MyVisitHistoryViewModel
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiActivity
@@ -75,6 +76,7 @@ class MyVisitHistoryFragment :
                     showDeleteConfirmDialog(item)
                 }
             },
+            isDeletable = { item -> MyVisitDeletePolicy.isDeletable(item.visit.createdAt) },
         )
         binding.rvVisitHistory.adapter = adapter
         binding.tvEdit.onSingleClick { myVisitHistoryViewModel.toggleEditMode() }
@@ -113,8 +115,8 @@ class MyVisitHistoryFragment :
 
     private fun handleDeleteResult(result: MyVisitDeleteResult) {
         when (result) {
-            is MyVisitDeleteResult.Deleted -> {
-                result.message?.let { showToast(it) }
+            MyVisitDeleteResult.Deleted -> {
+                showToast(CommonR.string.my_visit_history_deleted)
                 adapter?.refresh()
                 myPageViewModel.getUserInfo()
                 myPageViewModel.getMyVisitsStore()
@@ -125,10 +127,10 @@ class MyVisitHistoryFragment :
     }
 
     private fun updateEmptyState() {
-        val isEmpty = adapter?.itemCount == 0
-        binding.emptyStateView.isVisible = isEmpty
-        binding.tvEdit.isVisible = !isEmpty
-        if (isEmpty) myVisitHistoryViewModel.exitEditMode()
+        binding.emptyStateView.isVisible = adapter?.itemCount == 0
+        val hasDeletable = MyVisitDeletePolicy.hasDeletable(adapter?.snapshot()?.items.orEmpty().map { it.visit.createdAt })
+        binding.tvEdit.isVisible = hasDeletable
+        if (!hasDeletable) myVisitHistoryViewModel.exitEditMode()
     }
 
     private fun observeUiData() {

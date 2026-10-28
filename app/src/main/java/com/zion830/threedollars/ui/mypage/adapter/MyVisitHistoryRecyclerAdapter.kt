@@ -15,6 +15,7 @@ import zion830.com.common.base.onSingleClick
 class MyVisitHistoryRecyclerAdapter(
     private val listener: OnItemClickListener<MyVisitHistoryV2>,
     private val deleteListener: OnItemClickListener<MyVisitHistoryV2>,
+    private val isDeletable: (MyVisitHistoryV2) -> Boolean,
 ) : PagingDataAdapter<MyVisitHistoryV2, BaseViewHolder<ItemMyVisitHistoryBinding, MyVisitHistoryV2>>(BaseDiffUtilCallback()) {
 
     private var isEditMode = false
@@ -42,7 +43,7 @@ class MyVisitHistoryRecyclerAdapter(
             tvCreatedAt.text = StringUtils.getTimeString(item.visit.createdAt, "HH:MM:ss")
             tvDate.text = StringUtils.getTimeString(item.visit.createdAt, "MM월 d일 E요일")
             tvCategories.text = categories
-            ivDelete.isVisible = isEditMode
+            ivDelete.isVisible = isEditMode && isDeletable(item)
             ivDelete.onSingleClick { deleteListener.onClick(item) }
         }
     }

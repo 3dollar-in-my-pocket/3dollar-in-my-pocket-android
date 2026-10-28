@@ -10,6 +10,7 @@ import com.threedollar.data.my.datasource.MyVisitHistoryDataSourceImpl
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.visit_history.MyVisitHistoryV2
+import com.zion830.threedollars.ui.mypage.model.MyVisitDeletePolicy
 import com.zion830.threedollars.ui.mypage.model.MyVisitDeleteResult
 import com.zion830.threedollars.ui.mypage.model.createDeleteVisitClickEvent
 import com.zion830.threedollars.ui.mypage.model.createVisitHistoryEditClickEvent
@@ -58,6 +59,7 @@ class MyVisitHistoryViewModel @Inject constructor(
     /** 확인 팝업에서 삭제를 눌렀을 때만 부른다. 삭제 가능 기간은 서버가 판단한다. */
     fun deleteVisit(item: MyVisitHistoryV2) {
         val visitId = item.visit.visitId?.takeIf { it.isNotBlank() } ?: return
+        if (!MyVisitDeletePolicy.isDeletable(item.visit.createdAt)) return
         LogManager.sendEvent(
             createDeleteVisitClickEvent(
                 storeId = item.store.storeId.orEmpty(),
