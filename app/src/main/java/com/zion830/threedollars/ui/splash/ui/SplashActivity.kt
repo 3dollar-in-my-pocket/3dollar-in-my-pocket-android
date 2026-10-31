@@ -203,11 +203,7 @@ class SplashActivity :
             }
 
             deepLink.contains("dollars") -> {
-                startActivity(
-                    Intent(this@SplashActivity, DynamicLinkActivity::class.java).apply {
-                        putExtra("link", deepLink)
-                    },
-                )
+                startActivity(DynamicLinkActivity.getExternalIntent(this@SplashActivity, deepLink))
             }
 
             else -> {
