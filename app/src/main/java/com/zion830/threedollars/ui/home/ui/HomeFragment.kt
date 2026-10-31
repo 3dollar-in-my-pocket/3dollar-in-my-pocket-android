@@ -724,7 +724,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         val storeId = intent.getLongExtra(DynamicLinkActivity.STORE_PREVIEW, 0L).takeIf { it > 0L } ?: return
         intent.removeExtra(DynamicLinkActivity.STORE_PREVIEW)
         if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)) {
-            val expanded = intent.getBooleanExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED, true)
+            val expanded = intent.getBooleanExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED, false)
             intent.removeExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)
             viewModel.openStoreLanding(HomeStoreLandingRequest(storeId = storeId, expanded = expanded))
             return
