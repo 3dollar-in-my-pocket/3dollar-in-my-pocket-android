@@ -11,16 +11,16 @@ internal data class HomeStoreLandingRequest(
     val expanded: Boolean,
 ) {
     companion object {
-        private const val VIEW_COLLAPSED = "collapsed"
+        private const val VIEW_EXPANDED = "expanded"
 
         /**
          * 앱 안에서 연 링크([isExternal] false)는 기존처럼 가게 상세 화면으로 보내야 하므로 null 을 돌려준다.
-         * `view` 가 없거나 알 수 없는 값이면 하위 호환을 위해 펼친다.
+         * `view` 가 `expanded` 일 때만 펼치고, 없거나 알 수 없는 값이면 미리보기로 연다.
          */
         fun from(storeId: String?, view: String?, isExternal: Boolean): HomeStoreLandingRequest? {
             if (!isExternal) return null
             val id = storeId?.toLongOrNull()?.takeIf { it > 0L } ?: return null
-            return HomeStoreLandingRequest(storeId = id, expanded = view != VIEW_COLLAPSED)
+            return HomeStoreLandingRequest(storeId = id, expanded = view == VIEW_EXPANDED)
         }
     }
 }

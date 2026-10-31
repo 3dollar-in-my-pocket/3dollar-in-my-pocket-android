@@ -16,7 +16,7 @@ class HomeStoreLandingRequestTest {
         val request = HomeStoreLandingRequest.from(storeId = storeId, view = null, isExternal = true)
 
         // Then
-        assertEquals(HomeStoreLandingRequest(storeId = 12806182L, expanded = true), request)
+        assertEquals(HomeStoreLandingRequest(storeId = 12806182L, expanded = false), request)
     }
 
     // TH-1537 TC3
@@ -47,7 +47,7 @@ class HomeStoreLandingRequestTest {
 
     // TH-1537 TC5
     @Test
-    fun `TH1537_TC5_view가_없거나_알수없는값이면_펼쳐서_연다`() {
+    fun `TH1537_TC5_view가_없거나_알수없는값이면_미리보기로_연다`() {
         // Given
         val views = listOf(null, "", "unknown", "COLLAPSED")
 
@@ -55,7 +55,7 @@ class HomeStoreLandingRequestTest {
         val expanded = views.map { HomeStoreLandingRequest.from(storeId = "100", view = it, isExternal = true)?.expanded }
 
         // Then
-        assertEquals(listOf(true, true, true, true), expanded)
+        assertEquals(listOf(false, false, false, false), expanded)
     }
 
     // TH-1537 TC10
