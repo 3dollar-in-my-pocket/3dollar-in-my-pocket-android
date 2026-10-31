@@ -175,13 +175,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             if (isInitialCameraPlaced) {
                 mapPosition.value = map.cameraPosition.target
             }
-            map.contentBounds.let {
-                val northWest = it.northWest
-                val southEast = it.southEast
-                val distanceM = calculateDistance(northWest, southEast)
-
-                mapViewPortDistance.value = distanceM.toDouble()
-            }
+            currentViewportDistanceM()?.let { mapViewPortDistance.value = it }
         }
         if (isShowOverlay) {
             val storeMarker = GlobalApplication.storeMarker ?: return
@@ -602,7 +596,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     fun currentViewportDistanceM(): Double? {
         val bounds = naverMap?.contentBounds ?: return null
-        return calculateDistance(bounds.northWest, bounds.southEast).toDouble()
+        return NaverMapUtils.searchDistanceM(calculateDistance(bounds.northWest, bounds.southEast).toDouble())
     }
 
     fun moveCameraWithAnim(position: LatLng, zoomLevel: Double? = null) {

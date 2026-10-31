@@ -8,6 +8,10 @@ object NaverMapUtils {
     val DEFAULT_LOCATION = LatLng(37.56, 126.97) // 서울
     val DEFAULT_DISTANCE_M = 100000.0
     const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    private const val VIEWPORT_DIAGONAL_PER_SEARCH_DISTANCE = 3.0
+
+    fun searchDistanceM(viewportDiagonalM: Double): Double =
+        viewportDiagonalM / VIEWPORT_DIAGONAL_PER_SEARCH_DISTANCE
 
     fun calculateDistance(first: LatLng?, second: LatLng?): Float {
         if (first == null || second == null) {
