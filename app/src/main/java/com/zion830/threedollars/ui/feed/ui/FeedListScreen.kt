@@ -2,47 +2,60 @@ package com.zion830.threedollars.ui.feed.ui
 
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import base.compose.ColorWhite
 import base.compose.Gray0
+import base.compose.Gray10
 import base.compose.Gray100
+import base.compose.Gray30
 import base.compose.Gray70
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
@@ -63,100 +76,167 @@ import kotlinx.coroutines.flow.map
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun FeedListScreen(
     state: FeedListUiState,
     onIntent: (FeedListUiIntent) -> Unit,
+    listState: LazyListState,
+    modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
     FeedPagingTrigger(
         listState = listState,
         canLoadMore = state.canLoadMore,
         onLoadNextPage = { onIntent(FeedListUiIntent.OnLoadNextPage) },
     )
+    var scrolledListRevision by rememberSaveable { mutableStateOf(state.listRevision) }
+    LaunchedEffect(state.listRevision) {
+        if (state.listRevision == scrolledListRevision) return@LaunchedEffect
+        listState.scrollToItem(0)
+        scrolledListRevision = state.listRevision
+    }
 
-    Column(
-        modifier = Modifier
+    LazyColumn(
+        state = listState,
+        modifier = modifier
             .fillMaxSize()
-            .background(Gray0)
-            .statusBarsPadding(),
+            .background(Gray0),
+        contentPadding = PaddingValues(horizontal = HORIZONTAL_PADDING_DP.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        FeedListTopBar(onClose = { onIntent(FeedListUiIntent.OnCloseClick) })
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = { onIntent(FeedListUiIntent.OnRefresh) },
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                item(key = AD_ITEM_KEY) {
-                    FeedAdvertisementSlot(
-                        advertisement = state.advertisement,
-                        onClick = { onIntent(FeedListUiIntent.OnAdvertisementClick(it)) },
-                    )
-                }
+        item(key = HEADER_ITEM_KEY) { FeedListHeader() }
+        item(key = AD_ITEM_KEY) {
+            FeedAdvertisementSlot(
+                advertisement = state.advertisement,
+                onClick = { onIntent(FeedListUiIntent.OnAdvertisementClick(it)) },
+            )
+        }
+        when {
+            state.showsSkeleton -> items(SKELETON_COUNT, key = { "skeleton:$it" }) { FeedCardSkeleton() }
+            state.isFailed -> item(key = ERROR_ITEM_KEY) {
+                FeedErrorContent(onRetry = { onIntent(FeedListUiIntent.OnRetry) })
+            }
+            state.isEmpty -> item(key = EMPTY_ITEM_KEY) { FeedEmptyContent() }
+            else -> {
                 items(state.feeds, key = { it.feedId }) { feed ->
                     FeedCard(feed = feed, onClick = { onIntent(FeedListUiIntent.OnFeedClick(feed)) })
                 }
-                if (state.isLoading && state.feeds.isNotEmpty()) {
-                    item {
+                if (state.isLoading) {
+                    item(key = LOADING_ITEM_KEY) {
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                             LottieFishLoading(modifier = Modifier.size(72.dp))
                         }
                     }
                 }
-                item { Spacer(modifier = Modifier.navigationBarsPadding()) }
-            }
-            if (state.isEmpty) {
-                FeedEmptyContent(modifier = Modifier.align(Alignment.Center))
-            }
-            if (state.isLoading && !state.hasLoaded) {
-                LottieFishLoading(
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .size(120.dp),
-                )
             }
         }
     }
 }
 
 @Composable
-private fun FeedListTopBar(onClose: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-    ) {
+private fun FeedListHeader() {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(
-            text = stringResource(CommonR.string.feed_list_title),
-            modifier = Modifier.align(Alignment.Center),
+            text = stringResource(CommonR.string.feed_list_header_title),
             color = Gray100,
             fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = dpToSp(16),
+            fontWeight = FontWeight.Bold,
+            fontSize = dpToSp(20),
+            lineHeight = dpToSp(28),
         )
-        Image(
-            painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.dp)
-                .size(24.dp)
-                .noRippleClickable(onClick = onClose),
+        Text(
+            text = stringResource(CommonR.string.feed_list_header_description),
+            color = Gray70,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.Normal,
+            fontSize = dpToSp(14),
+            lineHeight = dpToSp(20),
         )
     }
 }
 
 @Composable
-private fun FeedEmptyContent(modifier: Modifier = Modifier) {
+private fun FeedCardSkeleton() {
+    val transition = rememberInfiniteTransition(label = "feed_skeleton")
+    val alpha by transition.animateFloat(
+        initialValue = 1f,
+        targetValue = 0.4f,
+        animationSpec = infiniteRepeatable(tween(SKELETON_PULSE_MS), RepeatMode.Reverse),
+        label = "feed_skeleton_alpha",
+    )
+    val shape = RoundedCornerShape(20.dp)
     Column(
-        modifier = modifier.offset(y = (-40).dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(ColorWhite, shape)
+            .padding(16.dp)
+            .alpha(alpha),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        SkeletonBlock(width = 140.dp, height = 26.dp, shape = CircleShape)
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            SkeletonBlock(width = 56.dp, height = 56.dp, shape = RoundedCornerShape(12.dp))
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                SkeletonBlock(width = 80.dp, height = 14.dp)
+                SkeletonBlock(width = 160.dp, height = 20.dp)
+            }
+        }
+        SkeletonBlock(height = 72.dp, shape = RoundedCornerShape(12.dp))
+    }
+}
+
+@Composable
+private fun SkeletonBlock(
+    height: Dp,
+    width: Dp? = null,
+    shape: Shape = RoundedCornerShape(8.dp),
+) {
+    Box(
+        modifier = Modifier
+            .then(if (width != null) Modifier.width(width) else Modifier.fillMaxWidth())
+            .height(height)
+            .background(Gray10, shape),
+    )
+}
+
+@Composable
+private fun FeedErrorContent(onRetry: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 40.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(CommonR.string.feed_list_error_title),
+            color = Gray70,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = dpToSp(16),
+            textAlign = TextAlign.Center,
+        )
+        Spacer(modifier = Modifier.height(12.dp))
+        Text(
+            text = stringResource(CommonR.string.feed_list_error_retry),
+            modifier = Modifier
+                .clip(CircleShape)
+                .border(1.dp, Gray30, CircleShape)
+                .background(ColorWhite)
+                .clickable(onClick = onRetry)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            color = Gray100,
+            fontFamily = PretendardFontFamily,
+            fontWeight = FontWeight.Medium,
+            fontSize = dpToSp(14),
+        )
+    }
+}
+
+@Composable
+private fun FeedEmptyContent() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
@@ -265,6 +345,12 @@ private fun FeedPagingTrigger(
     }
 }
 
+private const val HEADER_ITEM_KEY = "header"
 private const val AD_ITEM_KEY = "advertisement"
+private const val ERROR_ITEM_KEY = "error"
+private const val EMPTY_ITEM_KEY = "empty"
+private const val LOADING_ITEM_KEY = "loading"
 private const val AD_SLOT_HEIGHT_DP = 200
-private const val HORIZONTAL_PADDING_DP = 16
+private const val HORIZONTAL_PADDING_DP = 20
+private const val SKELETON_COUNT = 3
+private const val SKELETON_PULSE_MS = 600

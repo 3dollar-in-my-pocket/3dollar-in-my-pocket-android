@@ -45,6 +45,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -115,6 +116,10 @@ import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
+import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
+import com.zion830.threedollars.ui.feed.model.FeedListUiState
+import com.zion830.threedollars.ui.feed.ui.FeedListScreen
+import com.zion830.threedollars.ui.home.data.HomeSheetTabScrollPolicy
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
@@ -124,6 +129,7 @@ import com.threedollar.common.sdui.model.component.ImagePreviewCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
@@ -192,6 +198,8 @@ fun HomeBottomSheetContent(
     onRetryCuration: () -> Unit = {},
     onRetryCurationCarousel: (String) -> Unit = {},
     onCurationHeaderAction: (SDActionEvent) -> Unit = {},
+    feedState: FeedListUiState = FeedListUiState(),
+    onFeedIntent: (FeedListUiIntent) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -230,6 +238,7 @@ fun HomeBottomSheetContent(
         val coroutineScope = rememberCoroutineScope()
         val nearbyListState = rememberLazyListState()
         val curationListState = rememberLazyListState()
+        val newsListState = rememberLazyListState()
         val curationViewportWidthDp = maxWidth.value.toInt()
         val curationCarouselWidthDp = (maxWidth - SDHomeCurationDefaults.HorizontalPadding * 2).value.toInt()
         val curationAds = curationState.section?.items.orEmpty().flatMap { item ->
@@ -249,8 +258,18 @@ fun HomeBottomSheetContent(
         val hiddenCurationAdIds = failedCurationAdIds + curationAds.mapNotNull { (card, availableWidth) ->
             card.cardId.takeIf { HomeCurationAdPolicy.dimensions(card.height, availableWidth) == null }
         }
-        val isCurationTab = curationState.tabs.firstOrNull { it.tabId == curationState.selectedTabId }?.viewType == "CURATION"
-        val listState = if (isCurationTab) curationListState else nearbyListState
+        val listState = when {
+            curationState.isNewsTabSelected -> newsListState
+            curationState.isCurationTabSelected -> curationListState
+            else -> nearbyListState
+        }
+        var lastSelectedTabId by rememberSaveable { mutableStateOf(curationState.selectedTabId) }
+        LaunchedEffect(curationState.selectedTabId) {
+            if (HomeSheetTabScrollPolicy.shouldScrollToTop(lastSelectedTabId, curationState.selectedTabId)) {
+                listState.scrollToItem(0)
+            }
+            lastSelectedTabId = curationState.selectedTabId
+        }
         val carouselListStates = remember(curationState.sectionRequestId, curationState.section) {
             curationState.section?.items.orEmpty().filterIsInstance<SDHomeCurationItemModel.Carousel>()
                 .associate { it.carouselId to LazyListState() }
@@ -638,6 +657,19 @@ fun HomeBottomSheetContent(
                                 onAdCardClick = onAdCardClick,
                                 modifier = Modifier.fillMaxSize(),
                             )
+                        },
+                        newsContent = {
+                            FeedListScreen(
+                                state = feedState,
+                                onIntent = onFeedIntent,
+                                listState = newsListState,
+                                modifier = Modifier.fillMaxSize(),
+                            )
+                        },
+                        dotTabIds = if (feedState.showsNewBadge) {
+                            curationState.tabs.filter { it.viewType == SDHomeBottomSheetViewType.NEWS }.mapTo(HashSet()) { it.tabId }
+                        } else {
+                            emptySet()
                         },
                         modifier = Modifier
                             .weight(1f)
