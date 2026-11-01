@@ -250,7 +250,7 @@ private fun FeedContentOnlyBody(body: FeedBodyModel, modifier: Modifier) {
                     .size(16.dp),
             )
         }
-        body.content?.let { FeedBodyText(it, maxLines = BODY_MAX_LINES) }
+        body.content?.let { FeedBodyText(it) }
     }
 }
 
@@ -286,7 +286,7 @@ private fun FeedContentWithTitleBody(body: FeedBodyModel, modifier: Modifier, wi
                 }
             }
         }
-        body.content?.let { FeedBodyText(it, maxLines = BODY_MAX_LINES) }
+        body.content?.let { FeedBodyText(it, maxLines = TITLE_BODY_MAX_LINES) }
     }
 }
 
@@ -305,12 +305,7 @@ private fun FeedContentWithImagesBody(body: FeedBodyModel, modifier: Modifier) {
             }
         }
         body.content?.let {
-            FeedBodyText(
-                it,
-                modifier = Modifier.padding(horizontal = 16.dp),
-                maxLines = BODY_MAX_LINES,
-                fallbackColor = Gray95,
-            )
+            FeedBodyText(it, modifier = Modifier.padding(horizontal = 16.dp), fallbackColor = Gray95)
         }
     }
 }
@@ -378,5 +373,5 @@ private fun feedTimeText(updatedAt: String): String = when (val time = FeedTime.
 }
 
 private val CARD_SHADOW = Color.Black.copy(alpha = 0.06f)
-private const val BODY_MAX_LINES = 5
+private const val TITLE_BODY_MAX_LINES = 5
 private const val IMAGES_BODY_IMAGE_HEIGHT_DP = 124
