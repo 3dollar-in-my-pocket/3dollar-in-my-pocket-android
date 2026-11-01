@@ -1064,7 +1064,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 viewModel.screenName,
                 EventName.HOME_REOPEN
             ))
-            if (viewModel.curationState.value.isNewsTabSelected) sendFeedListPageView()
         }
         isFirstLoad = false
     }
