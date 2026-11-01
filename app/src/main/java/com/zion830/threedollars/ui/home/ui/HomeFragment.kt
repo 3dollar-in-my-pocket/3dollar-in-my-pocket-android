@@ -588,6 +588,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.curationState.map { it.isNewsTabSelected }.distinctUntilChanged().collect { selected ->
                         feedListViewModel.dispatch(FeedListUiIntent.OnTabSelectionChanged(selected))
+                        if (selected) sendFeedListPageView()
                     }
                 }
                 launch {
@@ -1063,8 +1064,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 viewModel.screenName,
                 EventName.HOME_REOPEN
             ))
+            if (viewModel.curationState.value.isNewsTabSelected) sendFeedListPageView()
         }
         isFirstLoad = false
+    }
+
+    private fun sendFeedListPageView() {
+        LogManager.sendPageView(ScreenName.FEED_LIST, FEED_LIST_PAGE_VIEW_CLASS_NAME)
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -1080,3 +1086,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         locationPermissionDialog = null
     }
 }
+
+private const val FEED_LIST_PAGE_VIEW_CLASS_NAME = "FeedListScreen"
