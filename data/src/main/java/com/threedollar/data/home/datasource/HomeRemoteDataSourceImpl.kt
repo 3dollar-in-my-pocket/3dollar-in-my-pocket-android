@@ -7,7 +7,6 @@ import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -18,18 +17,13 @@ import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PlaceType
-import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
-import com.threedollar.network.request.BossStoreReviewRequest
-import com.threedollar.network.request.FeedbackRequest
-import com.threedollar.network.request.ImageRequest
 import com.threedollar.network.request.StickerRequest
 import com.threedollar.network.request.StoreReviewRequest
 import com.threedollar.network.request.UserStoreRequest
@@ -152,10 +146,6 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.getFeedbackFull(targetType, targetId)))
     }
 
-    override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>> = flow {
-        emit(apiResult(serverApi.postFeedback(targetType, targetId, postFeedbackRequest)))
-    }
-
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultResponse>> = flow {
         emit(apiResult(serverApi.deleteStore(storeId, deleteReasonType)))
     }
@@ -235,22 +225,5 @@ class HomeRemoteDataSourceImpl @Inject constructor(
                 )
             )
         )
-    }
-
-    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>> = flow {
-        val imageRequests = images.map { ImageRequest(url = it.imageUrl, width = it.width, height = it.height) }
-        val feedbackRequests = feedbacks.map { FeedbackRequest(it) }
-        val request = BossStoreReviewRequest(
-            storeId = storeId,
-            contents = contents,
-            rating = rating,
-            images = imageRequests,
-            feedbacks = feedbackRequests
-        )
-        emit(apiResult(serverApi.postBossStoreReview(request)))
-    }
-
-    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsResponse>> = flow {
-        emit(apiResult(serverApi.checkFeedbackExists(targetType, targetId)))
     }
 }

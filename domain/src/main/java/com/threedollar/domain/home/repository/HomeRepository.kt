@@ -9,7 +9,6 @@ import com.threedollar.domain.home.data.store.AroundStoreModel
 import com.threedollar.domain.home.data.store.BossStoreDetailModel
 import com.threedollar.domain.home.data.store.DeleteResultModel
 import com.threedollar.domain.home.data.store.EditStoreReviewModel
-import com.threedollar.domain.home.data.store.FeedbackExistsModel
 import com.threedollar.domain.home.data.store.FoodTruckReviewModel
 import com.threedollar.domain.home.data.store.ImageContentModel
 import com.threedollar.domain.home.data.store.PostUserStoreModel
@@ -70,8 +69,6 @@ interface HomeRepository {
 
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FoodTruckReviewModel>>>
 
-    fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: List<String>): Flow<BaseResponse<String>>
-
     fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>>
 
     fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>>
@@ -89,9 +86,9 @@ interface HomeRepository {
 
     fun getStoreImages(storeId: Int): Flow<PagingData<ImageContentModel>>
 
-    fun postStoreReview(contents: String, rating: Int?, storeId: Int): Flow<BaseResponse<ReviewContentModel>>
+    fun postStoreReview(contents: String, rating: Int?, storeId: Int, images: List<UploadFileModel> = emptyList()): Flow<BaseResponse<ReviewContentModel>>
 
-    fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>>
+    fun putStoreReview(reviewId: Long, contents: String, rating: Int, images: List<UploadFileModel> = emptyList()): Flow<BaseResponse<EditStoreReviewModel>>
 
     fun getStoreReview(storeId: Int, reviewSortType: ReviewSortType): Flow<PagingData<ReviewContentModel>>
 
@@ -113,8 +110,4 @@ interface HomeRepository {
     fun getPlace(placeType: PlaceType): Flow<PagingData<PlaceModel>>
 
     fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
-
-    fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>>
-
-    fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>>
 }
