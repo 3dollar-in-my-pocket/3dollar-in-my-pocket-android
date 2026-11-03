@@ -37,7 +37,6 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/sortTabLayout"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -55,7 +54,6 @@
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/gray70"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/sortTabLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

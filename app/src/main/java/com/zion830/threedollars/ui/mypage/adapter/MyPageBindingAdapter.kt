@@ -7,6 +7,7 @@ import android.text.style.StyleSpan
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.threedollar.network.data.store.Category
 import com.zion830.threedollars.datasource.model.MenuType
 import com.zion830.threedollars.datasource.model.v2.response.store.CategoriesModel
@@ -102,4 +103,11 @@ fun ImageView.bindSmallMenuIcon(category: MenuType?) {
     }
 
     setImageResource(MenuType.of(category.key).colorIcon)
+}
+
+@BindingAdapter("feedBacks")
+fun RecyclerView.setFeedBacks(feedBacks: List<String>? = emptyList()) {
+    val feedBackItemAdapter = FeedBackItemAdapter()
+    feedBackItemAdapter.submitList(feedBacks)
+    this.adapter = feedBackItemAdapter
 }
