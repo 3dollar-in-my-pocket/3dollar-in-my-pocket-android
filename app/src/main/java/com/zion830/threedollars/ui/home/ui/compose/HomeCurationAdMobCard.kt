@@ -29,13 +29,12 @@ import com.google.android.gms.ads.LoadAdError
 import com.threedollar.common.analytics.SDLogSender
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.home.data.HomeCurationAdEventGate
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
 import com.threedollar.common.R as CommonR
 
 private const val CurationAdTag = "HomeCurationAdMob"
-// Google의 고정 배너 테스트 단위. release는 기존 앱 리소스를 사용한다.
-private const val TestBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
 
 @Composable
 internal fun HomeCurationAdMobCard(
@@ -48,10 +47,15 @@ internal fun HomeCurationAdMobCard(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val currentCard by rememberUpdatedState(card)
     val currentOnLoadFailed by rememberUpdatedState(onLoadFailed)
-    val adView = remember(context, card.cardId, dimensions) {
+    val resolvedAdUnitId = AdMobUnitId.resolve(
+        serverUnitId = card.adUnitId,
+        fallbackUnitId = context.getString(CommonR.string.admob_list_banner),
+        isDebug = BuildConfig.DEBUG,
+    )
+    val adView = remember(context, card.cardId, dimensions, resolvedAdUnitId) {
         AdView(context).apply {
             setAdSize(if (dimensions.heightDp == 100) AdSize.LARGE_BANNER else AdSize.BANNER)
-            adUnitId = if (BuildConfig.DEBUG) TestBannerAdUnitId else context.getString(CommonR.string.admob_list_banner)
+            adUnitId = resolvedAdUnitId
         }
     }
     val eventGate = remember(adView) { HomeCurationAdEventGate() }
@@ -68,7 +72,7 @@ internal fun HomeCurationAdMobCard(
             override fun onAdFailedToLoad(error: LoadAdError) {
                 if (isDisposed) return
                 eventGate.onFailed()
-                Log.d(CurationAdTag, "failed card=${currentCard.cardId} code=${error.code}")
+                Log.d(CurationAdTag, "failed card=${currentCard.cardId} unit=${adView.adUnitId} code=${error.code}")
                 currentOnLoadFailed(currentCard.cardId)
             }
 

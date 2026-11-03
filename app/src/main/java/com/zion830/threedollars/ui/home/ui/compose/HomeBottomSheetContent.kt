@@ -115,6 +115,8 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
@@ -868,8 +870,13 @@ private fun HomeListAdMobCard(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnClick by rememberUpdatedState(onClick)
+    val adUnitId = AdMobUnitId.resolve(
+        serverUnitId = card.adUnitId,
+        fallbackUnitId = context.getString(CommonR.string.admob_list_banner),
+        isDebug = BuildConfig.DEBUG,
+    )
     SduiAdMobSlot(
-        adUnitId = context.getString(CommonR.string.admob_list_banner),
+        adUnitId = adUnitId,
         heightDp = card.heightDp,
         adListener = remember {
             object : AdListener() {
@@ -878,7 +885,7 @@ private fun HomeListAdMobCard(
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
+                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: unit=$adUnitId ${error.code} ${error.message}")
                 }
 
                 override fun onAdClicked() {
