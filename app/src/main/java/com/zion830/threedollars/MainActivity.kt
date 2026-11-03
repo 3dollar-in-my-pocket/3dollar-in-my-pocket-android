@@ -3,6 +3,7 @@ package com.zion830.threedollars
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -188,10 +189,24 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) resumePendingLink(intent)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         navigateToMedalPageWithDeepLink(intent)
+        resumePendingLink(intent)
+    }
+
+    /** TH-1070: 로그인 때문에 멈춘 푸시·외부 링크를 메인 위에서 다시 연다. 한 번만 열도록 extra 를 지운다. */
+    private fun resumePendingLink(intent: Intent) {
+        val link = intent.getStringExtra(EXTRA_RESUME_LINK)
+        if (link.isNullOrBlank()) return
+        intent.removeExtra(EXTRA_RESUME_LINK)
+        startActivity(DynamicLinkActivity.getExternalIntent(this, link))
     }
 
     private fun initNavController(navController: NavController) {
@@ -318,6 +333,12 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     companion object {
 
-        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+        private const val EXTRA_RESUME_LINK = "extra_resume_link"
+
+        /** [resumeLink]: 로그인 전에 열려던 딥링크. 메인을 띄운 뒤 그 위에서 이어서 연다(TH-1070). */
+        fun getIntent(context: Context, resumeLink: String? = null): Intent =
+            Intent(context, MainActivity::class.java).apply {
+                if (!resumeLink.isNullOrBlank()) putExtra(EXTRA_RESUME_LINK, resumeLink)
+            }
     }
 }

@@ -42,14 +42,12 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
     override val viewModel: LoginViewModel by viewModels()
     private val inputNameLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            startActivity(MainActivity.getIntent(this))
-            finish()
+            startMainAndFinish()
         }
     }
     private val signUpLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == RESULT_OK) {
-            startActivity(MainActivity.getIntent(this))
-            finish()
+            startMainAndFinish()
         }
     }
 
@@ -183,8 +181,7 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                                         viewModel.putPushInformation(pushToken = firebaseToken.result)
                                     }
                                 }
-                                startActivity(MainActivity.getIntent(this@LoginActivity))
-                                finish()
+                                startMainAndFinish()
                             }
 
                             is LoginResultModel.Maintanance -> {
@@ -210,13 +207,18 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
                 launch {
                     viewModel.isNameUpdated.collect {
                         if (it) {
-                            startActivity(MainActivity.getIntent(this@LoginActivity))
-                            finish()
+                            startMainAndFinish()
                         }
                     }
                 }
             }
         }
+    }
+
+    /** 로그인 완료 후 메인으로 간다. 로그인 전에 열려던 링크가 있으면 메인 위에서 이어서 연다(TH-1070). */
+    private fun startMainAndFinish() {
+        startActivity(MainActivity.getIntent(this, resumeLink = intent.getStringExtra(PENDING_LINK)))
+        finish()
     }
 
     private fun tryKakaoLogin() {
@@ -239,11 +241,18 @@ class LoginActivity : BaseActivity<ActivityLoginBinding, LoginViewModel>({ Activ
 
     companion object {
         private const val SESSION_EXPIRED = "sessionExpired"
+        private const val PENDING_LINK = "pendingLink"
+
+        /** [pendingLink]: 로그인 성공 뒤 이어서 열 딥링크(TH-1070). */
+        fun getIntent(context: Context, pendingLink: String? = null) = Intent(context, LoginActivity::class.java).apply {
+            if (!pendingLink.isNullOrBlank()) putExtra(PENDING_LINK, pendingLink)
+        }
 
         /** 세션 만료로 로그인이 필요할 때 사용하는 Intent. 기존 화면 스택을 모두 정리한다. */
-        fun getSessionExpiredIntent(context: Context) = Intent(context, LoginActivity::class.java).apply {
-            putExtra(SESSION_EXPIRED, true)
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
+        fun getSessionExpiredIntent(context: Context, pendingLink: String? = null) =
+            getIntent(context, pendingLink).apply {
+                putExtra(SESSION_EXPIRED, true)
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
     }
 }
