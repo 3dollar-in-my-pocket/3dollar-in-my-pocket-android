@@ -105,6 +105,7 @@ class GlobalApplication : Application() {
     private fun moveToLoginBySessionExpired() {
         LegacySharedPrefUtils.clearUserInfo()
         loginPlatform = LoginType.NONE
-        startActivity(LoginActivity.getSessionExpiredIntent(this))
+        // TH-1070: 링크로 연 화면에서 바로 만료되면 로그인 뒤 그 링크로 돌아간다
+        startActivity(LoginActivity.getSessionExpiredIntent(this, pendingLink = PendingDeepLink.takeIfRecent()))
     }
 }
