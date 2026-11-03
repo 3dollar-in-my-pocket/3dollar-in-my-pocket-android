@@ -1,8 +1,7 @@
 package com.zion830.threedollars.ui.edit.ui
 
-import android.app.Dialog
+import android.content.DialogInterface
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,18 +90,13 @@ class EditAddressBottomSheetDialogFragment : BaseBottomSheetDialogFragment<Fragm
         }
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dialog = super.onCreateDialog(savedInstanceState)
-        dialog.setOnKeyListener { _, keyCode, event ->
-            if (keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP) {
-                editStoreViewModel.processIntent(EditStoreContract.Intent.CancelLocationEdit)
-                dismiss()
-                true
-            } else {
-                false
-            }
-        }
-        return dialog
+    /**
+     * TH-919: predictive back 에서는 KEYCODE_BACK 키 리스너가 호출되지 않는다.
+     * 뒤로가기는 두 모드 모두 다이얼로그 cancel 로 오므로 여기서 위치 수정을 취소한다.
+     */
+    override fun onCancel(dialog: DialogInterface) {
+        editStoreViewModel.processIntent(EditStoreContract.Intent.CancelLocationEdit)
+        super.onCancel(dialog)
     }
 
     companion object {
