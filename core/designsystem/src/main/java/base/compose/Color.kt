@@ -17,6 +17,8 @@ val Color99Ffffff = Color(0xFF99FFFFFF)
 
 /** 디자인 가이드의 `gray/40`. 레포 [Gray40]은 `#878787` 로 값이 달라 따로 둔다. */
 val ColorB7B7B7 = Color(0xFFB7B7B7)
+val ColorFf858F = Color(0xFFFF858F)
+val ColorF9737E = Color(0xFFF9737E)
 val ColorBlack = Color(0xFF1C1C1C)
 val ColorBlack2C2C2C = Color(0xFF2C2C2C)
 val ColorFf4D4D = Color(0xFFFF4D4D)
