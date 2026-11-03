@@ -216,6 +216,7 @@ sealed interface HomeListCardModel {
         val clickLog: SDClickLogModel? = null,
         val impressionLog: SDImpressionLogModel? = null,
         val heightDp: Int = SDAdMobSlotHeight.MIN_DP,
+        val adUnitId: String? = null,
     ) : HomeListCardModel
 
     data class AdCard(
