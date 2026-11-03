@@ -50,6 +50,7 @@ import com.threedollar.domain.home.data.store.UserStoreModel
 import com.threedollar.domain.home.data.user.UserModel
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.screen.repository.ScreenRepository
+import com.threedollar.domain.store.repository.StoreRepository
 import com.zion830.threedollars.datasource.model.v2.response.StoreEmptyResponse
 import com.zion830.threedollars.ui.dialog.category.StoreCategoryItem
 import com.zion830.threedollars.ui.home.data.HomeAroundStoreRequestParamsBuilder
@@ -58,6 +59,8 @@ import com.zion830.threedollars.ui.home.data.HomeFilterCellType
 import com.zion830.threedollars.ui.home.data.HomeListSectionQueryParamsBuilder
 import com.zion830.threedollars.ui.home.data.HomeMapControlItem
 import com.zion830.threedollars.ui.home.data.HomeMapControlResolver
+import com.zion830.threedollars.ui.home.data.HomeStoreLanding
+import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
 import com.zion830.threedollars.ui.home.data.HomeCurationStateReducer
@@ -88,6 +91,7 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val screenRepository: ScreenRepository,
+    private val storeRepository: StoreRepository,
     private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel() {
 
@@ -165,6 +169,23 @@ class HomeViewModel @Inject constructor(
 
     private val _selectedHomeListCardId = MutableStateFlow<String?>(null)
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
+
+    private val _storeLanding = MutableStateFlow<HomeStoreLanding?>(null)
+
+    /** 외부 가게 링크로 랜딩해 시트에 띄운 가게. 시트를 닫거나 다른 가게를 고르면 null 이 된다. */
+    internal val storeLanding: StateFlow<HomeStoreLanding?> = _storeLanding.asStateFlow()
+
+    private val _storeLandingMove = MutableSharedFlow<HomeStoreLanding>(extraBufferCapacity = 1)
+
+    /** 지도를 랜딩한 가게 위치로 옮기라는 요청. */
+    internal val storeLandingMove: SharedFlow<HomeStoreLanding> = _storeLandingMove.asSharedFlow()
+
+    private val _storeLandingFailure = MutableSharedFlow<Long>(extraBufferCapacity = 1)
+
+    /** 미리보기 조회에 실패해 랜딩할 수 없는 가게 id. 기존 가게 상세 화면으로 보낸다. */
+    val storeLandingFailure: SharedFlow<Long> = _storeLandingFailure.asSharedFlow()
+
+    private var homeListRequestSerial = 0L
 
     private var homeListNextCursor: String? = null
 
@@ -249,7 +270,11 @@ class HomeViewModel @Inject constructor(
         fetchAroundStores(state, refreshCuration = true)
     }
 
-    private fun fetchAroundStores(state: HomeUIState, refreshCuration: Boolean = false) {
+    private fun fetchAroundStores(
+        state: HomeUIState,
+        refreshCuration: Boolean = false,
+        landingStoreId: Long? = null,
+    ) {
         curationQuery = HomeCurationQueryPolicy.commit(
             previous = curationQuery,
             location = HomeCurationRequestLocation(
@@ -260,8 +285,60 @@ class HomeViewModel @Inject constructor(
             ),
             refresh = refreshCuration,
         )
-        fetchHomeListSection(state = state, cursor = null, append = false)
+        fetchHomeListSection(state = state, cursor = null, append = false, landingStoreId = landingStoreId)
         requestHomeCurationSection(forceRefresh = refreshCuration)
+    }
+
+    /**
+     * 외부 가게 링크 랜딩. 미리보기 응답의 마커 좌표로 위치를 확인한 뒤 시트를 띄우고 지도 이동을 요청한다.
+     * 홈 목록 카드가 없어도(조회 범위 밖) 시트가 뜨도록 카드 대신 미리보기 응답을 기준으로 삼는다.
+     */
+    internal fun openStoreLanding(request: HomeStoreLandingRequest) {
+        viewModelScope.launch(coroutineExceptionHandler) {
+            val userLocation = uiState.value.userLocation
+            val location = storeRepository.getStorePreviewScreen(
+                storeId = request.storeId.toString(),
+                lat = userLocation.latitude.takeIf { hasDeviceLocation },
+                lng = userLocation.longitude.takeIf { hasDeviceLocation },
+            ).getOrNull()?.previewMarkerLocation
+            val latitude = location?.latitude
+            val longitude = location?.longitude
+            if (latitude == null || longitude == null) {
+                _storeLandingFailure.emit(request.storeId)
+                return@launch
+            }
+            val landing = HomeStoreLanding(
+                storeId = request.storeId,
+                location = LatLng(latitude, longitude),
+                expanded = request.expanded,
+            )
+            showStoreLanding(landing)
+            _storeLandingMove.emit(landing)
+        }
+    }
+
+    private fun showStoreLanding(landing: HomeStoreLanding) {
+        val card = _homeListSection.value.cards
+            .filterIsInstance<HomeListCardModel.BasicCard>()
+            .firstOrNull { it.storePreviewStoreIdOrNull() == landing.storeId }
+        if (_selectedStorePreviewStoreId.value != landing.storeId) {
+            _isStoreDetailExpanded.value = false
+        }
+        _storeLanding.value = landing
+        _selectedHomeListCardId.value = card?.cardId
+        _selectedStorePreviewStoreId.value = landing.storeId
+        _selectedStoreScreen.value = card?.toFallbackStorePreviewScreen(
+            isSubscriber = storePreviewFavoriteOverrides[landing.storeId] ?: false,
+        ) ?: StoreScreenModel()
+        _isStoreDetailExpanded.value = landing.expanded
+    }
+
+    /** 랜딩한 가게 위치를 지도 중심으로 홈 목록·큐레이션을 다시 불러온다. 목록의 그 가게 카드를 선택 상태로 둔다. */
+    internal fun fetchAroundStoreLanding(landing: HomeStoreLanding) {
+        val state = uiState.value.copy(mapPosition = landing.location)
+        _uiState.value = state
+        savedStateHandle[KEY_MAP_POSITION] = landing.location
+        fetchAroundStores(state, refreshCuration = true, landingStoreId = landing.storeId)
     }
 
     fun refreshHomeListSectionAfterStoreUpdate() {
@@ -424,7 +501,9 @@ class HomeViewModel @Inject constructor(
         cursor: String?,
         append: Boolean,
         preserveSelectedStore: Boolean = false,
+        landingStoreId: Long? = null,
     ) {
+        val requestSerial = if (append) homeListRequestSerial else ++homeListRequestSerial
         viewModelScope.launch(coroutineExceptionHandler) {
             isHomeListLoading = true
             hasRequestedHomeList = true
@@ -447,6 +526,7 @@ class HomeViewModel @Inject constructor(
                 dynamicParams = HomeListSectionQueryParamsBuilder.build(params.dynamicParams),
                 cursor = cursor,
             ).collect { response ->
+                if (requestSerial != homeListRequestSerial) return@collect
                 isHomeListLoading = false
                 if (response.ok) {
                     val section = response.data ?: HomeListSectionModel()
@@ -459,15 +539,15 @@ class HomeViewModel @Inject constructor(
                     _homeListSection.value = section.copy(cards = nextCards)
                     homeListNextCursor = section.cursor?.nextCursor?.takeIf { section.cursor?.hasMore == true }
                     if (!append) {
-                        section.focusBounds?.let { _focusBounds.tryEmit(it) }
+                        if (landingStoreId == null) section.focusBounds?.let { _focusBounds.tryEmit(it) }
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
-                        val selectedCardId = if (preserveSelectedStore) {
-                            cards.selectedCardIdAfterRefresh(
+                        val selectedCardId = when {
+                            landingStoreId != null -> cards.firstOrNull { it.storePreviewStoreIdOrNull() == landingStoreId }?.cardId
+                            preserveSelectedStore -> cards.selectedCardIdAfterRefresh(
                                 previousSelectedCardId = previousSelectedCardId,
                                 previousSelectedStoreId = previousSelectedStoreId,
                             )
-                        } else {
-                            cards.firstOrNull()?.cardId
+                            else -> cards.firstOrNull()?.cardId
                         }
                         _selectedHomeListCardId.value = selectedCardId
                         if (preserveSelectedStore && previousSelectedStoreId != null && _selectedStoreScreen.value != null) {
@@ -521,6 +601,9 @@ class HomeViewModel @Inject constructor(
         if (_selectedStorePreviewStoreId.value != storeId) {
             _isStoreDetailExpanded.value = false
         }
+        if (_storeLanding.value?.storeId != storeId) {
+            _storeLanding.value = null
+        }
         _selectedStorePreviewStoreId.value = storeId
         val card = fallbackCard ?: _homeListSection.value.cards
             .filterIsInstance<HomeListCardModel.BasicCard>()
@@ -540,6 +623,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun closeStorePreview() {
+        _storeLanding.value = null
         _selectedStoreScreen.value = null
         _selectedStorePreviewStoreId.value = null
         _selectedHomeListCardId.value = null

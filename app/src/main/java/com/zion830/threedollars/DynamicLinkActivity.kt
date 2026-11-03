@@ -16,6 +16,7 @@ import com.zion830.threedollars.ui.community.poll.PollDetailActivity
 import com.zion830.threedollars.ui.coupon.ui.MyCouponsActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
+import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.ui.storeDetail.post.model.StorePostListDeepLink
@@ -34,6 +35,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val MEDAL = "medal"
         const val STORE = "store"
         const val STORE_PREVIEW = "storePreview"
+        const val STORE_PREVIEW_EXPANDED = "storePreviewExpanded"
         const val VISIT = "visit"
         const val POLL = "pollDetail"
         const val COMMUNITY = "community"
@@ -47,6 +49,7 @@ class DynamicLinkActivity : AppCompatActivity() {
 
         private const val LINK = "link"
         private const val EXTRA_IN_APP = "extra_in_app"
+        private const val EXTRA_EXTERNAL = "extra_external"
         private const val SCHEME_DOLLARS = "dollars"
         private const val FOLDER_ID = "folderId"
         private const val FAVORITE_ID = "favoriteId"
@@ -55,6 +58,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val ID = "id"
         private const val URL = "url"
         private const val PRESET = "preset"
+        private const val VIEW = "view"
 
         /** 앱 안의 화면에서 링크를 열 때 쓴다. 목록 딥링크가 현재 화면 위에 쌓이도록 [EXTRA_IN_APP] 을 붙인다. */
         fun launch(context: Context, link: String) {
@@ -65,6 +69,13 @@ class DynamicLinkActivity : AppCompatActivity() {
                 context.startActivity(it)
             }
         }
+
+        /** 푸시처럼 앱 밖에서 들어온 링크를 열 때 쓴다. 가게 링크가 상세 대신 홈 지도 + 가게 시트로 랜딩한다. */
+        fun getExternalIntent(context: Context, link: String): Intent =
+            Intent(context, DynamicLinkActivity::class.java).apply {
+                putExtra(LINK, link)
+                putExtra(EXTRA_EXTERNAL, true)
+            }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,19 +112,19 @@ class DynamicLinkActivity : AppCompatActivity() {
     private fun handleDeepLink() {
         val pushLink = intent.getStringExtra(LINK)
         if (pushLink.isNotNullOrEmpty()) {
-            handleDeepLinkNavigation(pushLink?.toUri().orEmpty())
+            handleDeepLinkNavigation(pushLink?.toUri().orEmpty(), isExternal = intent.getBooleanExtra(EXTRA_EXTERNAL, false))
             return
         }
 
         if (intent.data?.scheme.toStringDefault().contains(SCHEME_DOLLARS)) {
-            handleDeepLinkNavigation(intent.data.orEmpty())
+            handleDeepLinkNavigation(intent.data.orEmpty(), isExternal = true)
             return
         }
 
         finish()
     }
 
-    private fun handleDeepLinkNavigation(deeplink: Uri) {
+    private fun handleDeepLinkNavigation(deeplink: Uri, isExternal: Boolean) {
         StoreSectionFragment.parseLink(deeplink.toString())?.let { link ->
             startActivity(StoreDetailSduiActivity.getIntent(this, link.storeId, link.fragment))
             finish()
@@ -137,10 +148,19 @@ class DynamicLinkActivity : AppCompatActivity() {
 
             STORE -> {
                 val id = deeplink.getQueryParameter(STORE_ID)
-                if (id.isNullOrBlank()) {
-                    startActivity(MainActivity.getIntent(this))
-                } else {
-                    startActivity(StoreDetailSduiActivity.getIntent(this, id))
+                val landing = HomeStoreLandingRequest.from(
+                    storeId = id,
+                    view = deeplink.getQueryParameter(VIEW),
+                    isExternal = isExternal,
+                )
+                when {
+                    id.isNullOrBlank() -> startActivity(MainActivity.getIntent(this))
+                    landing != null -> startActivity(MainActivity.getIntent(this).apply {
+                        putExtra(STORE_PREVIEW, landing.storeId)
+                        putExtra(STORE_PREVIEW_EXPANDED, landing.expanded)
+                        flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    })
+                    else -> startActivity(StoreDetailSduiActivity.getIntent(this, id))
                 }
             }
 

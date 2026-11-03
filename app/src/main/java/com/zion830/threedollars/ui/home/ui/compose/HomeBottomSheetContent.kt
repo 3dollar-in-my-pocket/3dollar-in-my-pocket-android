@@ -384,7 +384,7 @@ fun HomeBottomSheetContent(
             }
         }
 
-        LaunchedEffect(storeDetailExpanded) {
+        LaunchedEffect(storeDetailExpanded, storeDetailExpanded && storeScreen != null) {
             if (!isSheetInitialized || storeScreen == null) return@LaunchedEffect
             if (storeDetailExpanded) isShowingStoreDetail = true
             val targetOffset = if (storeDetailExpanded) storeDetailFullOffsetPx else storePreviewOffsetPx
