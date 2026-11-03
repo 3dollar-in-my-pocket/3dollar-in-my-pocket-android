@@ -870,13 +870,15 @@ private fun HomeListAdMobCard(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnClick by rememberUpdatedState(onClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_list_banner)
     val adUnitId = AdMobUnitId.resolve(
         serverUnitId = card.adUnitId,
-        fallbackUnitId = context.getString(CommonR.string.admob_list_banner),
+        fallbackUnitId = fallbackAdUnitId,
         isDebug = BuildConfig.DEBUG,
     )
     SduiAdMobSlot(
         adUnitId = adUnitId,
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.heightDp,
         adListener = remember {
             object : AdListener() {
@@ -885,7 +887,7 @@ private fun HomeListAdMobCard(
                 }
 
                 override fun onAdFailedToLoad(error: LoadAdError) {
-                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: unit=$adUnitId ${error.code} ${error.message}")
+                    Log.d(HOME_LIST_ADMOB_TAG, "Home list AdMob failed: ${error.code} ${error.message}")
                 }
 
                 override fun onAdClicked() {

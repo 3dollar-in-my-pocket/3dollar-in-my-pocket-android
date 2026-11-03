@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -47,15 +48,17 @@ internal fun HomeCurationAdMobCard(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val currentCard by rememberUpdatedState(card)
     val currentOnLoadFailed by rememberUpdatedState(onLoadFailed)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_list_banner)
     val resolvedAdUnitId = AdMobUnitId.resolve(
         serverUnitId = card.adUnitId,
-        fallbackUnitId = context.getString(CommonR.string.admob_list_banner),
+        fallbackUnitId = fallbackAdUnitId,
         isDebug = BuildConfig.DEBUG,
     )
-    val adView = remember(context, card.cardId, dimensions, resolvedAdUnitId) {
+    var requestUnitId by remember(card.cardId, resolvedAdUnitId) { mutableStateOf(resolvedAdUnitId) }
+    val adView = remember(context, card.cardId, dimensions, requestUnitId) {
         AdView(context).apply {
             setAdSize(if (dimensions.heightDp == 100) AdSize.LARGE_BANNER else AdSize.BANNER)
-            adUnitId = resolvedAdUnitId
+            adUnitId = requestUnitId
         }
     }
     val eventGate = remember(adView) { HomeCurationAdEventGate() }
@@ -73,7 +76,12 @@ internal fun HomeCurationAdMobCard(
                 if (isDisposed) return
                 eventGate.onFailed()
                 Log.d(CurationAdTag, "failed card=${currentCard.cardId} unit=${adView.adUnitId} code=${error.code}")
-                currentOnLoadFailed(currentCard.cardId)
+                val retryUnitId = AdMobUnitId.retryUnitId(failedUnitId = adView.adUnitId, fallbackUnitId = fallbackAdUnitId)
+                if (retryUnitId != null) {
+                    requestUnitId = retryUnitId
+                } else {
+                    currentOnLoadFailed(currentCard.cardId)
+                }
             }
 
             override fun onAdImpression() {
@@ -111,9 +119,11 @@ internal fun HomeCurationAdMobCard(
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        AndroidView(
-            factory = { adView },
-            modifier = Modifier.width(dimensions.widthDp.dp).height(dimensions.heightDp.dp),
-        )
+        key(adView) {
+            AndroidView(
+                factory = { adView },
+                modifier = Modifier.width(dimensions.widthDp.dp).height(dimensions.heightDp.dp),
+            )
+        }
     }
 }

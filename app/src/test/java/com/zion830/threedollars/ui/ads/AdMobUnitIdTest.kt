@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.ads
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class AdMobUnitIdTest {
@@ -59,5 +60,23 @@ class AdMobUnitIdTest {
 
         // Then
         assertEquals(testUnitId, unitId)
+    }
+
+    @Test
+    fun `TH1565_TC10_서버유닛이_실패하면_앱리소스_유닛으로_다시_요청한다`() {
+        // When
+        val retryUnitId = AdMobUnitId.retryUnitId(failedUnitId = serverUnitId, fallbackUnitId = fallbackUnitId)
+
+        // Then
+        assertEquals(fallbackUnitId, retryUnitId)
+    }
+
+    @Test
+    fun `TH1565_TC10_앱리소스_유닛까지_실패하면_다시_요청하지_않는다`() {
+        // When
+        val retryUnitId = AdMobUnitId.retryUnitId(failedUnitId = fallbackUnitId, fallbackUnitId = fallbackUnitId)
+
+        // Then
+        assertNull(retryUnitId)
     }
 }

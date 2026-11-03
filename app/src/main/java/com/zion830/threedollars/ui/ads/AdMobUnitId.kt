@@ -12,4 +12,8 @@ object AdMobUnitId {
         if (isDebug) return fallbackUnitId
         return serverUnitId?.takeIf { it.isNotBlank() } ?: fallbackUnitId
     }
+
+    /** 서버 단위로 불러오다 실패하면 [fallbackUnitId] 로 한 번 더 요청한다. 기본 단위까지 실패하면 null. */
+    fun retryUnitId(failedUnitId: String?, fallbackUnitId: String): String? =
+        fallbackUnitId.takeIf { failedUnitId != it }
 }

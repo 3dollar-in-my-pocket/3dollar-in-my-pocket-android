@@ -137,12 +137,14 @@ private fun StoreDetailBanner(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnAdClick by rememberUpdatedState(onAdClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_store_detail_banner)
     SduiAdMobSlot(
         adUnitId = AdMobUnitId.resolve(
             serverUnitId = card.adUnitId,
-            fallbackUnitId = context.getString(CommonR.string.admob_store_detail_banner),
+            fallbackUnitId = fallbackAdUnitId,
             isDebug = BuildConfig.DEBUG,
         ),
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.slotHeightDp,
         adListener = remember {
             object : AdListener() {
