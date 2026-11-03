@@ -1,9 +1,6 @@
 package com.zion830.threedollars.datasource
 
 import com.threedollar.common.base.BaseResponse
-import com.threedollar.network.data.store.StoreReviewDetailResponse
-import com.threedollar.network.request.BossStoreReviewRequest
-import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.NewReviewRequest
 import com.zion830.threedollars.datasource.model.v2.response.NewReviewResponse
@@ -83,13 +80,4 @@ interface StoreDataSource {
 
     suspend fun getBossStoreFeedbackFull(bossStoreId: String): Response<BossStoreFeedbackFullResponse>
     suspend fun getBossStoreFeedbackType(): Response<BossStoreFeedbackTypeResponse>
-    suspend fun postBossStoreFeedback(
-        bossStoreId: String,
-        bossStoreFeedbackRequest: BossStoreFeedbackRequest,
-    ): Response<BaseResponse<String>>
-
-    fun postBossStoreReview(
-        bossStoreReviewRequest: BossStoreReviewRequest
-    ): Flow<BaseResponse<StoreReviewDetailResponse>>
-
 }

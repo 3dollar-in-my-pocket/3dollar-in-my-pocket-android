@@ -17,7 +17,7 @@ import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
-import com.zion830.threedollars.ui.dialog.AddReviewDialog
+import com.zion830.threedollars.ui.review.ReviewWriteBottomSheet
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.storeDetail.user.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
@@ -42,7 +42,7 @@ class StoreReviewDetailActivity :
                 override fun onClick(item: ReviewContentModel) {
                     if (item.review.isOwner) {
                         viewModel.sendClickDeleteReviewFromList()
-                        AddReviewDialog.getInstance(item, storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                        ReviewWriteBottomSheet.showForEdit(supportFragmentManager, storeId, storeName = "", review = item.review)
                     } else {
                         viewModel.sendClickReportReviewFromList()
                         if (item.reviewReport.reportedByMe) {
@@ -103,7 +103,7 @@ class StoreReviewDetailActivity :
     }
 
     private fun showAddReviewDialog() {
-        AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
+        ReviewWriteBottomSheet.showForWrite(supportFragmentManager, storeId, storeName = "")
     }
 
     private fun initAdapter() {
@@ -164,20 +164,11 @@ class StoreReviewDetailActivity :
                     }
                 }
 
-                launch {
-                    viewModel.reviewSuccessEvent.collect {
-                        if (it) {
-                            viewModel.getReview(storeId, reviewSortType)
-                        }
-                    }
-                }
             }
         }
 
-        viewModel.addReviewResult.observe(this) {
-            if (it) {
-                viewModel.getReview(storeId, reviewSortType)
-            }
+        ReviewWriteBottomSheet.setOnSubmittedListener(supportFragmentManager, this) {
+            viewModel.getReview(storeId, reviewSortType)
         }
     }
 

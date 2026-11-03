@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.storeDetail.user.viewModel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -65,9 +64,6 @@ class StoreDetailViewModel @Inject constructor(
     private val _uploadImageStatus: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val uploadImageStatus: SharedFlow<Boolean> get() = _uploadImageStatus
 
-    private val _addReviewResult: MutableLiveData<Boolean> = MutableLiveData<Boolean>()
-    val addReviewResult: LiveData<Boolean>
-        get() = _addReviewResult
 
     private val _photoDeleted: MutableSharedFlow<Boolean> = MutableSharedFlow()
     val photoDeleted: SharedFlow<Boolean> get() = _photoDeleted
@@ -94,8 +90,6 @@ class StoreDetailViewModel @Inject constructor(
     private val _reportReasons = MutableStateFlow<List<ReasonModel>?>(null)
     val reportReasons: StateFlow<List<ReasonModel>?> get() = _reportReasons
 
-    private val _reviewSuccessEvent = MutableSharedFlow<Boolean>()
-    val reviewSuccessEvent: SharedFlow<Boolean> get() = _reviewSuccessEvent
 
     private val _relatedStoreSection = MutableStateFlow<SDRelatedStoresSectionModel?>(null)
     val relatedStoreSection = _relatedStoreSection.asStateFlow()
@@ -194,24 +188,6 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun putStoreReview(reviewId: Long, content: String, rating: Int) {
-        if (content.isBlank()) {
-            _addReviewResult.postValue(false)
-            return
-        }
-
-        viewModelScope.launch(coroutineExceptionHandler) {
-            homeRepository.putStoreReview(reviewId, content, rating).collect {
-                if (it.ok) {
-                    _msgTextId.postValue(CommonR.string.success_edit_review)
-                    _addReviewResult.postValue(true)
-                } else {
-                    _serverError.emit(it.message)
-                }
-            }
-        }
-    }
-
     fun saveImages(images: List<MultipartBody.Part>, storeId: Int) {
         if (images.isEmpty()) {
             return
@@ -282,20 +258,6 @@ class StoreDetailViewModel @Inject constructor(
         }
     }
 
-    fun postStoreReview(content: String, rating: Int, storeId: Int?) {
-        viewModelScope.launch {
-            storeId?.let {
-                homeRepository.postStoreReview(contents = content, rating = rating, storeId = storeId).collect {
-                    if (it.ok) {
-                        _reviewSuccessEvent.emit(true)
-                    } else {
-                        _serverError.emit(it.message)
-                    }
-                }
-            }
-        }
-    }
-
     fun getReview(storeId: Int, sortType: ReviewSortType) {
         _reviewLikeOverrides.value = emptyMap()
         viewModelScope.launch {
@@ -353,18 +315,6 @@ class StoreDetailViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    // GA Events - Review Bottom Sheet
-    fun sendClickWriteReviewSubmit(rating: Int) {
-        LogManager.sendEvent(
-            ClickEvent(
-                screen = ScreenName.REVIEW_BOTTOM_SHEET,
-                objectType = LogObjectType.BUTTON,
-                objectId = LogObjectId.WRITE_REVIEW,
-                additionalParams = mapOf(ParameterName.VALUE to rating.toString())
-            )
-        )
     }
 
     // GA Events - Report Store
