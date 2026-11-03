@@ -124,19 +124,12 @@ class NewAddressFragment : Fragment() {
                     onBossDownloadClick = {
                         BossDownloadDialog.newInstance()
                             .setOnConfirmListener {
-                                val intent = Intent(Intent.ACTION_VIEW).apply {
-                                    data = Uri.parse("https://massive-iguana-121.notion.site/3-28c7ad52990e809caba2fb2040677a2a?source=copy_link")
-                                    setPackage("com.android.vending")
-                                }
+                                // TH-841: 노션 URL에 Play 스토어 패키지를 지정하면 스토어가 처리하지 못해 실행이 실패(-91)했다
                                 try {
-                                    startActivity(intent)
-                                } catch (_: ActivityNotFoundException) {
                                     startActivity(
-                                        Intent(
-                                            Intent.ACTION_VIEW,
-                                            Uri.parse("https://massive-iguana-121.notion.site/3-28c7ad52990e809caba2fb2040677a2a?source=copy_link")
-                                        )
+                                        Intent(Intent.ACTION_VIEW, Uri.parse(getString(CommonR.string.boss_app_intro_url)))
                                     )
+                                } catch (_: ActivityNotFoundException) {
                                 }
                             }
                             .show(parentFragmentManager, "BossDownloadDialog")

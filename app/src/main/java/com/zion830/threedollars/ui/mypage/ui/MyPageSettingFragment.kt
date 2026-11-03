@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.mypage.ui
 
 import android.app.AlertDialog
+import android.content.ActivityNotFoundException
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
@@ -142,12 +143,10 @@ class MyPageSettingFragment :
             startActivity(intent)
         }
         binding.constraintBoss.setOnClickListener {
+            // TH-841: 제보 화면과 같은 사장님앱 소개 노션 페이지로 보낸다
             try {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=app.threedollars.manager"))
-                startActivity(intent)
-            } catch (e: Exception) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=app.threedollars.manager"))
-                startActivity(intent)
+                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(getString(CommonR.string.boss_app_intro_url))))
+            } catch (_: ActivityNotFoundException) {
             }
         }
     }
