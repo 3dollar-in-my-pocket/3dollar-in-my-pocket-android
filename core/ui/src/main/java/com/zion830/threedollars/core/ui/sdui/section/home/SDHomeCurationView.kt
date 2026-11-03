@@ -23,6 +23,7 @@ import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.threedollar.common.sdui.model.element.SDActionEvent
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
@@ -44,6 +45,8 @@ fun SDHomeCurationView(
     listState: LazyListState = rememberLazyListState(),
     carouselListStates: Map<String, LazyListState> = emptyMap(),
     nearbyContent: @Composable () -> Unit = {},
+    newsContent: @Composable () -> Unit = {},
+    dotTabIds: Set<String> = emptySet(),
     adMobContent: (@Composable (SDAdMobCardModel) -> Unit)? = null,
     adMobCardWidth: Dp = SDHomeCurationDefaults.CardSize,
     hiddenAdCardIds: Set<String> = emptySet(),
@@ -56,7 +59,7 @@ fun SDHomeCurationView(
     onAdCardClick: (SDAdCardModel) -> Unit = {},
     onAdCardVisible: (carouselId: String, card: SDAdCardModel) -> Unit = { _, _ -> },
 ) {
-    val supportedTabs = tabs.tabs.filter { it.viewType == "CURATION" || it.viewType == "STORE_LIST" }
+    val supportedTabs = tabs.tabs.filter { it.viewType in SDHomeBottomSheetViewType.supported }
     val selectedTab = supportedTabs.firstOrNull { it.tabId == selectedTabId }
     Column(modifier = modifier.background(ColorWhite)) {
         if (supportedTabs.isNotEmpty()) {
@@ -65,9 +68,12 @@ fun SDHomeCurationView(
                 selectedTabId = selectedTab?.tabId,
                 onTabClick = onTabClick,
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 8.dp),
+                dotTabIds = dotTabIds,
             )
         }
-        if (selectedTab?.viewType != "CURATION") {
+        if (selectedTab?.viewType == SDHomeBottomSheetViewType.NEWS) {
+            newsContent()
+        } else if (selectedTab?.viewType != SDHomeBottomSheetViewType.CURATION) {
             nearbyContent()
         } else if (sectionStateContent != null) {
             sectionStateContent()

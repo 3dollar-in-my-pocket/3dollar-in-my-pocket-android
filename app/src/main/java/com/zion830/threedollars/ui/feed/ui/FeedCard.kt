@@ -98,11 +98,13 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (category != null) {
-            FeedCategoryBadge(category = category, modifier = Modifier.weight(1f, fill = false))
+            FeedCategoryBadge(category = category)
         }
         Text(
             text = feedTimeText(updatedAt),
-            modifier = Modifier.padding(start = 12.dp),
+            modifier = Modifier
+                .weight(1f, fill = false)
+                .padding(start = 12.dp),
             color = ColorB7B7B7,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.Medium,

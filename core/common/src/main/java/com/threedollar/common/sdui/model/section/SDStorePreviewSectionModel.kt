@@ -17,7 +17,8 @@ data class SDStorePreviewSectionModel(
     val bodies: List<Body>?,
     val additionalInfos: AdditionalInfos?,
     override val style: SDSurfaceStyleModel?,
-    override val impressionLog: SDLogModel? = null
+    override val impressionLog: SDLogModel? = null,
+    val markers: List<Marker>? = null
 ) : SDSectionModel {
     override val type: SDSectionType get() = SDSectionType.PREVIEW
 
@@ -35,6 +36,16 @@ data class SDStorePreviewSectionModel(
     data class Body(
         val text: SDTextModel?,
         val style: SDSurfaceStyleModel?
+    )
+
+    /** 이 가게의 지도 마커. 서버는 가게 하나의 마커를 내려준다. */
+    data class Marker(
+        val location: Location?
+    )
+
+    data class Location(
+        val latitude: Double?,
+        val longitude: Double?
     )
 
     /** `type` 이 `STORE` 일 때만 값이 채워진다. */

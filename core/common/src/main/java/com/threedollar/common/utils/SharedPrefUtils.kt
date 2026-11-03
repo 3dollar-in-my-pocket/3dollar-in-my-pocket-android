@@ -150,8 +150,15 @@ class SharedPrefUtils @Inject constructor(@ApplicationContext private val contex
         return latitude to longitude
     }
 
+    fun getLastSeenLocalNewsFeedId(): String? = sharedPreferences.getString(LAST_SEEN_LOCAL_NEWS_FEED_ID, null)
+
+    fun saveLastSeenLocalNewsFeedId(feedId: String) = sharedPreferences.edit {
+        putString(LAST_SEEN_LOCAL_NEWS_FEED_ID, feedId)
+    }
+
     companion object {
         private const val PREFERENCE_FILE_KEY = "preference_file_key"
+        private const val LAST_SEEN_LOCAL_NEWS_FEED_ID = "last_seen_local_news_feed_id"
         private const val USER_LAST_LATITUDE = "user_last_latitude"
         private const val USER_LAST_LONGITUDE = "user_last_longitude"
         private const val KAKAO_ACCESS_TOKEN = "kakao_access_token"

@@ -14,6 +14,7 @@ enum class ParameterName(val value: String) {
     CATEGORY_ID("category_id"),
     COUNT("count"),
     REVIEW_ID("review_id"),
+    VISIT_ID("visit_id"),
     RATING("rating"),
     POLL_ID("poll_id"),
     OPTION_ID("option_id"),

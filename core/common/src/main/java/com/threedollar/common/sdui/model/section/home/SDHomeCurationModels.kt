@@ -8,6 +8,14 @@ import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 import com.threedollar.common.sdui.model.element.SDTextModel
 
+object SDHomeBottomSheetViewType {
+    const val STORE_LIST = "STORE_LIST"
+    const val CURATION = "CURATION"
+    const val NEWS = "NEWS"
+
+    val supported: Set<String> = setOf(STORE_LIST, CURATION, NEWS)
+}
+
 data class SDHomeBottomSheetTabsModel(
     val tabs: List<SDHomeBottomSheetTabModel> = emptyList()
 )

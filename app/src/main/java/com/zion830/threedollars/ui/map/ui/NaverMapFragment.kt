@@ -90,6 +90,8 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     private val homeListMarkerImageTargets = mutableMapOf<Marker, CustomTarget<Bitmap>>()
 
+    private var landingStoreMarker: Marker? = null
+
     var listener: OnMapTouchListener? = null
 
     private var isShowOverlay = true
@@ -175,13 +177,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
             if (isInitialCameraPlaced) {
                 mapPosition.value = map.cameraPosition.target
             }
-            map.contentBounds.let {
-                val northWest = it.northWest
-                val southEast = it.southEast
-                val distanceM = calculateDistance(northWest, southEast)
-
-                mapViewPortDistance.value = distanceM.toDouble()
-            }
+            currentViewportDistanceM()?.let { mapViewPortDistance.value = it }
         }
         if (isShowOverlay) {
             val storeMarker = GlobalApplication.storeMarker ?: return
@@ -221,6 +217,22 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
                 this.map = naverMap
             },
         )
+    }
+
+    /**
+     * 홈 목록 마커와 별개로 마커 하나를 [position] 에 둔다. 목록에 없는 가게로 랜딩했을 때 쓴다.
+     * null 이면 지운다.
+     */
+    fun updateLandingStoreMarker(@DrawableRes drawableRes: Int, position: LatLng?) {
+        if (position == null || naverMap == null) {
+            landingStoreMarker?.map = null
+            landingStoreMarker = null
+            return
+        }
+        val marker = landingStoreMarker ?: Marker().also { landingStoreMarker = it }
+        marker.position = position
+        marker.icon = OverlayImage.fromResource(drawableRes)
+        marker.map = naverMap
     }
 
     fun clearMarker() {
@@ -602,7 +614,7 @@ open class NaverMapFragment : Fragment(R.layout.fragment_naver_map), OnMapReadyC
 
     fun currentViewportDistanceM(): Double? {
         val bounds = naverMap?.contentBounds ?: return null
-        return calculateDistance(bounds.northWest, bounds.southEast).toDouble()
+        return NaverMapUtils.searchDistanceM(calculateDistance(bounds.northWest, bounds.southEast).toDouble())
     }
 
     fun moveCameraWithAnim(position: LatLng, zoomLevel: Double? = null) {
