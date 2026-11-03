@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -66,6 +67,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
 import com.google.android.gms.ads.LoadAdError
 import com.threedollar.domain.community.data.AdvertisementModelV2
+import com.threedollar.domain.feed.model.FeedModel
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
@@ -104,22 +106,26 @@ internal fun FeedListScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(key = HEADER_ITEM_KEY) { FeedListHeader() }
-        item(key = AD_ITEM_KEY) {
-            FeedAdvertisementSlot(
-                advertisement = state.advertisement,
-                onClick = { onIntent(FeedListUiIntent.OnAdvertisementClick(it)) },
-            )
-        }
         when {
-            state.showsSkeleton -> items(SKELETON_COUNT, key = { "skeleton:$it" }) { FeedCardSkeleton() }
-            state.isFailed -> item(key = ERROR_ITEM_KEY) {
-                FeedErrorContent(onRetry = { onIntent(FeedListUiIntent.OnRetry) })
+            state.showsSkeleton -> {
+                items(AD_CONTENT_INDEX, key = { "skeleton:$it" }) { FeedCardSkeleton() }
+                feedAdvertisementItem(state.advertisement, onIntent)
+                items(SKELETON_COUNT - AD_CONTENT_INDEX, key = { "skeleton:${it + AD_CONTENT_INDEX}" }) { FeedCardSkeleton() }
             }
-            state.isEmpty -> item(key = EMPTY_ITEM_KEY) { FeedEmptyContent() }
-            else -> {
-                items(state.feeds, key = { it.feedId }) { feed ->
-                    FeedCard(feed = feed, onClick = { onIntent(FeedListUiIntent.OnFeedClick(feed)) })
+            state.isFailed -> {
+                item(key = ERROR_ITEM_KEY) {
+                    FeedErrorContent(onRetry = { onIntent(FeedListUiIntent.OnRetry) })
                 }
+                feedAdvertisementItem(state.advertisement, onIntent)
+            }
+            state.isEmpty -> {
+                item(key = EMPTY_ITEM_KEY) { FeedEmptyContent() }
+                feedAdvertisementItem(state.advertisement, onIntent)
+            }
+            else -> {
+                feedItems(state.feeds.take(AD_CONTENT_INDEX), onIntent)
+                feedAdvertisementItem(state.advertisement, onIntent)
+                feedItems(state.feeds.drop(AD_CONTENT_INDEX), onIntent)
                 if (state.isLoading) {
                     item(key = LOADING_ITEM_KEY) {
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -129,6 +135,24 @@ internal fun FeedListScreen(
                 }
             }
         }
+    }
+}
+
+private fun LazyListScope.feedItems(feeds: List<FeedModel>, onIntent: (FeedListUiIntent) -> Unit) {
+    items(feeds, key = { it.feedId }) { feed ->
+        FeedCard(feed = feed, onClick = { onIntent(FeedListUiIntent.OnFeedClick(feed)) })
+    }
+}
+
+private fun LazyListScope.feedAdvertisementItem(
+    advertisement: AdvertisementModelV2?,
+    onIntent: (FeedListUiIntent) -> Unit,
+) {
+    item(key = AD_ITEM_KEY) {
+        FeedAdvertisementSlot(
+            advertisement = advertisement,
+            onClick = { onIntent(FeedListUiIntent.OnAdvertisementClick(it)) },
+        )
     }
 }
 
@@ -266,7 +290,7 @@ private fun FeedEmptyContent() {
 }
 
 /**
- * 목록 최상단 광고 슬롯(높이 200). 서버 광고가 있으면 그 이미지를, 없으면 AdMob 배너를 보여준다.
+ * 광고 슬롯(높이 200). 서버 광고가 있으면 그 이미지를, 없으면 AdMob 배너를 보여준다.
  * AdMob 은 광고 WebView 가 포커스를 가져가 목록이 튀지 않도록 하위 포커스를 막는다.
  */
 @Composable
@@ -353,4 +377,5 @@ private const val LOADING_ITEM_KEY = "loading"
 private const val AD_SLOT_HEIGHT_DP = 200
 private const val HORIZONTAL_PADDING_DP = 20
 private const val SKELETON_COUNT = 3
+private const val AD_CONTENT_INDEX = 1
 private const val SKELETON_PULSE_MS = 600
