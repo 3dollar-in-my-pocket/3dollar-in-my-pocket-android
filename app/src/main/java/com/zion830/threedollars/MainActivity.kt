@@ -3,6 +3,7 @@ package com.zion830.threedollars
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -94,6 +95,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         initFlow()
         initNavController(navController)
         initNavView()
+        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -224,7 +226,17 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
-    override fun onBackPressed() {
+    /**
+     * TH-919: targetSdk 36(Android 16)·predictive back 에서는 [onBackPressed] override 가 호출되지 않는다.
+     * 기존 뒤로가기 규칙을 [OnBackPressedCallback] 으로 옮겨 predictive back 사용 여부와 관계없이 같게 동작시킨다.
+     */
+    private val mainBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            handleMainBack()
+        }
+    }
+
+    private fun handleMainBack() {
         val fragmentList = supportFragmentManager.fragments
         for (fragment in fragmentList) {
             if (fragment is OnBackPressedListener) {
@@ -232,14 +244,22 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 return
             }
         }
-        if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_popup) {
-            binding.navHostFragment.findNavController().navigateUp()
-        } else if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_write) {
-            super.onBackPressed()
-        }  else if (binding.navHostFragment.findNavController().currentDestination?.id != R.id.navigation_home) {
-            binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
-        } else {
-            super.onBackPressed()
+        val navController = binding.navHostFragment.findNavController()
+        when (navController.currentDestination?.id) {
+            R.id.navigation_popup -> navController.navigateUp()
+            R.id.navigation_write -> dispatchBackToNextHandler()
+            R.id.navigation_home -> dispatchBackToNextHandler()
+            else -> navController.navigate(R.id.navigation_home)
+        }
+    }
+
+    /** 기존 `super.onBackPressed()` 와 같다: 이 콜백을 잠시 끄고 다음 콜백(홈 시트·제보 화면 등) 또는 기본 동작에 넘긴다. */
+    private fun dispatchBackToNextHandler() {
+        mainBackPressedCallback.isEnabled = false
+        try {
+            onBackPressedDispatcher.onBackPressed()
+        } finally {
+            mainBackPressedCallback.isEnabled = true
         }
     }
 
