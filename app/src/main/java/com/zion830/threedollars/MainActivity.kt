@@ -6,6 +6,8 @@ import android.content.Intent
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -259,12 +261,31 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 homeViewModel.applyPreset(preset)
             }
         } else if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW)) {
+            val isStoreLanding = intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)
             binding.navView.post {
+                if (isStoreLanding) closeScreensAboveHome()
                 selectTabWithoutClickLog(R.id.navigation_home)
             }
         } else if (intent.getStringExtra(DynamicLinkActivity.BROWSER).isNotNullOrEmpty()) {
             val url = intent.getStringExtra(DynamicLinkActivity.BROWSER).orEmpty()
             startActivity(WebActivity.getIntent(this, url))
+        }
+    }
+
+    /** 외부 가게 링크로 홈에 랜딩할 때 탭 위에 쌓인 화면(MY 하위 화면 등)과 닫을 수 있는 다이얼로그를 닫는다. */
+    private fun closeScreensAboveHome() {
+        if (supportFragmentManager.isStateSaved) return
+        supportFragmentManager.popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        dismissCancelableDialogs(supportFragmentManager)
+    }
+
+    private fun dismissCancelableDialogs(fragmentManager: FragmentManager) {
+        fragmentManager.fragments.forEach { fragment ->
+            if (fragment is DialogFragment && fragment.isCancelable) {
+                fragment.dismissAllowingStateLoss()
+            } else {
+                dismissCancelableDialogs(fragment.childFragmentManager)
+            }
         }
     }
 

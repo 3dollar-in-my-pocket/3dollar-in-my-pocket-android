@@ -76,6 +76,9 @@ interface HomeRepository {
 
     fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>>
 
+    /** 방문 인증 삭제. 삭제 가능 기간은 서버가 판단해 거부하면 실패 응답(message)을 준다. */
+    fun deleteStoreVisit(visitId: String): Flow<BaseResponse<String>>
+
     fun deleteImage(imageId: Int): Flow<BaseResponse<String>>
 
     suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>?
