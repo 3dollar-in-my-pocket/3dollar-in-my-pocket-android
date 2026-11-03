@@ -95,7 +95,7 @@
             android:paddingHorizontal="24dp"
             android:paddingVertical="20dp"
             app:layout_constraintBottom_toBottomOf="@id/layout_timestamp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_delete"
             app:layout_constraintStart_toEndOf="@id/layout_timestamp"
             app:layout_constraintTop_toTopOf="@id/layout_timestamp">
 
@@ -136,5 +136,17 @@
                     tools:text="붕어빵 땅콩과자 호떡" />
             </LinearLayout>
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/iv_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/delete"
+            android:padding="10dp"
+            android:src="@drawable/ic_delete_small"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/layout_timestamp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/layout_timestamp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

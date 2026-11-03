@@ -195,6 +195,9 @@ class HomeRepositoryImpl @Inject constructor(
     override fun postStoreVisit(storeId: Int, visitType: String): Flow<BaseResponse<String>> =
         homeRemoteDataSource.postStoreVisit(PostStoreVisitRequest(storeId = storeId, type = visitType))
 
+    override fun deleteStoreVisit(visitId: String): Flow<BaseResponse<String>> =
+        homeRemoteDataSource.deleteStoreVisit(visitId)
+
     override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = homeRemoteDataSource.deleteImage(imageId)
 
     override suspend fun saveImages(images: List<MultipartBody.Part>, storeId: Int): BaseResponse<List<SaveImagesModel>>? = runCatching {

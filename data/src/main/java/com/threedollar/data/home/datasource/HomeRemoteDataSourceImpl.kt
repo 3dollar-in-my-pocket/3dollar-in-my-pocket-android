@@ -164,6 +164,10 @@ class HomeRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.postStoreVisit(postStoreVisitRequest)))
     }
 
+    override fun deleteStoreVisit(visitId: String): Flow<BaseResponse<String>> = flow {
+        emit(apiResult(serverApi.deleteStoreVisit(visitId)))
+    }
+
     override fun deleteImage(imageId: Int): Flow<BaseResponse<String>> = flow {
         emit(apiResult(serverApi.deleteImage(imageId)))
     }

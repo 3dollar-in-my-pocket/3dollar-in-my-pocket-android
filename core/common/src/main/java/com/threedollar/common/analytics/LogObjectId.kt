@@ -26,6 +26,7 @@ enum class LogObjectId(val value: String) {
     LIKE("like"),
     SORT("sort"),
     DELETE_REVIEW("delete_review"),
+    DELETE_VISIT("delete_visit"),
     VISIT_SUCCESS("visit_success"),
     VISIT_FAIL("visit_fail"),
     VISIT_INDUCEMENT_MODAL("visit_inducement_modal"),
