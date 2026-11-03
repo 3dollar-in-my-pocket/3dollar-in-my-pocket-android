@@ -107,8 +107,8 @@ class StoreDetailActionResolverTest {
         val bossStore = resolve(event, context.copy(isBossStore = true))
 
         // Then
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), userStore)
-        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), bossStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, context.storeName)), userStore)
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, context.storeName)), bossStore)
     }
 
     // TH-1226 TC14
