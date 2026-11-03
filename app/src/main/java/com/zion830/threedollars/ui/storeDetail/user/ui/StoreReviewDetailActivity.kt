@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.user.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -31,6 +32,13 @@ import zion830.com.common.base.onSingleClick
 class StoreReviewDetailActivity :
     BaseActivity<ActivityStoreReviewDetailBinding, StoreDetailViewModel>({ ActivityStoreReviewDetailBinding.inflate(it) }) {
     override val viewModel: StoreDetailViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            openReviewWriteIfNeeded()
+        }
+    }
 
     private var reviewSortType = ReviewSortType.LATEST
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
@@ -76,7 +84,6 @@ class StoreReviewDetailActivity :
         initAdapter()
         initTabLayout()
         initFlow()
-        openReviewWriteIfNeeded()
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -103,6 +110,7 @@ class StoreReviewDetailActivity :
     }
 
     private fun showAddReviewDialog() {
+        if (supportFragmentManager.findFragmentByTag(AddReviewDialog::class.java.name) != null) return
         AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
     }
 
