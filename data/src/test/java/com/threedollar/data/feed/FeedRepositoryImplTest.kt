@@ -142,4 +142,30 @@ class FeedRepositoryImplTest {
         assertNull(noBody.body)
         assertNotNull(noBody.header)
     }
+
+    // TH-1427 TC10
+    @Test
+    fun `TH1427_TC10_새소식_판단용_조회는_지도좌표로_1건만_요청한다`() {
+        // Given
+        feedApi.givenFixture("feed/LocalNewsFeeds.json")
+
+        // When
+        runBlocking {
+            repository.getLocalNewsFeeds(
+                cursor = null,
+                mapLatitude = 37.36,
+                mapLongitude = 126.93,
+                deviceLatitude = null,
+                deviceLongitude = null,
+                size = 1,
+            )
+        }
+
+        // Then
+        val request = feedApi.requests.single()
+        assertEquals(1, request.size)
+        assertNull(request.cursor)
+        assertEquals(37.36, request.mapLatitude!!, 0.0)
+        assertEquals(126.93, request.mapLongitude!!, 0.0)
+    }
 }

@@ -17,6 +17,7 @@ import com.threedollar.common.sdui.model.element.SDLink
 import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.analytics.ScreenName
@@ -148,6 +149,8 @@ class HomeViewModel @Inject constructor(
     private val curationCardImpressionDedup = HomeCurationCardImpressionDedup()
     private var curationRequestSerial = 0L
     private var curationQuery: HomeCurationQuerySnapshot? = null
+    private val _mapQuery = MutableStateFlow<HomeCurationQuerySnapshot?>(null)
+    val mapQuery: StateFlow<HomeCurationQuerySnapshot?> = _mapQuery.asStateFlow()
     private var curationRequestedRevision: Long? = null
     private var hasDeviceLocation = false
 
@@ -285,6 +288,7 @@ class HomeViewModel @Inject constructor(
             ),
             refresh = refreshCuration,
         )
+        _mapQuery.value = curationQuery
         fetchHomeListSection(state = state, cursor = null, append = false, landingStoreId = landingStoreId)
         requestHomeCurationSection(forceRefresh = refreshCuration)
     }
@@ -364,7 +368,7 @@ class HomeViewModel @Inject constructor(
     private fun requestHomeCurationSection(forceRefresh: Boolean = false) {
         val snapshot = curationQuery ?: return
         val current = _curationState.value
-        val tab = current.tabs.firstOrNull { it.tabId == current.selectedTabId && it.viewType == "CURATION" } ?: return
+        val tab = current.tabs.firstOrNull { it.tabId == current.selectedTabId && it.viewType == SDHomeBottomSheetViewType.CURATION } ?: return
         val location = snapshot.location
         if (!forceRefresh && HomeCurationQueryPolicy.canReuse(current, snapshot, curationRequestedRevision, tab.tabId)) return
 
@@ -455,15 +459,12 @@ class HomeViewModel @Inject constructor(
         SDLogSender.sendImpression(impressionLog)
     }
 
-    private fun isCurationTabSelected(): Boolean {
-        val state = _curationState.value
-        return state.tabs.firstOrNull { it.tabId == state.selectedTabId }?.viewType == "CURATION"
-    }
+    private fun isCurationTabSelected(): Boolean = _curationState.value.isCurationTabSelected
 
     private fun flushSectionImpressions() {
-        val isCuration = isCurationTabSelected()
-        SDLogSender.sendImpression(curationSectionImpression.flush(isVisible = isCuration))
-        homeListSectionImpression.flush(isVisible = !isCuration)?.let { SDClickLogger.send(it) }
+        val state = _curationState.value
+        SDLogSender.sendImpression(curationSectionImpression.flush(isVisible = state.isCurationTabSelected))
+        homeListSectionImpression.flush(isVisible = state.isStoreListVisible)?.let { SDClickLogger.send(it) }
     }
 
     fun onCurationAdCardVisible(carouselId: String, card: SDAdCardModel) {
@@ -556,7 +557,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     sendHomeListImpressionLogs(section.cards)
-                    homeListSectionImpression.offer(section.impressionLog, isVisible = !isCurationTabSelected())
+                    homeListSectionImpression.offer(section.impressionLog, isVisible = _curationState.value.isStoreListVisible)
                         ?.let { SDClickLogger.send(it) }
                 } else {
                     _serverError.emit(response.message)

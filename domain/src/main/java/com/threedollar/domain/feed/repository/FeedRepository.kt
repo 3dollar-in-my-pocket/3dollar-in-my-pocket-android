@@ -13,5 +13,10 @@ interface FeedRepository {
         mapLongitude: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
+        size: Int = DEFAULT_PAGE_SIZE,
     ): Result<FeedPageModel>
+
+    companion object {
+        const val DEFAULT_PAGE_SIZE = 20
+    }
 }

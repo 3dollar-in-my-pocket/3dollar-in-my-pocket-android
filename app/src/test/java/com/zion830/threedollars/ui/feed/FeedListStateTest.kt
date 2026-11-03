@@ -43,32 +43,15 @@ class FeedListStateTest {
 
     // TH-646 TC6
     @Test
-    fun `TH646_TC6_조회나_새로고침중에는_다음페이지를_요청하지_않는다`() {
+    fun `TH646_TC6_조회중에는_다음페이지를_요청하지_않는다`() {
         // Given
         val state = FeedListUiState().appendPage(page(1..20, nextCursor = "MjA="))
 
         // When
         val loading = state.copy(isLoading = true)
-        val refreshing = state.copy(isRefreshing = true)
 
         // Then
         assertFalse(loading.canLoadMore)
-        assertFalse(refreshing.canLoadMore)
-    }
-
-    // TH-646 TC7
-    @Test
-    fun `TH646_TC7_당겨서_새로고침하면_첫페이지로_목록을_교체한다`() {
-        // Given
-        val state = FeedListUiState().appendPage(page(1..20, nextCursor = "MjA=")).appendPage(page(21..40, nextCursor = "NDA="))
-
-        // When
-        val refreshed = state.copy(isRefreshing = true).replacePage(page(100..101, nextCursor = null))
-
-        // Then
-        assertEquals(listOf("100", "101"), refreshed.feeds.map { it.feedId })
-        assertFalse(refreshed.isRefreshing)
-        assertNull(refreshed.nextCursor)
     }
 
     // TH-646 TC9

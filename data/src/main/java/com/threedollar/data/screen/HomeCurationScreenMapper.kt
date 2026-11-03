@@ -18,6 +18,7 @@ import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
 import com.threedollar.common.sdui.model.element.SDTextModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
@@ -51,7 +52,7 @@ fun HomeCurationCardsResponse.asCurationCardsModel(): SDHomeCurationCardsModel =
 
 internal fun HomeBottomSheetTabResponse.asCurationTabModelOrNull(): SDHomeBottomSheetTabModel? {
     val id = tabId?.takeIf { it.isNotBlank() } ?: return null
-    val supportedViewType = viewType?.takeIf { it == "CURATION" || it == "STORE_LIST" } ?: return null
+    val supportedViewType = viewType?.takeIf { it in SDHomeBottomSheetViewType.supported } ?: return null
     val selectedModel = selected?.asSduiModel() ?: return null
     val unselectedModel = unselected?.asSduiModel() ?: return null
     return SDHomeBottomSheetTabModel(

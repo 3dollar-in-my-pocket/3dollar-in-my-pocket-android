@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.home.ui
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -47,6 +48,7 @@ import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.sdui.model.element.SDLinkType
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.utils.Constants
@@ -61,6 +63,10 @@ import com.zion830.threedollars.databinding.FragmentHomeBinding
 import com.zion830.threedollars.datasource.model.v2.response.store.BossNearStoreResponse
 import com.zion830.threedollars.ui.dialog.MarketingDialog
 import com.zion830.threedollars.ui.dialog.category.SelectCategoryDialogFragment
+import com.zion830.threedollars.ui.feed.model.FeedListUiEffect
+import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
+import com.zion830.threedollars.ui.feed.model.FeedLocation
+import com.zion830.threedollars.ui.feed.viewModel.FeedListViewModel
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
 import com.zion830.threedollars.ui.home.data.HomeStoreLanding
 import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
@@ -98,7 +104,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -117,6 +126,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
     private val searchViewModel: SearchAddressViewModel by activityViewModels()
 
     private val storeDetailViewModel: StoreDetailSduiViewModel by viewModels()
+
+    private val feedListViewModel: FeedListViewModel by activityViewModels()
 
     /** 다른 화면에서 돌아와 수집이 다시 시작될 때와, 미리보기를 닫았다가 같은 가게를 다시 여는 것을 구분한다. */
     private var openedPreviewStoreId: Long? = null
@@ -379,6 +390,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             AppTheme {
                 val homeListSection = viewModel.homeListSection.collectAsStateWithLifecycle().value
                 val curationState = viewModel.curationState.collectAsStateWithLifecycle().value
+                val feedState = feedListViewModel.state.collectAsStateWithLifecycle().value
                 val storeScreen = viewModel.selectedStoreScreen.collectAsStateWithLifecycle().value
                 val isStoreDetailExpanded = viewModel.isStoreDetailExpanded.collectAsStateWithLifecycle().value
                 val selectedStoreId = viewModel.selectedStorePreviewStoreId.collectAsStateWithLifecycle().value
@@ -404,6 +416,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onRetryCuration = viewModel::retryHomeCurationSection,
                     onRetryCurationCarousel = viewModel::retryCurationCarousel,
                     onCurationHeaderAction = viewModel::onCurationHeaderAction,
+                    feedState = feedState,
+                    onFeedIntent = feedListViewModel::dispatch,
                     storeScreen = storeScreen,
                     onCardClick = ::selectHomeListCard,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
@@ -563,6 +577,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     viewModel.curationLink.collect { link -> handleCurationLink(link) }
                 }
                 launch {
+                    viewModel.mapQuery.filterNotNull().collect { query ->
+                        val location = query.location
+                        val feedLocation = FeedLocation.of(
+                            map = location.mapLatitude to location.mapLongitude,
+                            device = location.deviceLatitude?.let { latitude ->
+                                location.deviceLongitude?.let { longitude -> latitude to longitude }
+                            },
+                        )
+                        feedListViewModel.dispatch(FeedListUiIntent.OnLocationChanged(feedLocation, query.revision))
+                    }
+                }
+                launch {
+                    viewModel.curationState.map { it.isNewsTabSelected }.distinctUntilChanged().collect { selected ->
+                        feedListViewModel.dispatch(FeedListUiIntent.OnTabSelectionChanged(selected))
+                        if (selected) sendFeedListPageView()
+                    }
+                }
+                launch {
+                    feedListViewModel.effect.collect(::handleFeedEffect)
+                }
+                launch {
                     viewModel.homeListSection.collect { section ->
                         val cards = section.cards.filterIsInstance<HomeListCardModel.BasicCard>()
                         if (cards.isEmpty()) {
@@ -705,6 +740,35 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
             )
         } else {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        }
+    }
+
+    private fun handleFeedEffect(effect: FeedListUiEffect) {
+        when (effect) {
+            is FeedListUiEffect.OpenLink -> {
+                val url = effect.link.link?.takeIf { it.isNotBlank() } ?: return
+                if (effect.link.type == SDLinkType.WEB) {
+                    startActivitySafely(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                } else {
+                    DynamicLinkActivity.launch(requireContext(), url)
+                }
+            }
+            is FeedListUiEffect.OpenAdvertisement -> {
+                val url = effect.advertisement.link.url.takeIf { it.isNotBlank() } ?: return
+                if (effect.advertisement.link.type == SDLinkType.APP_SCHEME.name) {
+                    DynamicLinkActivity.launch(requireContext(), url)
+                } else {
+                    startActivitySafely(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                }
+            }
+        }
+    }
+
+    private fun startActivitySafely(intent: Intent) {
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            showToast(CommonR.string.store_detail_error_default)
         }
     }
 
@@ -1052,6 +1116,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         isFirstLoad = false
     }
 
+    private fun sendFeedListPageView() {
+        LogManager.sendPageView(ScreenName.FEED_LIST, FEED_LIST_PAGE_VIEW_CLASS_NAME)
+    }
+
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
         viewModel.sendPageView()
     }
@@ -1065,3 +1133,5 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         locationPermissionDialog = null
     }
 }
+
+private const val FEED_LIST_PAGE_VIEW_CLASS_NAME = "FeedListScreen"

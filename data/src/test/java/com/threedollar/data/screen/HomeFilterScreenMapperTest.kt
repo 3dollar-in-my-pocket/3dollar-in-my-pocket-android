@@ -66,6 +66,39 @@ class HomeFilterScreenMapperTest {
         assertEquals(listOf("CURATION", "STORE_LIST"), tabs.map { it.viewType })
     }
 
+    // TH-1427 TC1
+    @Test
+    fun `TH1427_TC1_NEWS탭을_포함한_3탭을_서버순서_기본선택_클릭로그대로_옮긴다`() {
+        // Given
+        val response = homeScreen("HomeFilterScreenWithNewsTab.json")
+
+        // When
+        val tabs = response.asModel().sections
+            .filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>().single().tabs.tabs
+
+        // Then
+        assertEquals(listOf("DEFAULT", "CURATION", "NEWS"), tabs.map { it.tabId })
+        assertEquals(listOf("STORE_LIST", "CURATION", "NEWS"), tabs.map { it.viewType })
+        assertEquals(listOf(true, false, false), tabs.map { it.defaultSelected })
+        assertTrue(tabs.last().selected.title?.text.orEmpty().contains("동네 소식"))
+        assertEquals("NEWS", tabs.last().clickLog?.extraParameters?.get("value"))
+    }
+
+    // TH-1427 TC19
+    @Test
+    fun `TH1427_TC19_모르는viewType탭은_빼고_NEWS를_포함한_나머지탭은_유지한다`() {
+        // Given
+        val response = homeScreen("HomeFilterScreenWithNewsAndUnknownTab.json")
+
+        // When
+        val tabs = response.asModel().sections
+            .filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>().single().tabs.tabs
+
+        // Then
+        assertEquals(listOf("DEFAULT", "NEWS"), tabs.map { it.tabId })
+        assertEquals(listOf("STORE_LIST", "NEWS"), tabs.map { it.viewType })
+    }
+
     @Test
     fun homeFilterMapper_mapsViewLogAdditionalTextAndImageStyle() {
         val response = HomeFilterScreenResponse(

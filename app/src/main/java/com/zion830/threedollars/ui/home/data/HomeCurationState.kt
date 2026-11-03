@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.home.data
 
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabModel
 import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetTabsModel
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
@@ -16,7 +17,19 @@ data class HomeCurationUiState(
     val sectionRequestId: Long = 0L,
     val sectionTabId: String? = null,
     val requestLocation: HomeCurationRequestLocation? = null,
-)
+) {
+    val selectedViewType: String?
+        get() = tabs.firstOrNull { it.tabId == selectedTabId }?.viewType
+
+    val isCurationTabSelected: Boolean
+        get() = selectedViewType == SDHomeBottomSheetViewType.CURATION
+
+    val isNewsTabSelected: Boolean
+        get() = selectedViewType == SDHomeBottomSheetViewType.NEWS
+
+    val isStoreListVisible: Boolean
+        get() = !isCurationTabSelected && !isNewsTabSelected
+}
 
 data class HomeCurationCarouselState(
     val selectedCategoryId: String,
@@ -36,7 +49,7 @@ data class HomeCurationRequestLocation(
 
 object HomeCurationStateReducer {
     fun updateTabs(state: HomeCurationUiState, tabs: SDHomeBottomSheetTabsModel): HomeCurationUiState {
-        val supportedTabs = tabs.tabs.filter { it.viewType == "CURATION" || it.viewType == "STORE_LIST" }
+        val supportedTabs = tabs.tabs.filter { it.viewType in SDHomeBottomSheetViewType.supported }
         val selectedTabId = state.selectedTabId?.takeIf { current -> supportedTabs.any { it.tabId == current } }
             ?: supportedTabs.firstOrNull { it.defaultSelected }?.tabId
             ?: supportedTabs.firstOrNull()?.tabId
@@ -138,4 +151,9 @@ object HomeCurationStateReducer {
             )),
         )
     }
+}
+
+object HomeSheetTabScrollPolicy {
+    fun shouldScrollToTop(previousTabId: String?, selectedTabId: String?): Boolean =
+        previousTabId != null && selectedTabId != null && previousTabId != selectedTabId
 }

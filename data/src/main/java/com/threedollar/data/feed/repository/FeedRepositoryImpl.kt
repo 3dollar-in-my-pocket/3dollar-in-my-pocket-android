@@ -17,11 +17,12 @@ class FeedRepositoryImpl @Inject constructor(
         mapLongitude: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
+        size: Int,
     ): Result<FeedPageModel> = runApi {
         feedApi.getFeeds(
             ticketId = LOCAL_NEWS_TICKET_ID,
             cursor = cursor,
-            size = PAGE_SIZE,
+            size = size,
             mapLatitude = mapLatitude,
             mapLongitude = mapLongitude,
             deviceLatitude = deviceLatitude,
@@ -31,6 +32,5 @@ class FeedRepositoryImpl @Inject constructor(
 
     private companion object {
         const val LOCAL_NEWS_TICKET_ID = "LOCAL_NEWS"
-        const val PAGE_SIZE = 20
     }
 }
