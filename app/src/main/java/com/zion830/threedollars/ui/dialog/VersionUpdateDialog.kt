@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.dialog
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -11,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.ComponentDialog
+import androidx.activity.addCallback
 import androidx.fragment.app.DialogFragment
 import com.zion830.threedollars.databinding.DialogForceUpdateBinding
 import com.zion830.threedollars.datasource.model.AppUpdateDialog
@@ -21,6 +24,14 @@ import com.threedollar.common.R as CommonR
 @AndroidEntryPoint
 class VersionUpdateDialog(private val updateDialog: AppUpdateDialog) : DialogFragment() {
     val defaultUrl = "https://play.google.com/store/apps/details?id=com.zion830.threedollars"
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog =
+        super.onCreateDialog(savedInstanceState).also { dialog ->
+            // TH-919: predictive back 에서는 KEYCODE_BACK 키 리스너가 호출되지 않아 dispatcher 콜백으로 처리한다
+            (dialog as? ComponentDialog)?.onBackPressedDispatcher?.addCallback(this) {
+                requireActivity().finish()
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,14 +70,6 @@ class VersionUpdateDialog(private val updateDialog: AppUpdateDialog) : DialogFra
         val deviceWidth = size.x
         params?.width = (deviceWidth * 0.9).toInt()
         dialog?.window?.attributes = params as WindowManager.LayoutParams
-
-        dialog?.setOnKeyListener { dialog, keyCode, event ->
-            if ((keyCode == android.view.KeyEvent.KEYCODE_BACK)) {
-                requireActivity().finish()
-                true
-            }
-            else true
-        }
     }
 
     companion object {

@@ -17,6 +17,7 @@ import com.zion830.threedollars.ui.coupon.ui.MyCouponsActivity
 import com.zion830.threedollars.databinding.ActivityDynamiclinkBinding
 import com.zion830.threedollars.ui.favorite.viewer.FavoriteViewerActivity
 import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
+import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.storeDetail.contributor.ui.StoreContributorActivity
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.ui.storeDetail.post.model.StorePostListDeepLink
@@ -111,18 +112,31 @@ class DynamicLinkActivity : AppCompatActivity() {
 
     private fun handleDeepLink() {
         val pushLink = intent.getStringExtra(LINK)
-        if (pushLink.isNotNullOrEmpty()) {
-            handleDeepLinkNavigation(pushLink?.toUri().orEmpty(), isExternal = intent.getBooleanExtra(EXTRA_EXTERNAL, false))
+        val (deeplink, isExternal) = when {
+            pushLink.isNotNullOrEmpty() ->
+                pushLink?.toUri().orEmpty() to intent.getBooleanExtra(EXTRA_EXTERNAL, false)
+
+            intent.data?.scheme.toStringDefault().contains(SCHEME_DOLLARS) -> intent.data.orEmpty() to true
+
+            else -> {
+                finish()
+                return
+            }
+        }
+
+        // TH-1071: 미로그인이면 링크 화면을 열지 않고 로그인으로 보낸다. 로그인 뒤 같은 링크를 다시 연다(TH-1070).
+        if (!GlobalApplication.isLoggedIn && !deeplink.isGuestAllowed()) {
+            startActivity(LoginActivity.getIntent(this, pendingLink = deeplink.toString()))
+            finish()
             return
         }
 
-        if (intent.data?.scheme.toStringDefault().contains(SCHEME_DOLLARS)) {
-            handleDeepLinkNavigation(intent.data.orEmpty(), isExternal = true)
-            return
-        }
-
-        finish()
+        if (isExternal) PendingDeepLink.record(deeplink.toString())
+        handleDeepLinkNavigation(deeplink, isExternal = isExternal)
     }
+
+    /** 즐겨찾기 공유(bookmark)는 미로그인 열람을 지원한다(FavoriteViewerActivity 가 가게 이동 시 로그인을 요청). */
+    private fun Uri.isGuestAllowed(): Boolean = (lastPathSegment ?: host) == BOOKMARK
 
     private fun handleDeepLinkNavigation(deeplink: Uri, isExternal: Boolean) {
         StoreSectionFragment.parseLink(deeplink.toString())?.let { link ->

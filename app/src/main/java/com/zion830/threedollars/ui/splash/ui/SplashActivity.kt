@@ -169,7 +169,9 @@ class SplashActivity :
                                                 showToast(it)
                                             }
                                         }
-                                        startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                        // TH-1070: 백그라운드 푸시 링크를 로그인 뒤까지 넘긴다
+                                        val pushLink = intent.getStringExtra(PUSH_LINK)?.takeIf { it.contains("dollars") }
+                                        startActivity(LoginActivity.getIntent(this@SplashActivity, pendingLink = pushLink))
                                         finish()
                                     }
                                 }

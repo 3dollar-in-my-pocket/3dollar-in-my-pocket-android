@@ -3,6 +3,8 @@ package com.zion830.threedollars
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -94,6 +96,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         initFlow()
         initNavController(navController)
         initNavView()
+        onBackPressedDispatcher.addCallback(this, mainBackPressedCallback)
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -186,10 +189,24 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) resumePendingLink(intent)
+    }
+
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
         navigateToMedalPageWithDeepLink(intent)
+        resumePendingLink(intent)
+    }
+
+    /** TH-1070: 로그인 때문에 멈춘 푸시·외부 링크를 메인 위에서 다시 연다. 한 번만 열도록 extra 를 지운다. */
+    private fun resumePendingLink(intent: Intent) {
+        val link = intent.getStringExtra(EXTRA_RESUME_LINK)
+        if (link.isNullOrBlank()) return
+        intent.removeExtra(EXTRA_RESUME_LINK)
+        startActivity(DynamicLinkActivity.getExternalIntent(this, link))
     }
 
     private fun initNavController(navController: NavController) {
@@ -224,7 +241,17 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
-    override fun onBackPressed() {
+    /**
+     * TH-919: targetSdk 36(Android 16)·predictive back 에서는 [onBackPressed] override 가 호출되지 않는다.
+     * 기존 뒤로가기 규칙을 [OnBackPressedCallback] 으로 옮겨 predictive back 사용 여부와 관계없이 같게 동작시킨다.
+     */
+    private val mainBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            handleMainBack()
+        }
+    }
+
+    private fun handleMainBack() {
         val fragmentList = supportFragmentManager.fragments
         for (fragment in fragmentList) {
             if (fragment is OnBackPressedListener) {
@@ -232,14 +259,22 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 return
             }
         }
-        if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_popup) {
-            binding.navHostFragment.findNavController().navigateUp()
-        } else if (binding.navHostFragment.findNavController().currentDestination?.id == R.id.navigation_write) {
-            super.onBackPressed()
-        }  else if (binding.navHostFragment.findNavController().currentDestination?.id != R.id.navigation_home) {
-            binding.navHostFragment.findNavController().navigate(R.id.navigation_home)
-        } else {
-            super.onBackPressed()
+        val navController = binding.navHostFragment.findNavController()
+        when (navController.currentDestination?.id) {
+            R.id.navigation_popup -> navController.navigateUp()
+            R.id.navigation_write -> dispatchBackToNextHandler()
+            R.id.navigation_home -> dispatchBackToNextHandler()
+            else -> navController.navigate(R.id.navigation_home)
+        }
+    }
+
+    /** 기존 `super.onBackPressed()` 와 같다: 이 콜백을 잠시 끄고 다음 콜백(홈 시트·제보 화면 등) 또는 기본 동작에 넘긴다. */
+    private fun dispatchBackToNextHandler() {
+        mainBackPressedCallback.isEnabled = false
+        try {
+            onBackPressedDispatcher.onBackPressed()
+        } finally {
+            mainBackPressedCallback.isEnabled = true
         }
     }
 
@@ -298,6 +333,12 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     companion object {
 
-        fun getIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+        private const val EXTRA_RESUME_LINK = "extra_resume_link"
+
+        /** [resumeLink]: 로그인 전에 열려던 딥링크. 메인을 띄운 뒤 그 위에서 이어서 연다(TH-1070). */
+        fun getIntent(context: Context, resumeLink: String? = null): Intent =
+            Intent(context, MainActivity::class.java).apply {
+                if (!resumeLink.isNullOrBlank()) putExtra(EXTRA_RESUME_LINK, resumeLink)
+            }
     }
 }
