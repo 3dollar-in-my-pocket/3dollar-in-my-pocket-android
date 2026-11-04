@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.review
 
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,12 +26,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,6 +47,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import base.compose.ColorB7B7B7
 import base.compose.ColorF9737E
 import base.compose.ColorFf858F
@@ -245,6 +251,7 @@ private fun PhotoTile(photo: ReviewPhoto, onRemove: () -> Unit) {
 private fun ReviewContentsField(contents: String, onContentsChange: (String) -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
     val isFocused by interactionSource.collectIsFocusedAsState()
+    ClearFocusWhenKeyboardHides()
     val textStyle = pretendard(size = 14, weight = FontWeight.Normal, lineHeight = 20)
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         BasicTextField(
@@ -255,7 +262,7 @@ private fun ReviewContentsField(contents: String, onContentsChange: (String) -> 
                 .height(140.dp)
                 .clip(ContentShape)
                 .background(Gray0)
-                .border(1.dp, if (isFocused || contents.isNotEmpty()) ColorFf858F else Gray20, ContentShape)
+                .border(1.dp, if (isFocused) ColorFf858F else Gray20, ContentShape)
                 .padding(horizontal = 16.dp, vertical = 10.dp),
             textStyle = textStyle.copy(color = Gray70),
             cursorBrush = SolidColor(ColorFf858F),
@@ -278,7 +285,11 @@ private fun ReviewContentsField(contents: String, onContentsChange: (String) -> 
             )
             Text(
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = if (contents.isEmpty()) Gray50 else ColorF9737E)) { append(contents.length.toString()) }
+                    if (contents.isEmpty()) {
+                        append("0")
+                    } else {
+                        withStyle(SpanStyle(color = ColorF9737E, fontWeight = FontWeight.Medium)) { append(contents.length.toString()) }
+                    }
                     append("/${ReviewWriteState.MAX_CONTENTS_LENGTH}")
                 },
                 style = pretendard(size = 12, weight = FontWeight.Normal, lineHeight = 18),
@@ -286,6 +297,23 @@ private fun ReviewContentsField(contents: String, onContentsChange: (String) -> 
                 textAlign = TextAlign.End,
             )
         }
+    }
+}
+
+/** 시트(다이얼로그 창)에서는 Compose ime 인셋이 오지 않아, 루트 인셋으로 키보드가 내려가는 순간을 잡아 입력 포커스를 푼다. */
+@Composable
+private fun ClearFocusWhenKeyboardHides() {
+    val view = LocalView.current
+    val focusManager = LocalFocusManager.current
+    DisposableEffect(view) {
+        var wasImeVisible = false
+        val listener = ViewTreeObserver.OnGlobalLayoutListener {
+            val isImeVisible = ViewCompat.getRootWindowInsets(view)?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            if (wasImeVisible && !isImeVisible) focusManager.clearFocus()
+            wasImeVisible = isImeVisible
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
+        onDispose { view.viewTreeObserver.removeOnGlobalLayoutListener(listener) }
     }
 }
 
