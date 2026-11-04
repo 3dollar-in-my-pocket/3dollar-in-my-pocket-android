@@ -19,11 +19,21 @@ class ReviewSubmitterTest {
         var putImages: List<UploadFileModel>? = null
     }
 
-    private fun submitter(recorder: Recorder, uploadFails: Boolean = false) = ReviewSubmitter(
+    private fun submitter(
+        recorder: Recorder,
+        uploadFails: Boolean = false,
+        uploadedSize: Int = 100,
+        measured: PhotoPixelSize? = null,
+    ) = ReviewSubmitter(
         uploadPhotos = { uris ->
             recorder.uploadedUris = uris
-            if (uploadFails) null else uris.map { UploadFileModel("https://storage.threedollars.co.kr/review/${it.substringAfterLast('/')}.png", 100, 100, 1.0) }
+            if (uploadFails) {
+                null
+            } else {
+                uris.map { UploadFileModel("https://storage.threedollars.co.kr/review/${it.substringAfterLast('/')}.png", uploadedSize, uploadedSize, 1.0) }
+            }
         },
+        measurePhoto = { measured },
         postReview = { _, _, storeId, images ->
             recorder.postedStoreId = storeId
             recorder.postedImages = images
@@ -55,6 +65,38 @@ class ReviewSubmitterTest {
             recorder.postedImages?.map { it.imageUrl },
         )
         assertNull(recorder.putReviewId)
+    }
+
+    // TH-1422 TC17
+    @Test
+    fun `TH1422_TC17_업로드응답에_크기가없으면_올린사진의_실제픽셀크기를_넘긴다`() = runBlocking {
+        // Given
+        val recorder = Recorder()
+        val state = ReviewWriteState(storeId = 1).withRating(4).withContents("바삭해요").addPickedPhotos(listOf("content://picker/a"))
+
+        // When
+        submitter(recorder, uploadedSize = 0, measured = PhotoPixelSize(width = 400, height = 300)).submit(state)
+
+        // Then
+        val image = recorder.postedImages?.single()
+        assertEquals(400, image?.width)
+        assertEquals(300, image?.height)
+    }
+
+    // TH-1422 TC17
+    @Test
+    fun `TH1422_TC17_크기를_잴수없고_업로드응답에도_없으면_500으로_넘긴다`() = runBlocking {
+        // Given
+        val recorder = Recorder()
+        val state = ReviewWriteState(storeId = 1).withRating(4).withContents("바삭해요").addPickedPhotos(listOf("content://picker/a"))
+
+        // When
+        submitter(recorder, uploadedSize = 0, measured = null).submit(state)
+
+        // Then
+        val image = recorder.postedImages?.single()
+        assertEquals(500, image?.width)
+        assertEquals(500, image?.height)
     }
 
     // TH-1422 TC10

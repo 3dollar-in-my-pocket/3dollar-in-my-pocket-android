@@ -48,6 +48,7 @@ class ReviewWriteViewModel @Inject constructor(
 
     private val submitter = ReviewSubmitter(
         uploadPhotos = ::uploadPhotos,
+        measurePhoto = ::measurePhoto,
         postReview = { contents, rating, storeId, images ->
             homeRepository.postStoreReview(contents, rating, storeId, images).first().toSubmitResult()
         },
@@ -89,6 +90,10 @@ class ReviewWriteViewModel @Inject constructor(
     private suspend fun uploadPhotos(uris: List<String>) = withContext(Dispatchers.IO) {
         val parts = FileUtils.toImageParts(uris.map { it.toUri() }, FileUtils.UPLOAD_FILES_PART_NAME) ?: return@withContext null
         homeRepository.uploadFilesBulk(STORE_REVIEW_IMAGE, parts)?.takeIf { it.ok }?.data
+    }
+
+    private suspend fun measurePhoto(uri: String) = withContext(Dispatchers.IO) {
+        FileUtils.imagePixelSize(uri.toUri())?.let { (width, height) -> PhotoPixelSize(width, height) }
     }
 
     private fun BaseResponse<*>.toSubmitResult(): ReviewSubmitResult =
