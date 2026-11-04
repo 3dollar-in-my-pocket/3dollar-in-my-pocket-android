@@ -89,10 +89,12 @@ fun ReviewWriteScreen(
         Spacer(modifier = Modifier.height(28.dp))
         ReviewRating(storeName = state.storeName, rating = state.rating, onRatingChange = onRatingChange)
         Spacer(modifier = Modifier.height(28.dp))
-        if (state.photos.isEmpty()) {
-            AttachPhotoButton(onClick = onAddPhotoClick)
-        } else {
-            ReviewPhotoRow(state = state, onAddPhotoClick = onAddPhotoClick, onRemovePhoto = onRemovePhoto)
+        Box(modifier = Modifier.fillMaxWidth().height(PhotoSize)) {
+            if (state.photos.isEmpty()) {
+                AttachPhotoButton(onClick = onAddPhotoClick)
+            } else {
+                ReviewPhotoRow(state = state, onAddPhotoClick = onAddPhotoClick, onRemovePhoto = onRemovePhoto)
+            }
         }
         Spacer(modifier = Modifier.height(16.dp))
         ReviewContentsField(contents = state.contents, onContentsChange = onContentsChange)
