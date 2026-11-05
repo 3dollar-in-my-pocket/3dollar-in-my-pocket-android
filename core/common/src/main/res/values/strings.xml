@@ -334,6 +334,14 @@
     <string name="delete_review">리뷰 삭제</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
     <string name="success_edit_review">리뷰가 수정되었습니다.</string>
+    <string name="review_write_title">리뷰 작성</string>
+    <string name="review_write_attach_photo">사진 첨부하기</string>
+    <string name="review_write_hint">주문한 메뉴는 어땠나요? 맛, 분위기, 서비스에 대한 후기를 남겨주세요.</string>
+    <string name="review_write_length_guide">300자 이내로 작성해주세요.</string>
+    <string name="review_write_submit">등록하기</string>
+    <string name="review_write_rating_description">별점 %1$d점</string>
+    <string name="review_write_photo_delete_description">사진 삭제</string>
+    <string name="review_write_photo_add_description">사진 추가</string>
     <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
     <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
     <string name="input_content">내용을 입력해주세요.</string>

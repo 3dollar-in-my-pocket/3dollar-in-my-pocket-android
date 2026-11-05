@@ -1,5 +1,7 @@
 package com.zion830.threedollars.utils
 
+import android.graphics.BitmapFactory
+import android.media.ExifInterface
 import android.net.Uri
 import com.google.android.gms.common.util.IOUtils
 import com.zion830.threedollars.GlobalApplication
@@ -40,17 +42,38 @@ object FileUtils {
     /**
      * 사진 업로드용 multipart 목록을 만든다. 용량 제한을 넘는 사진이 하나라도 있으면 null 이다.
      */
-    fun toImageParts(uris: List<Uri?>): List<MultipartBody.Part>? {
+    fun toImageParts(uris: List<Uri?>, partName: String = IMAGE_PART_NAME): List<MultipartBody.Part>? {
         val parts = ArrayList<MultipartBody.Part>()
         uris.forEach { uri ->
             if (!isAvailable(uri)) return null
             uriToFile(uri)?.let { file ->
-                parts.add(MultipartBody.Part.createFormData(IMAGE_PART_NAME, file.name, file.asRequestBody(IMAGE_MEDIA_TYPE.toMediaType())))
+                parts.add(MultipartBody.Part.createFormData(partName, file.name, file.asRequestBody(IMAGE_MEDIA_TYPE.toMediaType())))
             }
         }
         return parts
     }
 
+    fun imagePixelSize(uri: Uri): Pair<Int, Int>? {
+        val resolver = GlobalApplication.getContext().contentResolver
+        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        val stream = runCatching { resolver.openInputStream(uri) }.getOrNull() ?: return null
+        stream.use { BitmapFactory.decodeStream(it, null, options) }
+        if (options.outWidth <= 0 || options.outHeight <= 0) return null
+
+        val orientation = runCatching {
+            resolver.openInputStream(uri)?.use { ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL) }
+        }.getOrNull() ?: ExifInterface.ORIENTATION_NORMAL
+        val isRotated = orientation in ROTATED_ORIENTATIONS
+        return if (isRotated) options.outHeight to options.outWidth else options.outWidth to options.outHeight
+    }
+
+    private val ROTATED_ORIENTATIONS = setOf(
+        ExifInterface.ORIENTATION_TRANSPOSE,
+        ExifInterface.ORIENTATION_ROTATE_90,
+        ExifInterface.ORIENTATION_TRANSVERSE,
+        ExifInterface.ORIENTATION_ROTATE_270,
+    )
     private const val IMAGE_PART_NAME = "images"
+    const val UPLOAD_FILES_PART_NAME = "files"
     private const val IMAGE_MEDIA_TYPE = "image/*"
 }

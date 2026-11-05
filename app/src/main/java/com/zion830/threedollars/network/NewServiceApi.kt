@@ -4,11 +4,8 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.common.utils.Constants
 import com.threedollar.common.utils.Constants.FAVORITE_STORE
 import com.threedollar.network.data.favorite.MyFavoriteFolderResponse
-import com.threedollar.network.data.store.StoreReviewDetailResponse
-import com.threedollar.network.request.BossStoreReviewRequest
 import com.threedollar.network.request.PatchPushInformationRequest
 import com.threedollar.network.request.PushInformationRequest
-import com.zion830.threedollars.datasource.model.v2.request.BossStoreFeedbackRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditNameRequest
 import com.zion830.threedollars.datasource.model.v2.request.EditReviewRequest
 import com.zion830.threedollars.datasource.model.v2.request.FavoriteInfoRequest
@@ -47,11 +44,6 @@ interface NewServiceApi {
     suspend fun saveReview(
         @Body newReviewRequest: NewReviewRequest
     ): Response<NewReviewResponse>
-
-    @POST("/api/v3/store/review")
-    suspend fun postBossStoreReview(
-        @Body bossStoreReviewRequest: BossStoreReviewRequest
-    ): Response<BaseResponse<StoreReviewDetailResponse>>
 
     @GET("/api/v3/store/reviews/me")
     suspend fun getMyReviews(
@@ -163,12 +155,6 @@ interface NewServiceApi {
 
     @GET("/api/v1/boss/store/feedback/types")
     suspend fun getBossStoreFeedbackType(): Response<BossStoreFeedbackTypeResponse>
-
-    @POST("/api/v1/boss/store/{bossStoreId}/feedback")
-    suspend fun postBossStoreFeedback(
-        @Path("bossStoreId") bossStoreId: String,
-        @Body feedbackTypes: BossStoreFeedbackRequest
-    ): Response<BaseResponse<String>>
 
     @PUT("/api/v2/device")
     suspend fun putPushInformation(@Body informationRequest: PushInformationRequest): Response<BaseResponse<String>>

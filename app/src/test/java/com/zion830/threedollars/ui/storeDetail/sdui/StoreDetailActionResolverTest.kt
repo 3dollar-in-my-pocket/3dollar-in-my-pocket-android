@@ -111,6 +111,22 @@ class StoreDetailActionResolverTest {
         assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID)), bossStore)
     }
 
+    @Test
+    fun `TH1422_TC16_리뷰작성액션에_가게명이있으면_작성시트에_가게명을_넘긴다`() {
+        // Given
+        val event = customEvent(
+            SDCustomActionType.STORE_PREVIEW_SECTION_REVIEW_WRITE,
+            SDCustomActionModel.STORE_ID to STORE_ID,
+            SDCustomActionModel.STORE_NAME to "강남역 주변 가게",
+        )
+
+        // When
+        val resolution = resolve(event)
+
+        // Then
+        assertEquals(Resolution.Navigate(StoreDetailDestination.WriteReview(STORE_ID, "강남역 주변 가게")), resolution)
+    }
+
     // TH-1226 TC14
     @Test
     fun `TH1226_TC14_가게신고는_신고다이얼로그를_연다`() {
