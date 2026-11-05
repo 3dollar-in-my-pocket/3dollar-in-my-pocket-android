@@ -117,7 +117,6 @@ class StoreDetailSduiViewModel @Inject constructor(
             is StoreDetailSduiUiIntent.OnCouponUseConfirmed -> useCoupon(intent.issuedKey)
             is StoreDetailSduiUiIntent.OnStoreReportSubmit -> reportStore(intent.deleteReasonType)
             is StoreDetailSduiUiIntent.OnReviewReportSubmit -> reportReview(intent)
-            is StoreDetailSduiUiIntent.OnReviewSubmit -> postReview(intent)
             is StoreDetailSduiUiIntent.OnImagesSelected -> uploadImages(intent.images)
             StoreDetailSduiUiIntent.OnStoreChanged -> fetch(keepContent = true)
             is StoreDetailSduiUiIntent.OnDisplayItemDisplayed -> displayItemController.onDisplayed(intent.item)
@@ -352,18 +351,6 @@ class StoreDetailSduiViewModel @Inject constructor(
             val response = homeRepository.reportStoreReview(storeId, intent.reviewId, intent.request).first()
             if (response.ok) {
                 sendEffect(StoreDetailSduiUiEffect.ShowToast(messageRes = CommonR.string.report_completed))
-                fetch(keepContent = true)
-            } else {
-                sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(response.message))
-            }
-        }
-    }
-
-    private fun postReview(intent: StoreDetailSduiUiIntent.OnReviewSubmit) {
-        val storeId = stateStore.value.storeId.toIntOrNull() ?: return
-        launch {
-            val response = homeRepository.postStoreReview(intent.contents, intent.rating, storeId).first()
-            if (response.ok) {
                 fetch(keepContent = true)
             } else {
                 sendEffect(StoreDetailSduiUiEffect.ShowErrorAlert(response.message))

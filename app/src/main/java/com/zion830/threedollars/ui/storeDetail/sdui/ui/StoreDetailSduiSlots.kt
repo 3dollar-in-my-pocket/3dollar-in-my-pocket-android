@@ -27,6 +27,8 @@ import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSectionSlots
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailAdLoadPolicy
 import com.threedollar.common.R as CommonR
@@ -126,8 +128,14 @@ private fun StoreDetailBanner(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnAdClick by rememberUpdatedState(onAdClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_store_detail_banner)
     SduiAdMobSlot(
-        adUnitId = context.getString(CommonR.string.admob_store_detail_banner),
+        adUnitId = AdMobUnitId.resolve(
+            serverUnitId = card.adUnitId,
+            fallbackUnitId = fallbackAdUnitId,
+            isDebug = BuildConfig.DEBUG,
+        ),
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.slotHeightDp,
         adListener = remember {
             object : AdListener() {

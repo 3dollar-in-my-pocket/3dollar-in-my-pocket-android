@@ -27,7 +27,6 @@ import com.threedollar.domain.home.data.store.DeleteResultModel
 import com.threedollar.domain.home.data.store.EditStoreReviewModel
 import com.threedollar.domain.home.data.store.ExtraModel
 import com.threedollar.domain.home.data.store.FavoriteModel
-import com.threedollar.domain.home.data.store.FeedbackExistsModel
 import com.threedollar.domain.home.data.store.FeedbackModel
 import com.threedollar.domain.home.data.store.FeedbackType
 import com.threedollar.domain.home.data.store.FoodTruckReviewModel
@@ -87,7 +86,6 @@ import com.threedollar.network.data.Reason
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.data.store.Account
 import com.threedollar.network.data.store.AccountNumber
@@ -848,6 +846,3 @@ fun FilterConditionsTypeModel.asType() = when (this) {
     FilterConditionsTypeModel.NO_RECENT_ACTIVITY -> FilterConditionsType.NO_RECENT_ACTIVITY
 }
 
-fun FeedbackExistsResponse.asModel() = FeedbackExistsModel(
-    exists = exists
-)

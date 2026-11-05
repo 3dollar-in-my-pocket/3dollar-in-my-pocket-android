@@ -18,6 +18,7 @@ data class HomeCurationItemResponse(
     @SerializedName("cards") val cards: List<HomeCurationCardResponse>? = emptyList(),
     @SerializedName("cardId") val cardId: String? = null,
     @SerializedName("height") val height: Int? = null,
+    @SerializedName("adUnitId") val adUnitId: String? = null,
     @SerializedName("clickLog") val clickLog: SDClickLogResponse? = null,
     @SerializedName("impressionLog") val impressionLog: SDImpressionLogResponse? = null,
 )
@@ -47,6 +48,7 @@ data class HomeCurationCardResponse(
     @SerializedName("style") val style: SDSurfaceStyleResponse? = null,
     @SerializedName("refs") val refs: List<HomeCurationCardReferenceResponse>? = emptyList(),
     @SerializedName("height") val height: Int? = null,
+    @SerializedName("adUnitId") val adUnitId: String? = null,
     @SerializedName("clickLog") val clickLog: SDClickLogResponse? = null,
     @SerializedName("impressionLog") val impressionLog: SDImpressionLogResponse? = null,
 )

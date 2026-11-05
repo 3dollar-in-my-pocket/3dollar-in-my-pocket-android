@@ -10,6 +10,8 @@ import com.threedollar.common.utils.SharedPrefUtils.Companion.BOSS_FEED_BACK_LIS
 import com.threedollar.data.home.asModel
 import com.threedollar.data.home.asRequest
 import com.threedollar.data.home.asType
+import com.threedollar.data.home.storeReviewCreateRequest
+import com.threedollar.data.home.storeReviewUpdateRequest
 import com.threedollar.data.home.datasource.HomeRemoteDataSource
 import com.threedollar.data.home.datasource.ImagePagingDataSource
 import com.threedollar.data.home.datasource.PlacePagingDataSource
@@ -20,7 +22,6 @@ import com.threedollar.domain.home.data.store.AroundStoreModel
 import com.threedollar.domain.home.data.store.BossStoreDetailModel
 import com.threedollar.domain.home.data.store.DeleteResultModel
 import com.threedollar.domain.home.data.store.EditStoreReviewModel
-import com.threedollar.domain.home.data.store.FeedbackExistsModel
 import com.threedollar.domain.home.data.store.FoodTruckReviewModel
 import com.threedollar.domain.home.data.store.ImageContentModel
 import com.threedollar.domain.home.data.store.PostUserStoreModel
@@ -40,10 +41,8 @@ import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.feedback.FeedbackTypeResponse
 import com.threedollar.network.request.MarketingConsentRequest
-import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
-import com.threedollar.network.request.StoreReviewRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
@@ -174,13 +173,6 @@ class HomeRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: List<String>): Flow<BaseResponse<String>> =
-        homeRemoteDataSource.postFeedback(
-            targetType = targetType,
-            targetId = targetId,
-            postFeedbackRequest = PostFeedbackRequest(postFeedbackRequest),
-        )
-
     override fun deleteStore(storeId: Int, deleteReasonType: String): Flow<BaseResponse<DeleteResultModel>> =
         homeRemoteDataSource.deleteStore(storeId, deleteReasonType).map {
             BaseResponse(
@@ -255,8 +247,8 @@ class HomeRepositoryImpl @Inject constructor(
         ImagePagingDataSource(storeId, serverApi)
     }.flow
 
-    override fun postStoreReview(contents: String, rating: Int?, storeId: Int) =
-        homeRemoteDataSource.postStoreReview(StoreReviewRequest(contents, rating, storeId)).map {
+    override fun postStoreReview(contents: String, rating: Int?, storeId: Int, images: List<UploadFileModel>) =
+        homeRemoteDataSource.postStoreReview(storeReviewCreateRequest(contents, rating, storeId, images)).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),
@@ -266,8 +258,8 @@ class HomeRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun putStoreReview(reviewId: Long, contents: String, rating: Int): Flow<BaseResponse<EditStoreReviewModel>> =
-        homeRemoteDataSource.putStoreReview(reviewId, StoreReviewRequest(contents = contents, rating = rating)).map {
+    override fun putStoreReview(reviewId: Long, contents: String, rating: Int, images: List<UploadFileModel>): Flow<BaseResponse<EditStoreReviewModel>> =
+        homeRemoteDataSource.putStoreReview(reviewId, storeReviewUpdateRequest(contents, rating, images)).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asModel(),
@@ -340,25 +332,4 @@ class HomeRepositoryImpl @Inject constructor(
 
     override fun putStickers(storeId: String, reviewId: String, stickers: List<String>): Flow<BaseResponse<String>>
         = homeRemoteDataSource.putStickers(storeId, reviewId, stickers)
-
-    override fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<ReviewContentModel>> =
-        homeRemoteDataSource.postBossStoreReview(storeId, contents, rating, images, feedbacks).map {
-            BaseResponse(
-                ok = it.ok,
-                data = it.data?.asModel(),
-                message = it.message,
-                resultCode = it.resultCode,
-                error = it.error,
-            )
-        }
-
-    override fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsModel>> =
-        homeRemoteDataSource.checkFeedbackExists(targetType, targetId).map { response ->
-            BaseResponse(
-                ok = response.ok,
-                error = response.error,
-                message = response.message,
-                data = response.data?.asModel()
-            )
-        }
 }

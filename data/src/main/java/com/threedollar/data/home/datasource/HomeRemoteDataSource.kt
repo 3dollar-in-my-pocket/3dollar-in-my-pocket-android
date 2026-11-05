@@ -6,7 +6,6 @@ import com.threedollar.common.utils.AdvertisementsPosition
 import com.threedollar.network.data.ReportReasonsResponse
 import com.threedollar.network.data.advertisement.AdvertisementResponse
 import com.threedollar.network.data.feedback.FeedbackCountResponse
-import com.threedollar.network.data.feedback.FeedbackExistsResponse
 import com.threedollar.network.data.store.AroundStoreResponse
 import com.threedollar.network.data.store.BossStoreResponse
 import com.threedollar.network.data.store.DeleteResultResponse
@@ -16,12 +15,10 @@ import com.threedollar.network.data.store.StoreReviewDetailResponse
 import com.threedollar.network.data.store.SaveImagesResponse
 import com.threedollar.network.data.store.UploadFileResponse
 import com.threedollar.network.data.store.UserStoreResponse
-import com.threedollar.domain.home.data.store.UploadFileModel
 import com.threedollar.network.data.user.UserResponse
 import com.threedollar.network.request.MarketingConsentRequest
 import com.threedollar.network.request.PlaceRequest
 import com.threedollar.network.request.PlaceType
-import com.threedollar.network.request.PostFeedbackRequest
 import com.threedollar.network.request.PostStoreVisitRequest
 import com.threedollar.network.request.PushInformationRequest
 import com.threedollar.network.request.ReportReviewRequest
@@ -66,8 +63,6 @@ interface HomeRemoteDataSource {
     fun deleteFavorite(storeId: String): Flow<BaseResponse<String>>
 
     fun getFeedbackFull(targetType: String, targetId: String): Flow<BaseResponse<List<FeedbackCountResponse>>>
-
-    fun postFeedback(targetType: String, targetId: String, postFeedbackRequest: PostFeedbackRequest): Flow<BaseResponse<String>>
 
     fun getUserStoreDetail(
         storeId: Int,
@@ -115,8 +110,4 @@ interface HomeRemoteDataSource {
     fun deletePlace(placeType: PlaceType, placeId: String): Flow<BaseResponse<String>>
 
     fun putStickers(storeId: String, reviewId: String, stickers:List<String>): Flow<BaseResponse<String>>
-
-    fun postBossStoreReview(storeId: String, contents: String, rating: Int, images: List<UploadFileModel>, feedbacks: List<String>): Flow<BaseResponse<StoreReviewDetailResponse>>
-
-    fun checkFeedbackExists(targetType: String, targetId: String): Flow<BaseResponse<FeedbackExistsResponse>>
 }
