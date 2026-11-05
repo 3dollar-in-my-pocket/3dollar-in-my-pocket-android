@@ -1140,11 +1140,9 @@ private fun MetadataRow(
             }
             MetadataChip(
                 chip = chip,
-                textColor = if (index == 0 && firstChipColor != null) {
-                    firstChipColor
-                } else {
-                    chip.text.fontColor.toColor(fallback = defaultTextColor)
-                },
+                textColor = chip.text.fontColor.toColor(
+                    fallback = firstChipColor?.takeIf { index == 0 } ?: defaultTextColor,
+                ),
                 fontWeight = chip.text.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
                 modifier = if (index == shrinkChipIndex && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
