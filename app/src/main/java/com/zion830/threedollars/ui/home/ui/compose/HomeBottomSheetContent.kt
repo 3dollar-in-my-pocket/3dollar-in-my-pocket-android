@@ -116,6 +116,8 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
@@ -877,8 +879,15 @@ private fun HomeListAdMobCard(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnClick by rememberUpdatedState(onClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_list_banner)
+    val adUnitId = AdMobUnitId.resolve(
+        serverUnitId = card.adUnitId,
+        fallbackUnitId = fallbackAdUnitId,
+        isDebug = BuildConfig.DEBUG,
+    )
     SduiAdMobSlot(
-        adUnitId = context.getString(CommonR.string.admob_list_banner),
+        adUnitId = adUnitId,
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.heightDp,
         adListener = remember {
             object : AdListener() {

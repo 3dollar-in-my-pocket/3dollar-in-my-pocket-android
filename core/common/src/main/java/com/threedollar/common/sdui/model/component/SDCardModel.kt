@@ -46,6 +46,7 @@ data class ImagePreviewCardModel(
 data class SDAdMobCardModel(
     override val cardId: String,
     val height: Int,
+    val adUnitId: String? = null,
     val clickLog: SDLogModel? = null,
     val impressionLog: SDLogModel? = null
 ) : SDCardModel {

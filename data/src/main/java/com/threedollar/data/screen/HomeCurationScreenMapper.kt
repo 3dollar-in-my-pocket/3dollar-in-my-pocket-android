@@ -83,6 +83,7 @@ private fun HomeCurationItemResponse.asCurationItemModel(): SDHomeCurationItemMo
         card = SDAdMobCardModel(
             cardId = cardId.orEmpty(),
             height = height ?: 0,
+            adUnitId = adUnitId,
             clickLog = clickLog?.asSduiLogModel(),
             impressionLog = impressionLog?.asSduiLogModel(),
         ),
@@ -118,6 +119,7 @@ private fun HomeCurationCardResponse.asCurationCardModelOrNull(): SDCardModel? =
     "ADMOB_CARD" -> SDAdMobCardModel(
         cardId = cardId.orEmpty(),
         height = height ?: 0,
+        adUnitId = adUnitId,
         clickLog = clickLog?.asSduiLogModel(),
         impressionLog = impressionLog?.asSduiLogModel(),
     )
