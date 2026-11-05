@@ -1,6 +1,7 @@
 package com.zion830.threedollars.ui.ads
 
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -31,6 +32,8 @@ import com.google.android.gms.ads.LoadAdError
  * 광고 WebView 가 포커스를 가져가면 목록이 광고 쪽으로 튀므로 하위 뷰 포커스를 막는다.
  * [adUnitId] 로 실패하면 [fallbackAdUnitId] 로 한 번 더 요청하고, [adListener] 에는 마지막 실패만 알린다.
  * AdView 는 단위 ID 를 한 번만 정할 수 있어서 재시도는 새 AdView 로 한다.
+ *
+ * @param adVisibility AdView 의 visibility. 미리 요청만 하고 노출은 막아야 하면 [View.INVISIBLE] 로 둔다.
  */
 @Composable
 fun SduiAdMobSlot(
@@ -39,6 +42,7 @@ fun SduiAdMobSlot(
     heightDp: Int,
     adListener: AdListener,
     modifier: Modifier = Modifier,
+    adVisibility: Int = View.VISIBLE,
 ) {
     var requestUnitId by remember(adUnitId) { mutableStateOf(adUnitId) }
     val currentAdListener by rememberUpdatedState(adListener)
@@ -68,13 +72,19 @@ fun SduiAdMobSlot(
     ) {
         val widthDp = maxWidth.value.toInt()
         key(widthDp, requestUnitId) {
-            AdMobSlotView(adUnitId = requestUnitId, widthDp = widthDp, heightDp = heightDp, adListener = retryingAdListener)
+            AdMobSlotView(
+                adUnitId = requestUnitId,
+                widthDp = widthDp,
+                heightDp = heightDp,
+                adListener = retryingAdListener,
+                adVisibility = adVisibility,
+            )
         }
     }
 }
 
 @Composable
-private fun AdMobSlotView(adUnitId: String, widthDp: Int, heightDp: Int, adListener: AdListener) {
+private fun AdMobSlotView(adUnitId: String, widthDp: Int, heightDp: Int, adListener: AdListener, adVisibility: Int) {
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->
@@ -82,6 +92,7 @@ private fun AdMobSlotView(adUnitId: String, widthDp: Int, heightDp: Int, adListe
                 descendantFocusability = ViewGroup.FOCUS_BLOCK_DESCENDANTS
                 addView(
                     AdView(context).apply {
+                        visibility = adVisibility
                         setAdSize(AdSize.getInlineAdaptiveBannerAdSize(widthDp, heightDp))
                         this.adUnitId = adUnitId
                         this.adListener = adListener
@@ -95,6 +106,7 @@ private fun AdMobSlotView(adUnitId: String, widthDp: Int, heightDp: Int, adListe
                 )
             }
         },
+        update = { container -> container.getChildAt(0)?.visibility = adVisibility },
         onRelease = { container -> (container.getChildAt(0) as? AdView)?.destroy() },
     )
 }
