@@ -51,16 +51,18 @@ fun StoreDetailSduiRoute(
     placeholderHeader: (@Composable () -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    // 홈 시트 tip 에서는 상세를 뒤에 미리 그려 두므로, 상세가 보인 뒤에만 광고를 로드한다. 가게가 바뀌면 다시 막는다.
-    var canLoadAd by remember(state.storeId) { mutableStateOf(StoreDetailAdLoadPolicy.initial(isDisplayed)) }
+    // 홈 시트 tip 에서는 상세를 뒤에 미리 그려 두므로, 쓰레드 임베드는 상세가 보인 뒤에만 로드한다. 가게가 바뀌면 다시 막는다.
+    var canLoadThreadPost by remember(state.storeId) { mutableStateOf(StoreDetailAdLoadPolicy.initial(isDisplayed)) }
     LaunchedEffect(state.storeId, isDisplayed) {
-        canLoadAd = StoreDetailAdLoadPolicy.next(canLoad = canLoadAd, isDisplayed = isDisplayed)
+        canLoadThreadPost = StoreDetailAdLoadPolicy.next(canLoad = canLoadThreadPost, isDisplayed = isDisplayed)
     }
-    val currentCanLoadAd = rememberUpdatedState(canLoadAd)
+    val currentIsDisplayed = rememberUpdatedState(isDisplayed)
+    val currentCanLoadThreadPost = rememberUpdatedState(canLoadThreadPost)
     val slots = remember(viewModel) {
         storeDetailSduiSlots(
             onAdClick = { viewModel.dispatch(StoreDetailSduiUiIntent.OnAdClick(it)) },
-            canLoadAd = { currentCanLoadAd.value },
+            isDisplayed = { currentIsDisplayed.value },
+            canLoadThreadPost = { currentCanLoadThreadPost.value },
         )
     }
 

@@ -1,9 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.sdui.ui
 
 import android.os.Bundle
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -30,7 +27,10 @@ import com.naver.maps.map.NaverMapOptions
 import com.naver.maps.map.overlay.Marker
 import com.naver.maps.map.overlay.OverlayImage
 import com.zion830.threedollars.core.ui.sdui.section.store.SDStoreSectionSlots
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailAdLoadPolicy
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
@@ -39,16 +39,18 @@ private const val STORE_MAP_ZOOM = 16.0
 /**
  * 가게 상세 섹션 중 앱 모듈 SDK 가 필요한 부분(EDIT 지도, AD_MOB 배너).
  *
- * @param canLoadAd 지금 광고를 로드해도 되는지. 홈 시트 tip 처럼 상세가 뒤에 미리 그려져 있을 때는 false 다.
- * Compose State 를 읽는 람다로 넘겨야 값이 바뀔 때 배너가 다시 그려진다. `StoreDetailAdLoadPolicy` 참고.
+ * @param isDisplayed 상세가 지금 보이는지. 홈 시트 tip 처럼 상세가 뒤에 미리 그려져 있을 때는 false 라 배너를 숨긴다.
+ * @param canLoadThreadPost 쓰레드 임베드를 로드해도 되는지.
+ * 둘 다 Compose State 를 읽는 람다로 넘겨야 값이 바뀔 때 다시 그려진다. `StoreDetailAdLoadPolicy` 참고.
  */
 fun storeDetailSduiSlots(
     onAdClick: (SDLogModel?) -> Unit,
-    canLoadAd: () -> Boolean = { true },
+    isDisplayed: () -> Boolean = { true },
+    canLoadThreadPost: () -> Boolean = { true },
 ): SDStoreSectionSlots = SDStoreSectionSlots(
     mapContent = { latitude, longitude, modifier -> StoreLocationMap(latitude, longitude, modifier) },
-    adContent = { card, modifier -> StoreDetailBanner(card, canLoadAd(), onAdClick, modifier) },
-    canLoadThreadPost = canLoadAd,
+    adContent = { card, modifier -> StoreDetailBanner(card, isDisplayed(), onAdClick, modifier) },
+    canLoadThreadPost = canLoadThreadPost,
 )
 
 /**
@@ -111,32 +113,29 @@ private fun StoreLocationMap(latitude: Double, longitude: Double, modifier: Modi
 /**
  * 가게 상세 배너 광고. 슬롯 높이는 서버가 내려준 카드 높이를 따르고, 로드에 실패하면 자리를 접는다.
  *
- * [canLoad] 가 false 면 광고를 요청하지 않고 같은 크기의 빈 자리만 둔다. 상세가 보여 true 가 되는 순간 로드해서,
- * 미리 그려 둔 상세가 올라올 때 레이아웃이 튀지 않는다.
+ * 홈 시트 tip 에서 미리 그려 둔 상세에서도 바로 요청해, 올렸을 때 추가 요청 없이 이미 떠 있게 한다.
+ * [isDisplayed] 가 false 인 동안은 AdView 를 INVISIBLE 로 두어 사용자가 보지 않은 광고가 노출로 집계되지 않게 한다.
  */
 @Composable
 private fun StoreDetailBanner(
     card: SDStoreAdmobSectionModel.Card,
-    canLoad: Boolean,
+    isDisplayed: Boolean,
     onAdClick: (SDLogModel?) -> Unit,
     modifier: Modifier,
 ) {
     var isFailed by remember { mutableStateOf(false) }
     if (isFailed) return
-    if (!canLoad) {
-        Spacer(
-            modifier = modifier
-                .bannerSlotPadding()
-                .fillMaxWidth()
-                .height(card.slotHeightDp.dp),
-        )
-        return
-    }
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnAdClick by rememberUpdatedState(onAdClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_store_detail_banner)
     SduiAdMobSlot(
-        adUnitId = context.getString(CommonR.string.admob_store_detail_banner),
+        adUnitId = AdMobUnitId.resolve(
+            serverUnitId = card.adUnitId,
+            fallbackUnitId = fallbackAdUnitId,
+            isDebug = BuildConfig.DEBUG,
+        ),
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.slotHeightDp,
         adListener = remember {
             object : AdListener() {
@@ -149,9 +148,7 @@ private fun StoreDetailBanner(
                 }
             }
         },
-        modifier = modifier.bannerSlotPadding(),
+        modifier = modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+        adVisibility = StoreDetailAdLoadPolicy.bannerVisibility(isDisplayed),
     )
 }
-
-/** 배너와 로드 전 빈 자리가 같은 크기를 차지하도록 여백을 한 곳에서 정한다. */
-private fun Modifier.bannerSlotPadding(): Modifier = padding(horizontal = 20.dp, vertical = 16.dp)

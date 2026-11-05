@@ -69,7 +69,6 @@ sealed interface StoreDetailSduiUiIntent {
 
     data class OnReviewReportSubmit(val reviewId: Long, val request: ReportReviewModelRequest) : StoreDetailSduiUiIntent
 
-    data class OnReviewSubmit(val contents: String, val rating: Int) : StoreDetailSduiUiIntent
 
     data class OnImagesSelected(val images: List<MultipartBody.Part>) : StoreDetailSduiUiIntent
 
@@ -116,7 +115,7 @@ sealed interface StoreDetailDestination {
     data class StorePhotos(val storeId: String, val startIndex: Int) : StoreDetailDestination
 
     /** 제보·사장님 가게 모두 같은 별점+글 작성 시트를 쓴다 (iOS `ReviewBottomSheet` 와 동일). */
-    data class WriteReview(val storeId: String) : StoreDetailDestination
+    data class WriteReview(val storeId: String, val storeName: String = "") : StoreDetailDestination
     data class AddImage(val storeId: String) : StoreDetailDestination
     data class ShowImages(val imageUrls: List<String>, val startIndex: Int) : StoreDetailDestination
     data class EditStore(val storeId: String) : StoreDetailDestination

@@ -15,7 +15,6 @@ import com.threedollar.common.ext.addNewFragment
 import com.threedollar.common.sdui.model.element.SDLinkType
 import com.threedollar.domain.home.data.store.ImageModel
 import com.zion830.threedollars.DynamicLinkActivity
-import com.zion830.threedollars.ui.dialog.AddReviewDialog
 import com.zion830.threedollars.ui.dialog.DeleteStoreDialog
 import com.zion830.threedollars.ui.dialog.DirectionBottomDialog
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
@@ -24,6 +23,7 @@ import com.zion830.threedollars.ui.storeDetail.post.ui.StorePostListActivity
 import com.zion830.threedollars.ui.dialog.StorePhotoDialog
 import com.zion830.threedollars.ui.edit.ui.EditStoreFragment
 import com.zion830.threedollars.ui.map.ui.FullScreenMapActivity
+import com.zion830.threedollars.ui.review.ReviewWriteBottomSheet
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailDestination
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
@@ -79,7 +79,7 @@ class StoreDetailSduiNavigator(
                 FullScreenMapActivity.getIntent(activity, destination.latitude, destination.longitude, destination.storeName)
             )
 
-            is StoreDetailDestination.WriteReview -> writeReview()
+            is StoreDetailDestination.WriteReview -> writeReview(destination)
             is StoreDetailDestination.AddImage -> pickImages()
             is StoreDetailDestination.ShowImages -> ReviewPhotoDialog
                 .getInstance(destination.imageUrls.map { ImageModel(imageUrl = it, width = 0, height = 0, ratio = 0) }, destination.startIndex)
@@ -157,10 +157,11 @@ class StoreDetailSduiNavigator(
             .show(activity.supportFragmentManager, StorePhotoDialog::class.java.name)
     }
 
-    private fun writeReview() {
-        AddReviewDialog.newInstance { contents, rating ->
-            dispatch(StoreDetailSduiUiIntent.OnReviewSubmit(contents, rating))
-        }.show(activity.supportFragmentManager, AddReviewDialog::class.java.name)
+    private fun writeReview(destination: StoreDetailDestination.WriteReview) {
+        val storeId = destination.storeId.toIntOrNull() ?: return
+        val fragmentManager = activity.supportFragmentManager
+        ReviewWriteBottomSheet.setOnSubmittedListener(fragmentManager, activity) { dispatch(StoreDetailSduiUiIntent.OnStoreChanged) }
+        ReviewWriteBottomSheet.showForWrite(fragmentManager, storeId, destination.storeName)
     }
 
     private fun pickImages() {

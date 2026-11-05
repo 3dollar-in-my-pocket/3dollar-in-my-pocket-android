@@ -3,6 +3,7 @@ package com.zion830.threedollars.ui.storeDetail.user.ui
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.lifecycle.Lifecycle
@@ -17,7 +18,7 @@ import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.zion830.threedollars.databinding.ActivityStoreReviewDetailBinding
-import com.zion830.threedollars.ui.dialog.AddReviewDialog
+import com.zion830.threedollars.ui.review.ReviewWriteBottomSheet
 import com.zion830.threedollars.ui.dialog.ReportReviewDialog
 import com.zion830.threedollars.ui.storeDetail.user.adapter.MoreReviewAdapter
 import com.zion830.threedollars.ui.storeDetail.user.viewModel.StoreDetailViewModel
@@ -32,6 +33,13 @@ class StoreReviewDetailActivity :
     BaseActivity<ActivityStoreReviewDetailBinding, StoreDetailViewModel>({ ActivityStoreReviewDetailBinding.inflate(it) }) {
     override val viewModel: StoreDetailViewModel by viewModels()
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        if (savedInstanceState == null) {
+            openReviewWriteIfNeeded()
+        }
+    }
+
     private var reviewSortType = ReviewSortType.LATEST
     private val storeId: Int by lazy { intent.getIntExtra(STORE_ID, 0) }
     private val openReviewWrite: Boolean by lazy { intent.getBooleanExtra(OPEN_REVIEW_WRITE, false) }
@@ -42,7 +50,7 @@ class StoreReviewDetailActivity :
                 override fun onClick(item: ReviewContentModel) {
                     if (item.review.isOwner) {
                         viewModel.sendClickDeleteReviewFromList()
-                        AddReviewDialog.getInstance(item, storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
+                        ReviewWriteBottomSheet.showForEdit(supportFragmentManager, storeId, storeName = "", review = item.review)
                     } else {
                         viewModel.sendClickReportReviewFromList()
                         if (item.reviewReport.reportedByMe) {
@@ -76,7 +84,6 @@ class StoreReviewDetailActivity :
         initAdapter()
         initTabLayout()
         initFlow()
-        openReviewWriteIfNeeded()
     }
 
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
@@ -103,7 +110,7 @@ class StoreReviewDetailActivity :
     }
 
     private fun showAddReviewDialog() {
-        AddReviewDialog.getInstance(storeId = storeId).show(supportFragmentManager, AddReviewDialog::class.java.name)
+        ReviewWriteBottomSheet.showForWrite(supportFragmentManager, storeId, storeName = "")
     }
 
     private fun initAdapter() {
@@ -164,20 +171,11 @@ class StoreReviewDetailActivity :
                     }
                 }
 
-                launch {
-                    viewModel.reviewSuccessEvent.collect {
-                        if (it) {
-                            viewModel.getReview(storeId, reviewSortType)
-                        }
-                    }
-                }
             }
         }
 
-        viewModel.addReviewResult.observe(this) {
-            if (it) {
-                viewModel.getReview(storeId, reviewSortType)
-            }
+        ReviewWriteBottomSheet.setOnSubmittedListener(supportFragmentManager, this) {
+            viewModel.getReview(storeId, reviewSortType)
         }
     }
 

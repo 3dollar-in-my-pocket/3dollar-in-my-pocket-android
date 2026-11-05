@@ -334,6 +334,14 @@
     <string name="delete_review">리뷰 삭제</string>
     <string name="success_add_review">리뷰가 등록되었습니다.</string>
     <string name="success_edit_review">리뷰가 수정되었습니다.</string>
+    <string name="review_write_title">리뷰 작성</string>
+    <string name="review_write_attach_photo">사진 첨부하기</string>
+    <string name="review_write_hint">주문한 메뉴는 어땠나요? 맛, 분위기, 서비스에 대한 후기를 남겨주세요.</string>
+    <string name="review_write_length_guide">300자 이내로 작성해주세요.</string>
+    <string name="review_write_submit">등록하기</string>
+    <string name="review_write_rating_description">별점 %1$d점</string>
+    <string name="review_write_photo_delete_description">사진 삭제</string>
+    <string name="review_write_photo_add_description">사진 추가</string>
     <string name="success_delete_review">리뷰가 삭제되었습니다.</string>
     <string name="over_rating_1">리뷰 평가 점수는 1점 이상으로 입력해주세요.</string>
     <string name="input_content">내용을 입력해주세요.</string>
@@ -576,6 +584,7 @@
     <string name="terms_of_service_url">https://massive-iguana-121.notion.site/3-37f521af4ac842ccba75a4fb590c506d</string>
     <string name="privacy_policy_url">https://pool-battery-996.notion.site/3-3d0a9c55ddd74086b63582c308ca285e</string>
     <string name="terms_of_marketing_url">https://massive-iguana-121.notion.site/3-91156528267e426b9609d3ed57acb27d</string>
+    <string name="boss_app_intro_url">https://massive-iguana-121.notion.site/3-28c7ad52990e809caba2fb2040677a2a?source=copy_link</string>
     <string name="toss_scheme">https://service.toss.im/transfer/bridge/open-transfer?type=send</string>
     <string name="official_email">3dollarinmypocket@gmail.com</string>
     <string name="download_url">https://play.google.com/store/apps/details?id=com.zion830.threedollars</string>

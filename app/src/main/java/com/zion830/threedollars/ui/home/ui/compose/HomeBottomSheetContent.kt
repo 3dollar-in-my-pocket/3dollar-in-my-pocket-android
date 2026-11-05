@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -115,6 +116,8 @@ import com.threedollar.common.serverdriven.model.SDTextModel
 import com.threedollar.common.serverdriven.model.StoreActionBarModel
 import com.threedollar.common.serverdriven.model.StoreScreenModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
@@ -200,6 +203,7 @@ fun HomeBottomSheetContent(
     onCurationHeaderAction: (SDActionEvent) -> Unit = {},
     feedState: FeedListUiState = FeedListUiState(),
     onFeedIntent: (FeedListUiIntent) -> Unit = {},
+    nearbyListResetRevision: Long = 0L,
     modifier: Modifier = Modifier,
 ) {
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {
@@ -237,6 +241,13 @@ fun HomeBottomSheetContent(
         }
         val coroutineScope = rememberCoroutineScope()
         val nearbyListState = rememberLazyListState()
+        var consumedNearbyListResetRevision by rememberSaveable { mutableLongStateOf(nearbyListResetRevision) }
+        LaunchedEffect(nearbyListResetRevision) {
+            if (nearbyListResetRevision != consumedNearbyListResetRevision) {
+                consumedNearbyListResetRevision = nearbyListResetRevision
+                if (nearbyListResetRevision > 0L) nearbyListState.requestScrollToItem(0)
+            }
+        }
         val curationListState = rememberLazyListState()
         val newsListState = rememberLazyListState()
         val curationViewportWidthDp = maxWidth.value.toInt()
@@ -868,8 +879,15 @@ private fun HomeListAdMobCard(
     val context = LocalContext.current
     val currentCard by rememberUpdatedState(card)
     val currentOnClick by rememberUpdatedState(onClick)
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_list_banner)
+    val adUnitId = AdMobUnitId.resolve(
+        serverUnitId = card.adUnitId,
+        fallbackUnitId = fallbackAdUnitId,
+        isDebug = BuildConfig.DEBUG,
+    )
     SduiAdMobSlot(
-        adUnitId = context.getString(CommonR.string.admob_list_banner),
+        adUnitId = adUnitId,
+        fallbackAdUnitId = fallbackAdUnitId,
         heightDp = card.heightDp,
         adListener = remember {
             object : AdListener() {
@@ -1122,11 +1140,9 @@ private fun MetadataRow(
             }
             MetadataChip(
                 chip = chip,
-                textColor = if (index == 0 && firstChipColor != null) {
-                    firstChipColor
-                } else {
-                    chip.text.fontColor.toColor(fallback = defaultTextColor)
-                },
+                textColor = chip.text.fontColor.toColor(
+                    fallback = firstChipColor?.takeIf { index == 0 } ?: defaultTextColor,
+                ),
                 fontWeight = chip.text.fontWeight.toServerDrivenFontWeight(FontWeight.Normal),
                 modifier = if (index == shrinkChipIndex && chips.size > 1) Modifier.weight(1f, fill = false) else Modifier,
             )
