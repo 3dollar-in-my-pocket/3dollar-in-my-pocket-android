@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -29,13 +30,12 @@ import com.google.android.gms.ads.LoadAdError
 import com.threedollar.common.analytics.SDLogSender
 import com.threedollar.common.sdui.model.component.SDAdMobCardModel
 import com.zion830.threedollars.BuildConfig
+import com.zion830.threedollars.ui.ads.AdMobUnitId
 import com.zion830.threedollars.ui.home.data.HomeCurationAdEventGate
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
 import com.threedollar.common.R as CommonR
 
 private const val CurationAdTag = "HomeCurationAdMob"
-// Google의 고정 배너 테스트 단위. release는 기존 앱 리소스를 사용한다.
-private const val TestBannerAdUnitId = "ca-app-pub-3940256099942544/6300978111"
 
 @Composable
 internal fun HomeCurationAdMobCard(
@@ -48,10 +48,17 @@ internal fun HomeCurationAdMobCard(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val currentCard by rememberUpdatedState(card)
     val currentOnLoadFailed by rememberUpdatedState(onLoadFailed)
-    val adView = remember(context, card.cardId, dimensions) {
+    val fallbackAdUnitId = context.getString(CommonR.string.admob_list_banner)
+    val resolvedAdUnitId = AdMobUnitId.resolve(
+        serverUnitId = card.adUnitId,
+        fallbackUnitId = fallbackAdUnitId,
+        isDebug = BuildConfig.DEBUG,
+    )
+    var requestUnitId by remember(card.cardId, resolvedAdUnitId) { mutableStateOf(resolvedAdUnitId) }
+    val adView = remember(context, card.cardId, dimensions, requestUnitId) {
         AdView(context).apply {
             setAdSize(if (dimensions.heightDp == 100) AdSize.LARGE_BANNER else AdSize.BANNER)
-            adUnitId = if (BuildConfig.DEBUG) TestBannerAdUnitId else context.getString(CommonR.string.admob_list_banner)
+            adUnitId = requestUnitId
         }
     }
     val eventGate = remember(adView) { HomeCurationAdEventGate() }
@@ -68,8 +75,13 @@ internal fun HomeCurationAdMobCard(
             override fun onAdFailedToLoad(error: LoadAdError) {
                 if (isDisposed) return
                 eventGate.onFailed()
-                Log.d(CurationAdTag, "failed card=${currentCard.cardId} code=${error.code}")
-                currentOnLoadFailed(currentCard.cardId)
+                Log.d(CurationAdTag, "failed card=${currentCard.cardId} unit=${adView.adUnitId} code=${error.code}")
+                val retryUnitId = AdMobUnitId.retryUnitId(failedUnitId = adView.adUnitId, fallbackUnitId = fallbackAdUnitId)
+                if (retryUnitId != null) {
+                    requestUnitId = retryUnitId
+                } else {
+                    currentOnLoadFailed(currentCard.cardId)
+                }
             }
 
             override fun onAdImpression() {
@@ -107,9 +119,11 @@ internal fun HomeCurationAdMobCard(
     }
 
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        AndroidView(
-            factory = { adView },
-            modifier = Modifier.width(dimensions.widthDp.dp).height(dimensions.heightDp.dp),
-        )
+        key(adView) {
+            AndroidView(
+                factory = { adView },
+                modifier = Modifier.width(dimensions.widthDp.dp).height(dimensions.heightDp.dp),
+            )
+        }
     }
 }

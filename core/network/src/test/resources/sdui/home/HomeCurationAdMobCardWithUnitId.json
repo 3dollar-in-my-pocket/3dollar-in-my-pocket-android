@@ -1,0 +1,26 @@
+{
+  "type": "ADMOB_CARD",
+  "cardId": "ADMOB:50cac787-8544-4da0-8456-7062d1322c35",
+  "clickLog": {
+    "screenName": "home",
+    "objectType": "card",
+    "objectId": "admob",
+    "extraParameters": {
+      "tabId": "CURATION",
+      "position": "2"
+    },
+    "eventType": "CLICK"
+  },
+  "impressionLog": {
+    "screenName": "home",
+    "objectType": "card",
+    "objectId": "admob",
+    "extraParameters": {
+      "tabId": "CURATION",
+      "position": "2"
+    },
+    "eventType": "IMPRESSION"
+  },
+  "height": 50,
+  "adUnitId": "ca-app-pub-5385646520024289/6488454438"
+}
