@@ -30,7 +30,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -54,21 +53,11 @@ import com.threedollar.common.R as CommonR
 
 @Composable
 fun MyPageTeamScreen(
+    teams: ImmutableList<TeamRow>,
     clickBack: () -> Unit,
     clickAd: () -> Unit = {},
     clickTeam: () -> Unit = {}
 ) {
-    val teams = remember {
-        persistentListOf(
-            TeamRow(role = "iOS", members = persistentListOf("유현식", "김하경")),
-            TeamRow(role = "Backend", members = persistentListOf("강승호", "고예림")),
-            TeamRow(role = "Android", members = persistentListOf("정진용", "전두영")),
-            TeamRow(role = "기획자", members = persistentListOf("이한나")),
-            TeamRow(role = "Marketer", members = persistentListOf("공서연")),
-            TeamRow(role = "Design", members = persistentListOf("이윤이", "박은지", "양민설", "조혜원")),
-        )
-    }
-
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -123,13 +112,10 @@ private fun ColumnScope.TeamGrid(
             .fillMaxWidth()
             .weight(1f)
     ) {
-        items(
-            items = teams,
-            key = { it.role }
-        ) {
+        items(items = teams) {
             TeamRow(it)
         }
-        item(key = "AdButton") {
+        item {
             AdButton(onClickAd)
         }
     }
@@ -320,10 +306,17 @@ private fun AdButton(
     }
 }
 
+private val previewTeams = persistentListOf(
+    TeamRow(role = "iOS", members = persistentListOf("유현식")),
+    TeamRow(role = "Android", members = persistentListOf("정진용")),
+    TeamRow(role = "Product Design", members = persistentListOf("양민설", "조혜원")),
+)
+
 @Preview
 @Composable
 private fun PreviewMyPageTeamScreen() {
     MyPageTeamScreen(
+        teams = previewTeams,
         clickBack = {},
         clickAd = {},
         clickTeam = {}
@@ -334,6 +327,7 @@ private fun PreviewMyPageTeamScreen() {
 @Composable
 private fun PreviewMyPageTeamSmallWidthScreen() {
     MyPageTeamScreen(
+        teams = previewTeams,
         clickBack = {},
         clickAd = {},
         clickTeam = {}
