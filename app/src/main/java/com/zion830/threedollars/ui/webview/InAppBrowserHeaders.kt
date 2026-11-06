@@ -6,6 +6,7 @@ object InAppBrowserHeaders {
     private const val HEADER_AUTHORIZATION = "Authorization"
     private const val SECURE_SCHEME = "https"
 
+    private const val TRUSTED_DOMAIN = "threedollars.co.kr"
     private val TRUSTED_HOSTS = setOf("boong-village.3dollarinmypocket.workers.dev")
     private val TRUSTED_DEV_HOSTS = setOf("boong-village-dev.3dollarinmypocket.workers.dev")
 
@@ -18,7 +19,8 @@ object InAppBrowserHeaders {
     fun isTrustedHost(url: String, isDebug: Boolean): Boolean {
         val httpUrl = url.trim().toHttpUrlOrNull() ?: return false
         if (httpUrl.scheme != SECURE_SCHEME) return false
-        val host = httpUrl.host.trimEnd('.')
+        val host = httpUrl.host.trimEnd('.').lowercase()
+        if (host == TRUSTED_DOMAIN || host.endsWith(".$TRUSTED_DOMAIN")) return true
         return host in if (isDebug) TRUSTED_DEV_HOSTS else TRUSTED_HOSTS
     }
 }
