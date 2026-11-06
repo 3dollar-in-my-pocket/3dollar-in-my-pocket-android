@@ -73,6 +73,17 @@ jobs:
           deep_link_release=${{ secrets.DEEP_LINK_RELEASE }}
           EOF
 
+      - name: Restore google-services.json (release)
+        env:
+          GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_RELEASE_BASE64 }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_BASE64" ]; then
+            echo "::error::GOOGLE_SERVICES_RELEASE_BASE64 시크릿이 없습니다. AGENTS.md 'Build Config' 를 참고해 등록하세요."
+            exit 1
+          fi
+          mkdir -p "$(dirname app/src/google-services.json)"
+          printf '%s' "$GOOGLE_SERVICES_BASE64" | base64 -d > app/src/google-services.json
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
