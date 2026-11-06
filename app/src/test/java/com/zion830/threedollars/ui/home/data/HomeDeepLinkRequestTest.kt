@@ -1,7 +1,9 @@
 package com.zion830.threedollars.ui.home.data
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class HomeDeepLinkRequestTest {
@@ -71,5 +73,44 @@ class HomeDeepLinkRequestTest {
 
         // Then
         assertEquals(HomeDeepLinkRequest.Screen(preset = "SNACK", tabId = null), request)
+    }
+
+    // TH-1579 TC4
+    @Test
+    fun `TH1579_TC4_tabId없이_받은_응답은_고른탭을_초기화하지_않는다`() {
+        // Given
+        val requestedTabId: String? = null
+
+        // When
+        val shouldReset = HomeDeepLinkRequest.shouldResetTabSelection(requestedTabId, requestSerial = 1L, latestSerial = 1L)
+
+        // Then
+        assertFalse(shouldReset)
+    }
+
+    // TH-1579 TC5
+    @Test
+    fun `TH1579_TC5_가장최근_딥링크의_tabId응답이면_고른탭을_초기화한다`() {
+        // Given
+        val requestedTabId = "NEWS"
+
+        // When
+        val shouldReset = HomeDeepLinkRequest.shouldResetTabSelection(requestedTabId, requestSerial = 2L, latestSerial = 2L)
+
+        // Then
+        assertTrue(shouldReset)
+    }
+
+    // TH-1579 TC5
+    @Test
+    fun `TH1579_TC5_뒤이어_다른딥링크가_오면_앞선응답은_고른탭을_초기화하지_않는다`() {
+        // Given
+        val requestedTabId = "CURATION"
+
+        // When
+        val shouldReset = HomeDeepLinkRequest.shouldResetTabSelection(requestedTabId, requestSerial = 1L, latestSerial = 2L)
+
+        // Then
+        assertFalse(shouldReset)
     }
 }

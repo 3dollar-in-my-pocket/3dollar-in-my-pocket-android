@@ -199,6 +199,7 @@ class HomeViewModel @Inject constructor(
 
     private var preset: String? = null
     private var homeTabsJob: Job? = null
+    private var homeDeepLinkSerial = 0L
     private var homeViewLog: SDViewLogModel? = null
     private var hasHomeViewLogResult = false
     private var isPageViewPending = false
@@ -827,16 +828,17 @@ class HomeViewModel @Inject constructor(
     // ----- SDU filter -----
 
     internal fun applyHomeDeepLink(request: HomeDeepLinkRequest) {
+        val serial = ++homeDeepLinkSerial
+        homeTabsJob?.cancel()
         when (request) {
             is HomeDeepLinkRequest.Screen -> {
-                homeTabsJob?.cancel()
                 preset = request.preset
                 homeViewLog = null
                 hasHomeViewLogResult = false
-                fetchHomeFilterScreen(shouldRefreshCards = true, tabId = request.tabId)
+                fetchHomeFilterScreen(shouldRefreshCards = true, tabId = request.tabId, deepLinkSerial = serial)
             }
 
-            is HomeDeepLinkRequest.Tabs -> fetchHomeTabs(tabId = request.tabId)
+            is HomeDeepLinkRequest.Tabs -> fetchHomeTabs(tabId = request.tabId, deepLinkSerial = serial)
         }
     }
 
@@ -862,7 +864,11 @@ class HomeViewModel @Inject constructor(
             ?: LogManager.sendPageView(screenName, HOME_PAGE_VIEW_CLASS_NAME)
     }
 
-    private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false, tabId: String? = null) {
+    private fun fetchHomeFilterScreen(
+        shouldRefreshCards: Boolean = false,
+        tabId: String? = null,
+        deepLinkSerial: Long = homeDeepLinkSerial,
+    ) {
         val requestedPreset = preset
         viewModelScope.launch(coroutineExceptionHandler) {
             screenRepository.getHomeFilterScreen(preset = requestedPreset, tabId = tabId).catch { throwable ->
@@ -881,7 +887,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
-                    applyBottomSheetTabs(screen, resetSelection = tabId != null)
+                    applyBottomSheetTabs(screen, resetSelection = shouldResetTabSelection(tabId, deepLinkSerial))
                     applyServerSelectionDefaults()
                     updateFilterCells()
                     updateMapControlItems()
@@ -897,19 +903,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun fetchHomeTabs(tabId: String) {
-        homeTabsJob?.cancel()
+    private fun fetchHomeTabs(tabId: String, deepLinkSerial: Long) {
         homeTabsJob = viewModelScope.launch(coroutineExceptionHandler) {
             screenRepository.getHomeFilterScreen(tabId = tabId).collect { response ->
-                val screen = response.data
-                if (response.ok && screen != null) applyBottomSheetTabs(screen, resetSelection = true)
+                val screen = response.data ?: return@collect
+                if (!response.ok || screen.bottomSheetTabs().tabs.isEmpty()) return@collect
+                applyBottomSheetTabs(screen, resetSelection = shouldResetTabSelection(tabId, deepLinkSerial))
             }
         }
     }
 
-    private fun applyBottomSheetTabs(screen: HomeFilterScreenModel, resetSelection: Boolean) {
-        val tabs = screen.sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
+    private fun shouldResetTabSelection(tabId: String?, deepLinkSerial: Long): Boolean =
+        HomeDeepLinkRequest.shouldResetTabSelection(
+            requestedTabId = tabId,
+            requestSerial = deepLinkSerial,
+            latestSerial = homeDeepLinkSerial,
+        )
+
+    private fun HomeFilterScreenModel.bottomSheetTabs(): SDHomeBottomSheetTabsModel =
+        sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
             .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
+
+    private fun applyBottomSheetTabs(screen: HomeFilterScreenModel, resetSelection: Boolean) {
+        val tabs = screen.bottomSheetTabs()
         _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs, resetSelection) }
         requestHomeCurationSection()
         if (resetSelection) flushSectionImpressions()

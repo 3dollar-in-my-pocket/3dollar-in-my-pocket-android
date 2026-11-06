@@ -10,5 +10,8 @@ internal sealed interface HomeDeepLinkRequest {
             tabId != null -> Tabs(tabId = tabId)
             else -> null
         }
+
+        fun shouldResetTabSelection(requestedTabId: String?, requestSerial: Long, latestSerial: Long): Boolean =
+            requestedTabId != null && requestSerial == latestSerial
     }
 }
