@@ -33,7 +33,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.MenuBoardImage
+import com.zion830.threedollars.ui.write.menuextraction.MenuBoardImageUploader
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionLog
 import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
@@ -43,7 +46,8 @@ import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 class AddStoreViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val fusedLocationProviderClient: FusedLocationProviderClient,
-    private val storeDataSource: StoreDataSource
+    private val storeDataSource: StoreDataSource,
+    private val menuBoardImageUploader: MenuBoardImageUploader,
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(AddStoreContract.State())
@@ -56,6 +60,8 @@ class AddStoreViewModel @Inject constructor(
     private val _removedCategoriesData: MutableMap<String, List<UserStoreMenuModel>> = mutableMapOf()
 
     private var submitStoreJob: Job? = null
+
+    private val menuBoardImage = MenuBoardImage()
 
     init {
         loadAvailableCategories()
@@ -96,7 +102,7 @@ class AddStoreViewModel @Inject constructor(
             is AddStoreContract.Intent.UpdateStoreWithDetails -> updateStoreWithDetails(intent.isMenuAddition)
             is AddStoreContract.Intent.ClearError -> clearError()
             is AddStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryModelList(intent.list)
-            is AddStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
+            is AddStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list, intent.menuBoardImage)
             is AddStoreContract.Intent.MarkMenuExtractionUsed -> markMenuExtractionUsed()
             is AddStoreContract.Intent.CheckNearStore -> checkNearStore(intent.location)
             is AddStoreContract.Intent.ResetState -> resetState()
@@ -463,6 +469,7 @@ class AddStoreViewModel @Inject constructor(
             homeRepository.postUserStore(userStoreModelRequest).collect {
                 if (it.ok) {
                     it.data?.let { data ->
+                        menuBoardImageUploader.upload(data.storeId, menuBoardImage)
                         _state.update { state ->
                             state.copy(
                                 isLoading = false,
@@ -520,6 +527,9 @@ class AddStoreViewModel @Inject constructor(
         viewModelScope.launch(coroutineExceptionHandler) {
             homeRepository.putUserStore(request, storeId).collect {
                 if (it.ok) {
+                    if (isMenuAddition) {
+                        menuBoardImageUploader.upload(storeId, menuBoardImage)
+                    }
                     it.data?.let { data ->
                         _state.update { state -> state.copy(isLoading = false, createdStoreInfo = data) }
                     }
@@ -547,7 +557,8 @@ class AddStoreViewModel @Inject constructor(
         _state.update { it.copy(selectCategoryList = list) }
     }
 
-    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>, image: File?) {
+        menuBoardImage.register(image)
         _state.update {
             val merged = it.selectCategoryList.mergeExtracted(list)
             it.copy(
@@ -581,6 +592,7 @@ class AddStoreViewModel @Inject constructor(
     }
 
     private fun resetState() {
+        menuBoardImage.consume()?.delete()
         _state.update { AddStoreContract.State() }
         _removedCategoriesData.clear()
         loadAvailableCategories()

@@ -145,8 +145,8 @@ fun AddStoreFlowScreen(
         viewModel = menuExtractionViewModel,
         screenTitle = stringResource(CommonR.string.title_add_store),
         flow = if (currentRoute == AddStoreRoute.COMPLETION_MENU_DETAIL) MenuExtractionFlow.AFTER_CREATE else MenuExtractionFlow.CREATE,
-        onCompleted = { categories ->
-            viewModel.processIntent(AddStoreContract.Intent.ApplyExtractedMenus(categories))
+        onCompleted = { categories, menuBoardImage ->
+            viewModel.processIntent(AddStoreContract.Intent.ApplyExtractedMenus(categories, menuBoardImage))
             if (currentRoute == AddStoreRoute.MENU_CATEGORY) {
                 navController.navigate(AddStoreRoute.MENU_DETAIL)
             }

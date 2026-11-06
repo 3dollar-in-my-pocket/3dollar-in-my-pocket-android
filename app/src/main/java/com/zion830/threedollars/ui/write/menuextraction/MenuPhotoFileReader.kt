@@ -34,16 +34,24 @@ class MenuPhotoFileReader @Inject constructor(
     }
 
     /** 이전 업로드·촬영 파일은 지우고 [uri] 사진만 남긴다. 읽기·저장에 실패하면 null 이다. */
-    suspend fun readAsPart(uri: Uri): MultipartBody.Part? = withContext(Dispatchers.IO) {
+    suspend fun readAsFile(uri: Uri): File? = withContext(Dispatchers.IO) {
         runCatching {
             val bitmap = decodeScaled(uri) ?: return@runCatching null
             deleteOldUploads()
             val file = File(photoDirectory(), "$UPLOAD_FILE_PREFIX${System.currentTimeMillis()}.jpg")
             file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.JPEG, JPEG_QUALITY, it) }
             bitmap.recycle()
-            MultipartBody.Part.createFormData(PART_NAME, file.name, file.asRequestBody(JPEG_MEDIA_TYPE.toMediaType()))
+            file
         }.getOrNull()
     }
+
+    fun keepForUpload(file: File): File {
+        val kept = File(photoDirectory(), "$MENU_BOARD_FILE_PREFIX${System.currentTimeMillis()}.jpg")
+        return if (file.renameTo(kept)) kept else file
+    }
+
+    fun toExtractionPart(file: File): MultipartBody.Part =
+        MultipartBody.Part.createFormData(PART_NAME, file.name, file.asRequestBody(JPEG_MEDIA_TYPE.toMediaType()))
 
     private fun deleteOldUploads() {
         photoDirectory().listFiles()
@@ -87,6 +95,7 @@ class MenuPhotoFileReader @Inject constructor(
         const val PHOTO_DIRECTORY = "menu_extraction"
         const val UPLOAD_FILE_PREFIX = "upload_"
         const val CAPTURE_FILE_PREFIX = "capture_"
+        const val MENU_BOARD_FILE_PREFIX = "menu_board_"
         const val FILE_PROVIDER_SUFFIX = ".fileprovider"
     }
 }

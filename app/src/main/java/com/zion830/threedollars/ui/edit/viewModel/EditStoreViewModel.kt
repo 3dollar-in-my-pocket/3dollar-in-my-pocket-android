@@ -39,6 +39,8 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import javax.inject.Inject
+import com.zion830.threedollars.ui.write.menuextraction.MenuBoardImage
+import com.zion830.threedollars.ui.write.menuextraction.MenuBoardImageUploader
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionFlow
 import com.zion830.threedollars.ui.write.menuextraction.MenuExtractionLog
 import com.zion830.threedollars.ui.write.menuextraction.firstExtractedCategoryId
@@ -47,7 +49,8 @@ import com.zion830.threedollars.ui.write.menuextraction.mergeExtracted
 @HiltViewModel
 class EditStoreViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
-    private val storeDataSource: StoreDataSource
+    private val storeDataSource: StoreDataSource,
+    private val menuBoardImageUploader: MenuBoardImageUploader,
 ) : BaseViewModel() {
 
     private val _state = MutableStateFlow(EditStoreContract.State())
@@ -60,6 +63,7 @@ class EditStoreViewModel @Inject constructor(
     private var pendingPhotoUploadRetry = false
     private var lastSubmitRequest: UserStoreModelRequest? = null
     private var isMenuEditConfirmed = false
+    private val menuBoardImage = MenuBoardImage()
 
     init {
         loadAvailableCategories()
@@ -87,7 +91,7 @@ class EditStoreViewModel @Inject constructor(
             is EditStoreContract.Intent.ConfirmLocation -> confirmLocation()
             is EditStoreContract.Intent.CancelLocationEdit -> cancelLocationEdit()
             is EditStoreContract.Intent.SetSelectCategoryList -> setSelectCategoryList(intent.list)
-            is EditStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list)
+            is EditStoreContract.Intent.ApplyExtractedMenus -> applyExtractedMenus(intent.list, intent.menuBoardImage)
             is EditStoreContract.Intent.MarkMenuExtractionUsed -> markMenuExtractionUsed()
             is EditStoreContract.Intent.ChangeSelectCategory -> changeSelectCategory(intent.category)
             is EditStoreContract.Intent.UpdateSelectedCategories -> updateSelectedCategories(intent.categoryIds)
@@ -260,7 +264,8 @@ class EditStoreViewModel @Inject constructor(
         _state.update { it.copy(tempLocation = null) }
     }
 
-    private fun applyExtractedMenus(list: List<SelectCategoryModel>) {
+    private fun applyExtractedMenus(list: List<SelectCategoryModel>, image: File?) {
+        menuBoardImage.register(image)
         _state.update {
             val merged = (it.tempSelectCategoryList ?: it.selectCategoryList).mergeExtracted(list)
             it.copy(
@@ -597,6 +602,9 @@ class EditStoreViewModel @Inject constructor(
         }
 
         if (storeSuccess && photoSuccess) {
+            if (isMenuEditConfirmed) {
+                menuBoardImageUploader.upload(_state.value.storeId, menuBoardImage)
+            }
             lastSubmitRequest = null
             _state.update {
                 nextState.copy(
@@ -955,6 +963,7 @@ class EditStoreViewModel @Inject constructor(
     }
 
     private fun cancelMenuEdit() {
+        menuBoardImage.consume()?.delete()
         _state.update { currentState ->
             currentState.copy(
                 tempSelectCategoryList = null,
