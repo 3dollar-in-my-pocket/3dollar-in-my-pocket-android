@@ -26,6 +26,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
+import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.HomeMapControl
@@ -64,6 +65,7 @@ import com.zion830.threedollars.ui.home.data.HomeStoreLanding
 import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
+import com.zion830.threedollars.ui.home.data.HomeDeepLinkRequest
 import com.zion830.threedollars.ui.home.data.HomeCurationStateReducer
 import com.zion830.threedollars.ui.home.data.HomeCurationRequestLocation
 import com.zion830.threedollars.ui.home.data.HomeCurationQueryPolicy
@@ -196,6 +198,7 @@ class HomeViewModel @Inject constructor(
     private var homeListNextCursor: String? = null
 
     private var preset: String? = null
+    private var homeTabsJob: Job? = null
     private var homeViewLog: SDViewLogModel? = null
     private var hasHomeViewLogResult = false
     private var isPageViewPending = false
@@ -823,11 +826,18 @@ class HomeViewModel @Inject constructor(
 
     // ----- SDU filter -----
 
-    fun applyPreset(preset: String) {
-        this.preset = preset
-        homeViewLog = null
-        hasHomeViewLogResult = false
-        fetchHomeFilterScreen(shouldRefreshCards = true)
+    internal fun applyHomeDeepLink(request: HomeDeepLinkRequest) {
+        when (request) {
+            is HomeDeepLinkRequest.Screen -> {
+                homeTabsJob?.cancel()
+                preset = request.preset
+                homeViewLog = null
+                hasHomeViewLogResult = false
+                fetchHomeFilterScreen(shouldRefreshCards = true, tabId = request.tabId)
+            }
+
+            is HomeDeepLinkRequest.Tabs -> fetchHomeTabs(tabId = request.tabId)
+        }
     }
 
     /**
@@ -852,10 +862,10 @@ class HomeViewModel @Inject constructor(
             ?: LogManager.sendPageView(screenName, HOME_PAGE_VIEW_CLASS_NAME)
     }
 
-    private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false) {
+    private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false, tabId: String? = null) {
         val requestedPreset = preset
         viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getHomeFilterScreen(preset = requestedPreset).catch { throwable ->
+            screenRepository.getHomeFilterScreen(preset = requestedPreset, tabId = tabId).catch { throwable ->
                 if (requestedPreset == preset) onHomeViewLogResult(null)
                 throw throwable
             }.collect { response ->
@@ -871,10 +881,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
-                    val tabs = screen.sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
-                        .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
-                    _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs) }
-                    requestHomeCurationSection()
+                    applyBottomSheetTabs(screen, resetSelection = tabId != null)
                     applyServerSelectionDefaults()
                     updateFilterCells()
                     updateMapControlItems()
@@ -888,6 +895,24 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun fetchHomeTabs(tabId: String) {
+        homeTabsJob?.cancel()
+        homeTabsJob = viewModelScope.launch(coroutineExceptionHandler) {
+            screenRepository.getHomeFilterScreen(tabId = tabId).collect { response ->
+                val screen = response.data
+                if (response.ok && screen != null) applyBottomSheetTabs(screen, resetSelection = true)
+            }
+        }
+    }
+
+    private fun applyBottomSheetTabs(screen: HomeFilterScreenModel, resetSelection: Boolean) {
+        val tabs = screen.sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
+            .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
+        _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs, resetSelection) }
+        requestHomeCurationSection()
+        if (resetSelection) flushSectionImpressions()
     }
 
     fun selectRadioOption(paramKey: String, optionIndex: Int) {

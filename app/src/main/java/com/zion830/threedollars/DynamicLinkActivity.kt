@@ -45,6 +45,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val MY_COUPONS = "myCoupons"
         const val BROWSER = "browser"
         const val HOME_PRESET = "homePreset"
+        const val HOME_TAB_ID = "homeTabId"
         const val STORE_CONTRIBUTORS = "store-contributors"
         const val STORE_IMAGES = "images"
 
@@ -59,6 +60,7 @@ class DynamicLinkActivity : AppCompatActivity() {
         private const val ID = "id"
         private const val URL = "url"
         private const val PRESET = "preset"
+        private const val TAB_ID = "tabId"
         private const val VIEW = "view"
 
         /** 앱 안의 화면에서 링크를 열 때 쓴다. 목록 딥링크가 현재 화면 위에 쌓이도록 [EXTRA_IN_APP] 을 붙인다. */
@@ -228,6 +230,7 @@ class DynamicLinkActivity : AppCompatActivity() {
                 startActivity(MainActivity.getIntent(this).apply {
                     putExtra(HOME, HOME)
                     deeplink.getQueryParameter(PRESET)?.let { putExtra(HOME_PRESET, it) }
+                    deeplink.getQueryParameter(TAB_ID)?.let { putExtra(HOME_TAB_ID, it) }
                     flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                 })
             }
