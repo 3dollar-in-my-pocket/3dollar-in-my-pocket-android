@@ -1,7 +1,6 @@
 package com.threedollar.network.di
 
 import android.content.Context
-import android.os.Build
 import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.threedollar.common.utils.GlobalEvent
@@ -16,6 +15,7 @@ import com.threedollar.network.api.StoreApi
 import com.threedollar.network.api.StoreMenuExtractionApi
 import com.threedollar.network.interceptor.ABTestInterceptor
 import com.threedollar.network.sdui.core.gson.SDUIGson
+import com.threedollar.network.util.AppUserAgent
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,12 +84,7 @@ object NetworkModule {
             .addInterceptor {
                 val request = it.request().newBuilder()
                     .removeHeader("User-Agent")
-                    .addHeader(
-                        "User-Agent",
-                        BuildConfig.VERSION_NAME +
-                                " (${if (BuildConfig.BUILD_TYPE == "debug") "com.zion830.threedollars.dev" else "com.zion830.threedollars"}); " +
-                                Build.VERSION.SDK_INT
-                    )
+                    .addHeader("User-Agent", AppUserAgent.value)
                     .addHeader(
                         "Authorization",
                         sharedPrefUtils.getAccessToken() ?: ""
