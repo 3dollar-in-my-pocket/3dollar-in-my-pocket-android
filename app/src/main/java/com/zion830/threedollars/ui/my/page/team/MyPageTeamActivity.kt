@@ -7,13 +7,17 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
+import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
 import com.zion830.threedollars.ui.my.page.screen.MyPageTeamScreen
 import com.threedollar.common.base.BaseComposeActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,7 +40,10 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
 
         setContent {
             MaterialTheme {
+                val teams by viewModel.teams.collectAsStateWithLifecycle()
+                FlowWithLifecycleEffect(viewModel.errorMessage) { showErrorAlert(it) }
                 MyPageTeamScreen(
+                    teams = teams,
                     clickBack = { finish() },
                     clickAd = {
                         rewardedAd?.let { ad ->
@@ -53,6 +60,14 @@ class MyPageTeamActivity : BaseComposeActivity<MyPageTeamViewModel>() {
                 )
             }
         }
+    }
+
+    private fun showErrorAlert(message: String?) {
+        if (isFinishing) return
+        AlertDialog.Builder(this)
+            .setMessage(message?.takeIf { it.isNotBlank() } ?: getString(CommonR.string.store_detail_error_default))
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun inItAd() {

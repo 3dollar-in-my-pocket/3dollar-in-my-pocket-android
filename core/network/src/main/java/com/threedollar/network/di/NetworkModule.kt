@@ -12,6 +12,7 @@ import com.threedollar.network.api.KakaoLoginApi
 import com.threedollar.network.api.KakaoMapApi
 import com.threedollar.network.api.LoginApi
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.api.ServiceCreatorApi
 import com.threedollar.network.api.StoreApi
 import com.threedollar.network.api.StoreMenuExtractionApi
 import com.threedollar.network.interceptor.ABTestInterceptor
@@ -197,4 +198,13 @@ object NetworkModule {
         .client(okHttpClient)
         .build()
         .create(FeedApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideServiceCreatorApi(@OkhttpClient okHttpClient: OkHttpClient): ServiceCreatorApi = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .client(okHttpClient)
+        .build()
+        .create(ServiceCreatorApi::class.java)
 }
