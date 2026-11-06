@@ -80,6 +80,7 @@ import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
 import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryStickyHeader
 import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
+import java.io.File
 
 /**
  * AI 메뉴 인식 흐름(사진 선택 모달 → 로딩 → 결과)을 [content] 위에 얹는다.
@@ -91,7 +92,7 @@ fun MenuExtractionHost(
     viewModel: MenuExtractionViewModel,
     screenTitle: String,
     flow: MenuExtractionFlow,
-    onCompleted: (List<SelectCategoryModel>) -> Unit,
+    onCompleted: (categories: List<SelectCategoryModel>, menuBoardImage: File?) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable (openPhotoSource: (() -> Unit)?) -> Unit,
 ) {
@@ -115,7 +116,7 @@ fun MenuExtractionHost(
     LaunchedEffect(viewModel) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MenuExtractionEffect.Completed -> currentOnCompleted(effect.categories)
+                is MenuExtractionEffect.Completed -> currentOnCompleted(effect.categories, effect.menuBoardImage)
                 is MenuExtractionEffect.ShowErrorAlert -> errorAlert = effect
                 is MenuExtractionEffect.ShowToast -> Toast.makeText(context, effect.messageRes, Toast.LENGTH_SHORT).show()
             }
