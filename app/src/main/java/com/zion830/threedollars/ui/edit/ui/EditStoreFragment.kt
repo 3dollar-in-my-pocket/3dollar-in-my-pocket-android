@@ -85,8 +85,8 @@ class EditStoreFragment : Fragment() {
                             viewModel = menuExtractionViewModel,
                             screenTitle = stringResource(CommonR.string.edit_store_section_menu),
                             flow = MenuExtractionFlow.EDIT,
-                            onCompleted = { categories ->
-                                editStoreViewModel.processIntent(EditStoreContract.Intent.ApplyExtractedMenus(categories))
+                            onCompleted = { categories, menuBoardImage ->
+                                editStoreViewModel.processIntent(EditStoreContract.Intent.ApplyExtractedMenus(categories, menuBoardImage))
                             },
                         ) { openPhotoSource ->
                             EditMenuScreen(
