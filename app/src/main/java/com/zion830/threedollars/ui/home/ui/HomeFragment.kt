@@ -68,8 +68,10 @@ import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedLocation
 import com.zion830.threedollars.ui.feed.viewModel.FeedListViewModel
 import com.zion830.threedollars.ui.home.adapter.AroundStoreMapViewRecyclerAdapter
+import com.zion830.threedollars.ui.home.data.HomeListCardFavorite
 import com.zion830.threedollars.ui.home.data.HomeStoreLanding
 import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
+import com.zion830.threedollars.ui.home.data.StoreFavoriteState
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.storePreviewStoreTypeOrNull
 import com.zion830.threedollars.ui.home.ui.compose.HomeBottomSheetContent
@@ -691,6 +693,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.homeListFavoriteToast.collect { messageRes ->
                         showToast(messageRes)
+                    }
+                }
+                launch {
+                    var previous: StoreFavoriteState? = null
+                    storeDetailViewModel.state.collect { state ->
+                        val current = StoreFavoriteState(storeId = state.storeId, isFavorite = state.isFavorite)
+                        HomeListCardFavorite.favoriteChangeOrNull(previous, current)?.let {
+                            viewModel.syncHomeListCardFavorite(it.storeId, it.isFavorite)
+                        }
+                        previous = current
                     }
                 }
                 launch {

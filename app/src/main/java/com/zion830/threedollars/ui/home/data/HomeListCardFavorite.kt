@@ -33,10 +33,22 @@ internal object HomeListCardFavorite {
         }
     }
 
+    /**
+     * 미리보기 시트(가게 상세 VM)의 찜 상태 변화 중 리스트 카드에 반영할 것만 고른다.
+     * 다른 가게로 바뀌는 순간은 이전 가게 값이 남아 있을 수 있어 건너뛰고, 같은 가게 안에서 바뀐 값(토글·서버 응답)만 돌려준다.
+     */
+    fun favoriteChangeOrNull(previous: StoreFavoriteState?, current: StoreFavoriteState): StoreFavoriteState? {
+        if (previous == null || current.storeId.isBlank()) return null
+        if (previous.storeId != current.storeId || previous.isFavorite == current.isFavorite) return null
+        return current
+    }
+
     fun toastMessageRes(isFavorite: Boolean): Int {
         return if (isFavorite) CommonR.string.store_detail_favorite_added else CommonR.string.store_detail_favorite_removed
     }
 }
+
+internal data class StoreFavoriteState(val storeId: String, val isFavorite: Boolean)
 
 /** 같은 가게에 찜 요청이 이미 나가 있으면 다음 탭을 막는다. */
 internal class HomeListFavoriteRequestGate {

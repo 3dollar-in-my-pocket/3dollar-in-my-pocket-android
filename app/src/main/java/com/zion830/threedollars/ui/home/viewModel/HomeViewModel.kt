@@ -706,16 +706,19 @@ class HomeViewModel @Inject constructor(
                     homeRepository.deleteFavorite(storeInfo.storeId)
                 }
                 if (request.first().ok) {
-                    _homeListSection.update { section ->
-                        section.copy(
-                            cards = HomeListCardFavorite.withFavorite(section.cards, storeInfo.storeId, willFavorite),
-                        )
-                    }
+                    syncHomeListCardFavorite(storeInfo.storeId, willFavorite)
                     _homeListFavoriteToast.emit(HomeListCardFavorite.toastMessageRes(willFavorite))
                 }
             } finally {
                 homeListFavoriteRequestGate.finish(storeInfo.storeId)
             }
+        }
+    }
+
+    /** 미리보기 시트 등 다른 곳에서 바뀐 찜 상태를 같은 가게의 리스트 카드에 반영한다. */
+    fun syncHomeListCardFavorite(storeId: String, isFavorite: Boolean) {
+        _homeListSection.update { section ->
+            section.copy(cards = HomeListCardFavorite.withFavorite(section.cards, storeId, isFavorite))
         }
     }
 

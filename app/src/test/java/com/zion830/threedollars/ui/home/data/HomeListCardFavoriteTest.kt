@@ -161,6 +161,40 @@ class HomeListCardFavoriteTest {
         assertFalse(merged.basicCard(1).storeInfo!!.isSubscriber)
     }
 
+    // TH-1589 TC13
+    @Test
+    fun `TH1589_TC13_미리보기시트에서_같은가게의_찜이_바뀌면_리스트에_반영할_변화로_고른다`() {
+        // Given
+        val previous = StoreFavoriteState(storeId = "1", isFavorite = false)
+        val current = StoreFavoriteState(storeId = "1", isFavorite = true)
+
+        // When
+        val change = HomeListCardFavorite.favoriteChangeOrNull(previous, current)
+
+        // Then
+        assertEquals(current, change)
+    }
+
+    // TH-1589 TC13
+    @Test
+    fun `TH1589_TC13_다른가게로_바뀌는순간이나_처음값이나_빈storeId는_반영하지않는다`() {
+        // Given
+        val storeChanged = StoreFavoriteState(storeId = "1", isFavorite = true) to StoreFavoriteState(storeId = "2", isFavorite = false)
+        val blank = StoreFavoriteState(storeId = "", isFavorite = false) to StoreFavoriteState(storeId = "", isFavorite = true)
+        val unchanged = StoreFavoriteState(storeId = "1", isFavorite = true) to StoreFavoriteState(storeId = "1", isFavorite = true)
+
+        // When
+        val results = listOf(
+            HomeListCardFavorite.favoriteChangeOrNull(storeChanged.first, storeChanged.second),
+            HomeListCardFavorite.favoriteChangeOrNull(blank.first, blank.second),
+            HomeListCardFavorite.favoriteChangeOrNull(unchanged.first, unchanged.second),
+            HomeListCardFavorite.favoriteChangeOrNull(null, StoreFavoriteState(storeId = "1", isFavorite = true)),
+        )
+
+        // Then
+        assertTrue(results.all { it == null })
+    }
+
     private fun List<HomeListCardModel>.basicCard(index: Int): HomeListCardModel.BasicCard =
         this[index] as HomeListCardModel.BasicCard
 
