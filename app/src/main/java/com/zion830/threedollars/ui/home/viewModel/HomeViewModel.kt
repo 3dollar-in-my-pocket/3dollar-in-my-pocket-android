@@ -69,6 +69,8 @@ import com.zion830.threedollars.ui.home.data.HomeCurationRequestLocation
 import com.zion830.threedollars.ui.home.data.HomeCurationQueryPolicy
 import com.zion830.threedollars.ui.home.data.HomeCurationQuerySnapshot
 import com.zion830.threedollars.ui.home.data.HomeCurationCardImpressionDedup
+import com.zion830.threedollars.ui.home.data.HomeListCardFavorite
+import com.zion830.threedollars.ui.home.data.HomeListFavoriteRequestGate
 import com.zion830.threedollars.ui.home.data.PendingSectionImpression
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
@@ -82,6 +84,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
@@ -172,6 +175,13 @@ class HomeViewModel @Inject constructor(
     val storePreviewToast: SharedFlow<String> = _storePreviewToast.asSharedFlow()
 
     private val storePreviewFavoriteOverrides = mutableMapOf<Long, Boolean>()
+
+    private val _homeListFavoriteToast = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+
+    /** 홈 리스트 카드 찜 토글 성공 토스트(문자열 리소스). */
+    val homeListFavoriteToast: SharedFlow<Int> = _homeListFavoriteToast.asSharedFlow()
+
+    private val homeListFavoriteRequestGate = HomeListFavoriteRequestGate()
 
     private val _selectedHomeListCardId = MutableStateFlow<String?>(null)
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
@@ -672,6 +682,39 @@ class HomeViewModel @Inject constructor(
                 } else {
                     _serverError.emit(response.message)
                 }
+            }
+        }
+    }
+
+    fun toggleHomeListCardFavorite(card: HomeListCardModel.BasicCard) {
+        val storeInfo = card.storeInfo ?: return
+        if (!homeListFavoriteRequestGate.tryStart(storeInfo.storeId)) return
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITE,
+                additionalParams = HomeListCardFavorite.clickLogParams(storeInfo),
+            )
+        )
+        val willFavorite = !storeInfo.isSubscriber
+        viewModelScope.launch(coroutineExceptionHandler) {
+            try {
+                val request = if (willFavorite) {
+                    homeRepository.putFavorite(storeInfo.storeId)
+                } else {
+                    homeRepository.deleteFavorite(storeInfo.storeId)
+                }
+                if (request.first().ok) {
+                    _homeListSection.update { section ->
+                        section.copy(
+                            cards = HomeListCardFavorite.withFavorite(section.cards, storeInfo.storeId, willFavorite),
+                        )
+                    }
+                    _homeListFavoriteToast.emit(HomeListCardFavorite.toastMessageRes(willFavorite))
+                }
+            } finally {
+                homeListFavoriteRequestGate.finish(storeInfo.storeId)
             }
         }
     }

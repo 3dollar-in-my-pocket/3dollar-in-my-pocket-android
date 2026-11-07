@@ -422,6 +422,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onFeedIntent = feedListViewModel::dispatch,
                     storeScreen = storeScreen,
                     onCardClick = ::selectHomeListCard,
+                    onCardFavoriteClick = viewModel::toggleHomeListCardFavorite,
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onAdMobClick = viewModel::sendClickAdMobCard,
                     onAdCardClick = viewModel::openAdCard,
@@ -685,6 +686,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.storePreviewToast.collect {
                         showToast(it)
+                    }
+                }
+                launch {
+                    viewModel.homeListFavoriteToast.collect { messageRes ->
+                        showToast(messageRes)
                     }
                 }
                 launch {
