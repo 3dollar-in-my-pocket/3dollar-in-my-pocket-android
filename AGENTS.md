@@ -82,6 +82,11 @@
 - 새 리소스를 만들기 전에 기존 리소스와 `docs/context/resource-rules-current.md`를 확인한다.
 - 프로젝트 기존 유틸리티와 패턴을 새 추상화보다 우선한다.
 
+## Build Config
+
+- 환경별 값은 커밋하지 않는다. 로컬은 `local.properties`, Firebase 설정은 `app/src/google-services.json`(release)·`app/src/debug/google-services.json`(debug)을 팀 내부에서 받아 둔다. 둘 다 `.gitignore` 대상이다.
+- GitHub Actions 는 시크릿에서 복원한다: `GOOGLE_SERVICES_DEBUG_BASE64`(test·Firebase App Distribution), `GOOGLE_SERVICES_RELEASE_BASE64`(Play 내부 테스트 배포). 값은 `base64 -i <파일> | tr -d '\n'` 결과를 넣는다.
+
 ## Safety
 
 - `local.properties`, 키스토어, API 키, Firebase/AdMob/지도/소셜 로그인 키 등 민감정보를 노출하지 않는다.

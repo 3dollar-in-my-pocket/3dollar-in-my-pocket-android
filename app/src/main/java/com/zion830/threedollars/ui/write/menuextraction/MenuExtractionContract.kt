@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.write.menuextraction
 
 import androidx.annotation.StringRes
 import com.threedollar.domain.home.data.store.SelectCategoryModel
+import java.io.File
 
 data class MenuExtractionState(
     val phase: Phase = Phase.IDLE,
@@ -18,5 +19,5 @@ sealed interface MenuExtractionEffect {
     data class ShowToast(@StringRes val messageRes: Int) : MenuExtractionEffect
 
     /** [등록하기]를 눌렀을 때 진입 화면에 합칠 카테고리·메뉴. */
-    data class Completed(val categories: List<SelectCategoryModel>) : MenuExtractionEffect
+    data class Completed(val categories: List<SelectCategoryModel>, val menuBoardImage: File?) : MenuExtractionEffect
 }

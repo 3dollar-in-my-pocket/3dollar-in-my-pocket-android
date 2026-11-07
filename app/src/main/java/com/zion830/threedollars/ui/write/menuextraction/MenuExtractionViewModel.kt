@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
 import javax.inject.Inject
 
 /**
@@ -41,6 +42,7 @@ class MenuExtractionViewModel @Inject constructor(
     val isAvailable: StateFlow<Boolean> = _isAvailable.asStateFlow()
 
     private var extractionJob: Job? = null
+    private var extractedImage: File? = null
 
     fun createCaptureUri(): Uri = photoFileReader.createCaptureUri()
 
@@ -49,12 +51,12 @@ class MenuExtractionViewModel @Inject constructor(
         extractionJob?.cancel()
         _state.value = MenuExtractionState(phase = MenuExtractionState.Phase.LOADING)
         extractionJob = viewModelScope.launch(coroutineExceptionHandler) {
-            val part = photoFileReader.readAsPart(uri)
-            if (part == null) {
+            val file = photoFileReader.readAsFile(uri)
+            if (file == null) {
                 failWith(message = null, fallbackMessageRes = CommonR.string.error_unknown_title)
                 return@launch
             }
-            storeRepository.extractStoreMenus(part)
+            storeRepository.extractStoreMenus(photoFileReader.toExtractionPart(file))
                 .onSuccess { menus ->
                     val categories = menus.toSelectCategories()
                     if (categories.isEmpty()) {
@@ -62,6 +64,7 @@ class MenuExtractionViewModel @Inject constructor(
                         return@onSuccess
                     }
                     _isAvailable.value = false
+                    extractedImage = file
                     _state.value = MenuExtractionState(
                         phase = MenuExtractionState.Phase.RESULT,
                         recognizedMenuCount = menus.size,
@@ -113,7 +116,9 @@ class MenuExtractionViewModel @Inject constructor(
             MenuInputError.MIN_COUNT -> _effect.trySend(MenuExtractionEffect.ShowToast(CommonR.string.menu_input_min_count))
             null -> {
                 _state.value = MenuExtractionState()
-                _effect.trySend(MenuExtractionEffect.Completed(categories.limitToMaxCategories()))
+                val menuBoardImage = extractedImage?.let(photoFileReader::keepForUpload)
+                extractedImage = null
+                _effect.trySend(MenuExtractionEffect.Completed(categories.limitToMaxCategories(), menuBoardImage))
             }
         }
     }

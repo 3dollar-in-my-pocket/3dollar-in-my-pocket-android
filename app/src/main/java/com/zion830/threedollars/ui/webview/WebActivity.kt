@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.compose.BackHandler
@@ -194,7 +195,14 @@ fun WebViewScreen(
                                     useWideViewPort = true
                                 }
 
-                                webViewClient = WebViewClient()
+                                webViewClient = object : WebViewClient() {
+                                    override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean {
+                                        if (request.isForMainFrame) {
+                                            view.settings.userAgentString = viewModel.browserRequest(request.url.toString()).userAgent
+                                        }
+                                        return false
+                                    }
+                                }
 
                                 webChromeClient = object : WebChromeClient() {
                                     override fun onReceivedTitle(view: WebView?, title: String?) {
@@ -205,7 +213,9 @@ fun WebViewScreen(
 
                                 webView = this
                                 viewModel.updateCurrentUrl(url)
-                                loadUrl(url)
+                                val request = viewModel.browserRequest(url)
+                                settings.userAgentString = request.userAgent
+                                loadUrl(url, request.headers)
                             },
                             FrameLayout.LayoutParams(
                                 ViewGroup.LayoutParams.MATCH_PARENT,
