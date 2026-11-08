@@ -107,6 +107,7 @@ import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.HomeListCardStoreInfoModel
 import com.threedollar.common.serverdriven.model.HomeListMarkerModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDChipModel
@@ -179,6 +180,7 @@ fun HomeBottomSheetContent(
     storeScreen: StoreScreenModel?,
     onCardClick: (HomeListCardModel.BasicCard) -> Unit,
     onLoadNextPage: () -> Unit,
+    onCardFavoriteClick: (HomeListCardModel.BasicCard) -> Unit = {},
     onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
     onAdCardClick: (SDAdCardModel) -> Unit = {},
     onStorePreviewClick: () -> Unit = {},
@@ -667,6 +669,7 @@ fun HomeBottomSheetContent(
                                 onAdMobClick = onAdMobClick,
                                 onAdCardClick = onAdCardClick,
                                 modifier = Modifier.fillMaxSize(),
+                                onCardFavoriteClick = onCardFavoriteClick,
                             )
                         },
                         newsContent = {
@@ -838,6 +841,7 @@ private fun HomeListContent(
     onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit,
     onAdCardClick: (SDAdCardModel) -> Unit,
     modifier: Modifier = Modifier,
+    onCardFavoriteClick: (HomeListCardModel.BasicCard) -> Unit = {},
 ) {
     val cards = homeListSection.cards
 
@@ -862,6 +866,7 @@ private fun HomeListContent(
                 is HomeListCardModel.BasicCard -> HomeListBasicCard(
                     card = card,
                     onClick = { onCardClick(card) },
+                    onFavoriteClick = { onCardFavoriteClick(card) },
                 )
                 is HomeListCardModel.EmptyCard -> HomeListEmptyCard(card = card)
                 is HomeListCardModel.AdMobCard -> HomeListAdMobCard(card = card, onClick = onAdMobClick)
@@ -914,6 +919,7 @@ private fun HomeListAdMobCard(
 private fun HomeListBasicCard(
     card: HomeListCardModel.BasicCard,
     onClick: () -> Unit,
+    onFavoriteClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
@@ -931,13 +937,31 @@ private fun HomeListBasicCard(
                 modifier = Modifier.padding(horizontal = HomeListCardHorizontalPadding),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                HomeHeader(
-                    header = card.header,
-                    titleSize = 16,
-                    titleWeight = FontWeight.Bold,
-                    titleColor = card.header.title?.fontColor.textColorOnWhite(fallback = Gray100),
-                    badgeDefaultSize = 14.dp,
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        HomeHeader(
+                            header = card.header,
+                            titleSize = 16,
+                            titleWeight = FontWeight.Bold,
+                            titleColor = card.header.title?.fontColor.textColorOnWhite(fallback = Gray100),
+                            badgeDefaultSize = 14.dp,
+                        )
+                    }
+                    card.storeInfo?.let { storeInfo ->
+                        StorePreviewIconButton(
+                            iconRes = if (storeInfo.isSubscriber) {
+                                DesignSystemR.drawable.ic_store_preview_bookmark_solid
+                            } else {
+                                DesignSystemR.drawable.ic_store_preview_bookmark_line
+                            },
+                            tint = if (storeInfo.isSubscriber) Pink else Gray100,
+                            onClick = onFavoriteClick,
+                        )
+                    }
+                }
                 MetadataRows(metadata = card.metadata)
             }
             HomeImages(images = card.images, listMode = true, horizontalPadding = HomeListCardHorizontalPadding)
@@ -1467,6 +1491,7 @@ private fun previewHomeListBasicCardWithLongTitle(): HomeListCardModel.BasicCard
             unfocused = SDChipModel(text = SDTextModel(text = "", isHtml = false)),
             location = SDLocationModel(latitude = 37.1, longitude = 127.2),
         ),
+        storeInfo = HomeListCardStoreInfoModel(storeId = "100186", storeType = "USER_STORE", isSubscriber = false),
     )
 }
 

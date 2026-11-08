@@ -199,6 +199,7 @@ sealed interface HomeListCardModel {
         val style: SDSurfaceStyleModel? = null,
         val clickLog: SDClickLogModel? = null,
         val impressionLog: SDImpressionLogModel? = null,
+        val storeInfo: HomeListCardStoreInfoModel? = null,
     ) : HomeListCardModel
 
     data class EmptyCard(
@@ -265,6 +266,17 @@ sealed interface StoreSectionModel {
         val style: SDSurfaceStyleModel? = null,
     ) : StoreSectionModel
 }
+
+/**
+ * 가게 카드의 `additionalInfos`(type=STORE). 찜 버튼은 이 값이 있을 때만 그린다.
+ *
+ * @property isSubscriber 찜 여부. 버튼 초기 상태이고, 토글에 성공하면 카드를 이 값만 바꿔 다시 그린다.
+ */
+data class HomeListCardStoreInfoModel(
+    val storeId: String,
+    val storeType: String?,
+    val isSubscriber: Boolean,
+)
 
 data class StoreSectionAdditionalInfosModel(
     val type: String = "EMPTY",

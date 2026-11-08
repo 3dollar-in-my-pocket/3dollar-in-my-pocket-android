@@ -41,6 +41,8 @@ data class HomeListCardResponse(
     val link: SDLinkResponse? = null,
     @SerializedName("style")
     val style: SDSurfaceStyleResponse? = null,
+    @SerializedName("additionalInfos")
+    val additionalInfos: StoreSectionAdditionalInfosResponse? = null,
     @SerializedName("clickLog")
     val clickLog: SDClickLogResponse? = null,
     @SerializedName("impressionLog")
@@ -123,6 +125,10 @@ data class StoreSectionAdditionalInfosResponse(
     val type: String? = null,
     @SerializedName("isSubscriber")
     val isSubscriber: Boolean? = false,
+    @SerializedName("storeId")
+    val storeId: String? = null,
+    @SerializedName("storeType")
+    val storeType: String? = null,
 )
 
 data class StoreActionBarResponse(
