@@ -8,6 +8,7 @@ import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.threedollar.domain.home.request.OpeningHourRequest
 import com.threedollar.domain.home.request.UserStoreModelRequest
 import com.zion830.threedollars.ui.dialog.category.StoreCategory
+import java.io.File
 
 object EditStoreContract {
 
@@ -115,7 +116,7 @@ object EditStoreContract {
         data class SetSelectCategoryList(val list: List<SelectCategoryModel>) : Intent
 
         /** AI 메뉴 인식 결과를 메뉴 수정 중인 카테고리·메뉴에 합친다 (같은 이름은 수량·가격 갱신, 카테고리 최대 10개). */
-        data class ApplyExtractedMenus(val list: List<SelectCategoryModel>) : Intent
+        data class ApplyExtractedMenus(val list: List<SelectCategoryModel>, val menuBoardImage: File?) : Intent
         data object MarkMenuExtractionUsed : Intent
 
         data class ChangeSelectCategory(val category: CategoryModel) : Intent

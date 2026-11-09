@@ -222,6 +222,7 @@ interface ServerApi {
     @GET("/api/v1/screen/home")
     suspend fun getHomeFilterScreen(
         @Query("preset") preset: String? = null,
+        @Query("tabId") tabId: String? = null,
     ): Response<BaseResponse<HomeFilterScreenResponse>>
 
     @GET("/api/v1/screen/home/section/curation/{tabId}")

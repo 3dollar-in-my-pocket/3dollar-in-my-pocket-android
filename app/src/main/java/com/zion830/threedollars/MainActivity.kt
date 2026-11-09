@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.zion830.threedollars.ui.home.data.HomeDeepLinkRequest
 import com.zion830.threedollars.ui.home.viewModel.HomeViewModel
 import com.zion830.threedollars.ui.my.page.MyPageViewModel
 import com.naver.maps.geometry.LatLng
@@ -292,9 +293,12 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             binding.navView.post {
                 selectTabWithoutClickLog(R.id.navigation_home)
             }
-            intent.getStringExtra(DynamicLinkActivity.HOME_PRESET)?.let { preset ->
-                homeViewModel.applyPreset(preset)
-            }
+            val tabId = intent.getStringExtra(DynamicLinkActivity.HOME_TAB_ID)
+            intent.removeExtra(DynamicLinkActivity.HOME_TAB_ID)
+            HomeDeepLinkRequest.from(
+                preset = intent.getStringExtra(DynamicLinkActivity.HOME_PRESET),
+                tabId = tabId,
+            )?.let(homeViewModel::applyHomeDeepLink)
         } else if (intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW)) {
             val isStoreLanding = intent.hasExtra(DynamicLinkActivity.STORE_PREVIEW_EXPANDED)
             binding.navView.post {

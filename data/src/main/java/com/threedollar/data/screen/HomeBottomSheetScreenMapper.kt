@@ -5,6 +5,7 @@ import com.threedollar.common.sdui.model.section.SDAdMobSlotHeight
 import com.threedollar.common.serverdriven.model.HomeListCardHeaderModel
 import com.threedollar.common.serverdriven.model.HomeListCardMetadataModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
+import com.threedollar.common.serverdriven.model.HomeListCardStoreInfoModel
 import com.threedollar.common.serverdriven.model.HomeListMarkerModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDBorderModel
@@ -90,6 +91,7 @@ private fun HomeListCardResponse.asHomeListCardModelOrNull(): HomeListCardModel?
                 style = style?.asModel(),
                 clickLog = clickLog?.asModel(),
                 impressionLog = impressionLog?.asModel(),
+                storeInfo = additionalInfos.asHomeListCardStoreInfoOrNull(),
             )
         }
 
@@ -171,6 +173,18 @@ private fun StoreSectionAdditionalInfosResponse?.asModel(): StoreSectionAddition
         isSubscriber = this?.isSubscriber ?: false,
     )
 }
+
+private fun StoreSectionAdditionalInfosResponse?.asHomeListCardStoreInfoOrNull(): HomeListCardStoreInfoModel? {
+    if (this == null || !type.equals(STORE_ADDITIONAL_INFOS_TYPE, ignoreCase = true)) return null
+    val storeId = storeId?.takeIf { it.isNotBlank() } ?: return null
+    return HomeListCardStoreInfoModel(
+        storeId = storeId,
+        storeType = storeType,
+        isSubscriber = isSubscriber ?: false,
+    )
+}
+
+private const val STORE_ADDITIONAL_INFOS_TYPE = "STORE"
 
 private fun HomeListMarkerResponse.asModelOrNull(): HomeListMarkerModel? {
     val locationModel = location?.asModelOrNull() ?: return null

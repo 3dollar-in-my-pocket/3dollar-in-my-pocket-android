@@ -48,9 +48,14 @@ data class HomeCurationRequestLocation(
 )
 
 object HomeCurationStateReducer {
-    fun updateTabs(state: HomeCurationUiState, tabs: SDHomeBottomSheetTabsModel): HomeCurationUiState {
+    fun updateTabs(
+        state: HomeCurationUiState,
+        tabs: SDHomeBottomSheetTabsModel,
+        resetSelection: Boolean = false,
+    ): HomeCurationUiState {
         val supportedTabs = tabs.tabs.filter { it.viewType in SDHomeBottomSheetViewType.supported }
-        val selectedTabId = state.selectedTabId?.takeIf { current -> supportedTabs.any { it.tabId == current } }
+        val selectedTabId = state.selectedTabId
+            ?.takeIf { current -> !resetSelection && supportedTabs.any { it.tabId == current } }
             ?: supportedTabs.firstOrNull { it.defaultSelected }?.tabId
             ?: supportedTabs.firstOrNull()?.tabId
         return state.copy(tabs = supportedTabs, selectedTabId = selectedTabId)

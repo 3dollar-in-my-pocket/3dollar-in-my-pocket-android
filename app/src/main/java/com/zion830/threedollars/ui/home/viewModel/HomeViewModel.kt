@@ -26,6 +26,7 @@ import com.threedollar.common.data.AdAndStoreItem
 import com.threedollar.common.serverdriven.model.HomeFilterBar
 import com.threedollar.common.serverdriven.model.HomeFilterBarType
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
+import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.HomeMapControl
@@ -64,11 +65,14 @@ import com.zion830.threedollars.ui.home.data.HomeStoreLanding
 import com.zion830.threedollars.ui.home.data.HomeStoreLandingRequest
 import com.zion830.threedollars.ui.home.data.HomeUIState
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
+import com.zion830.threedollars.ui.home.data.HomeDeepLinkRequest
 import com.zion830.threedollars.ui.home.data.HomeCurationStateReducer
 import com.zion830.threedollars.ui.home.data.HomeCurationRequestLocation
 import com.zion830.threedollars.ui.home.data.HomeCurationQueryPolicy
 import com.zion830.threedollars.ui.home.data.HomeCurationQuerySnapshot
 import com.zion830.threedollars.ui.home.data.HomeCurationCardImpressionDedup
+import com.zion830.threedollars.ui.home.data.HomeListCardFavorite
+import com.zion830.threedollars.ui.home.data.HomeListFavoriteRequestGate
 import com.zion830.threedollars.ui.home.data.PendingSectionImpression
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
@@ -82,6 +86,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.CancellationException
@@ -173,6 +178,13 @@ class HomeViewModel @Inject constructor(
 
     private val storePreviewFavoriteOverrides = mutableMapOf<Long, Boolean>()
 
+    private val _homeListFavoriteToast = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+
+    /** 홈 리스트 카드 찜 토글 성공 토스트(문자열 리소스). */
+    val homeListFavoriteToast: SharedFlow<Int> = _homeListFavoriteToast.asSharedFlow()
+
+    private val homeListFavoriteRequestGate = HomeListFavoriteRequestGate()
+
     private val _selectedHomeListCardId = MutableStateFlow<String?>(null)
     val selectedHomeListCardId: StateFlow<String?> = _selectedHomeListCardId.asStateFlow()
 
@@ -196,6 +208,8 @@ class HomeViewModel @Inject constructor(
     private var homeListNextCursor: String? = null
 
     private var preset: String? = null
+    private var homeTabsJob: Job? = null
+    private var homeDeepLinkSerial = 0L
     private var homeViewLog: SDViewLogModel? = null
     private var hasHomeViewLogResult = false
     private var isPageViewPending = false
@@ -676,6 +690,42 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun toggleHomeListCardFavorite(card: HomeListCardModel.BasicCard) {
+        val storeInfo = card.storeInfo ?: return
+        if (!homeListFavoriteRequestGate.tryStart(storeInfo.storeId)) return
+        LogManager.sendEvent(
+            ClickEvent(
+                screen = screenName,
+                objectType = LogObjectType.BUTTON,
+                objectId = LogObjectId.FAVORITE,
+                additionalParams = HomeListCardFavorite.clickLogParams(storeInfo),
+            )
+        )
+        val willFavorite = !storeInfo.isSubscriber
+        viewModelScope.launch(coroutineExceptionHandler) {
+            try {
+                val request = if (willFavorite) {
+                    homeRepository.putFavorite(storeInfo.storeId)
+                } else {
+                    homeRepository.deleteFavorite(storeInfo.storeId)
+                }
+                if (request.first().ok) {
+                    syncHomeListCardFavorite(storeInfo.storeId, willFavorite)
+                    _homeListFavoriteToast.emit(HomeListCardFavorite.toastMessageRes(willFavorite))
+                }
+            } finally {
+                homeListFavoriteRequestGate.finish(storeInfo.storeId)
+            }
+        }
+    }
+
+    /** 미리보기 시트 등 다른 곳에서 바뀐 찜 상태를 같은 가게의 리스트 카드에 반영한다. */
+    fun syncHomeListCardFavorite(storeId: String, isFavorite: Boolean) {
+        _homeListSection.update { section ->
+            section.copy(cards = HomeListCardFavorite.withFavorite(section.cards, storeId, isFavorite))
+        }
+    }
+
     fun updateSelectedStorePreviewFavorite(isFavorite: Boolean) {
         updateStorePreviewFavorite(storeId = _selectedStorePreviewStoreId.value, isFavorite = isFavorite)
     }
@@ -823,11 +873,19 @@ class HomeViewModel @Inject constructor(
 
     // ----- SDU filter -----
 
-    fun applyPreset(preset: String) {
-        this.preset = preset
-        homeViewLog = null
-        hasHomeViewLogResult = false
-        fetchHomeFilterScreen(shouldRefreshCards = true)
+    internal fun applyHomeDeepLink(request: HomeDeepLinkRequest) {
+        val serial = ++homeDeepLinkSerial
+        homeTabsJob?.cancel()
+        when (request) {
+            is HomeDeepLinkRequest.Screen -> {
+                preset = request.preset
+                homeViewLog = null
+                hasHomeViewLogResult = false
+                fetchHomeFilterScreen(shouldRefreshCards = true, tabId = request.tabId, deepLinkSerial = serial)
+            }
+
+            is HomeDeepLinkRequest.Tabs -> fetchHomeTabs(tabId = request.tabId, deepLinkSerial = serial)
+        }
     }
 
     /**
@@ -852,10 +910,14 @@ class HomeViewModel @Inject constructor(
             ?: LogManager.sendPageView(screenName, HOME_PAGE_VIEW_CLASS_NAME)
     }
 
-    private fun fetchHomeFilterScreen(shouldRefreshCards: Boolean = false) {
+    private fun fetchHomeFilterScreen(
+        shouldRefreshCards: Boolean = false,
+        tabId: String? = null,
+        deepLinkSerial: Long = homeDeepLinkSerial,
+    ) {
         val requestedPreset = preset
         viewModelScope.launch(coroutineExceptionHandler) {
-            screenRepository.getHomeFilterScreen(preset = requestedPreset).catch { throwable ->
+            screenRepository.getHomeFilterScreen(preset = requestedPreset, tabId = tabId).catch { throwable ->
                 if (requestedPreset == preset) onHomeViewLogResult(null)
                 throw throwable
             }.collect { response ->
@@ -871,10 +933,7 @@ class HomeViewModel @Inject constructor(
                         )
                     }
                     _initialMapZoomLevel.value = screen.configuration?.initialMapZoomLevel
-                    val tabs = screen.sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
-                        .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
-                    _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs) }
-                    requestHomeCurationSection()
+                    applyBottomSheetTabs(screen, resetSelection = shouldResetTabSelection(tabId, deepLinkSerial))
                     applyServerSelectionDefaults()
                     updateFilterCells()
                     updateMapControlItems()
@@ -888,6 +947,34 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun fetchHomeTabs(tabId: String, deepLinkSerial: Long) {
+        homeTabsJob = viewModelScope.launch(coroutineExceptionHandler) {
+            screenRepository.getHomeFilterScreen(tabId = tabId).collect { response ->
+                val screen = response.data ?: return@collect
+                if (!response.ok || screen.bottomSheetTabs().tabs.isEmpty()) return@collect
+                applyBottomSheetTabs(screen, resetSelection = shouldResetTabSelection(tabId, deepLinkSerial))
+            }
+        }
+    }
+
+    private fun shouldResetTabSelection(tabId: String?, deepLinkSerial: Long): Boolean =
+        HomeDeepLinkRequest.shouldResetTabSelection(
+            requestedTabId = tabId,
+            requestSerial = deepLinkSerial,
+            latestSerial = homeDeepLinkSerial,
+        )
+
+    private fun HomeFilterScreenModel.bottomSheetTabs(): SDHomeBottomSheetTabsModel =
+        sections.filterIsInstance<HomeScreenSection.HomeBottomSheetTabSectionModel>()
+            .firstOrNull()?.tabs ?: SDHomeBottomSheetTabsModel()
+
+    private fun applyBottomSheetTabs(screen: HomeFilterScreenModel, resetSelection: Boolean) {
+        val tabs = screen.bottomSheetTabs()
+        _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs, resetSelection) }
+        requestHomeCurationSection()
+        if (resetSelection) flushSectionImpressions()
     }
 
     fun selectRadioOption(paramKey: String, optionIndex: Int) {

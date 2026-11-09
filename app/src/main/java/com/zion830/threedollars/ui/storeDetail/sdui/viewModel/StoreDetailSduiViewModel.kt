@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.UdfViewModel
 import com.threedollar.common.sdui.model.element.SDLogModel
+import com.threedollar.common.sdui.model.section.SDSectionModel
 import com.threedollar.common.sdui.model.section.SDSectionType
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.text.SDHtmlText
@@ -22,6 +23,7 @@ import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiLogger
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiEffect
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiIntent
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreDetailSduiUiState
+import com.zion830.threedollars.ui.storeDetail.sdui.model.StorePreviewSections
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreSectionFragment
 import com.zion830.threedollars.ui.storeDetail.sdui.model.StoreThreadPostEmbedLoader
 import com.zion830.threedollars.ui.storeDetail.user.model.StoreDetailDisplayItemEffect
@@ -65,6 +67,11 @@ class StoreDetailSduiViewModel @Inject constructor(
      * 제보자 줄은 가이드상 full 에만 있어 `/preview` 응답 그대로 쓴다.
      */
     val preview: StateFlow<SDStorePreviewSectionModel?> = previewStore.asStateFlow()
+
+    private val previewSectionsStore = MutableStateFlow<List<SDSectionModel>>(emptyList())
+
+    /** 미리보기 시트가 서버 순서대로 그릴 섹션(PREVIEW·AD_MOB). [preview] 와 같은 응답에서 함께 바뀐다. */
+    val previewSections: StateFlow<List<SDSectionModel>> = previewSectionsStore.asStateFlow()
 
     private var latitude: Double? = null
     private var longitude: Double? = null
@@ -148,6 +155,7 @@ class StoreDetailSduiViewModel @Inject constructor(
         sentImpressionKeys.clear()
         stateStore.value = StoreDetailSduiUiState(storeId = intent.storeId)
         previewStore.value = null
+        previewSectionsStore.value = emptyList()
         fetch(keepContent = false)
         if (intent.withPreview) fetchPreview(intent.storeId)
     }
@@ -162,12 +170,11 @@ class StoreDetailSduiViewModel @Inject constructor(
             val screen = storeRepository.getStorePreviewScreen(storeId = storeId, lat = latitude, lng = longitude)
                 .getOrNull()
                 ?: return@launch
-            val preview = screen.sections.orEmpty()
-                .filterIsInstance<SDStorePreviewSectionModel>()
-                .firstOrNull()
-                ?: return@launch
+            val sections = StorePreviewSections.from(screen.sections)
+            val preview = sections.filterIsInstance<SDStorePreviewSectionModel>().firstOrNull() ?: return@launch
             if (stateStore.value.storeId != storeId) return@launch
             logger.pageView(screen.viewLog)
+            previewSectionsStore.value = sections
             previewStore.value = preview
             stateStore.update {
                 if (it.hasContent) {
