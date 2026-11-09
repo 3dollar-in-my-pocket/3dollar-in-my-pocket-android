@@ -407,6 +407,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 )
                 val storePreview = storeDetailViewModel.preview.collectAsStateWithLifecycle().value
                     ?.takeIf { it.additionalInfos?.storeId == null || it.additionalInfos?.storeId == selectedStoreId?.toString() }
+                val storePreviewSections = storeDetailViewModel.previewSections.collectAsStateWithLifecycle().value
                 val nearbyListResetRevision = viewModel.nearbyListResetRevision.collectAsStateWithLifecycle().value
                 HomeBottomSheetContent(
                     homeListSection = homeListSection,
@@ -462,6 +463,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                                 onImageClick = ::showStorePreviewImages,
                                 onAddPhotoClick = if (canAddPhotoToStorePreview()) ::moveStorePreviewPhotoAdd else null,
                                 showHeaderButtons = showHeaderButtons,
+                                // 자리표시(false)는 미리보기 뒤 상세에 그려지므로 광고를 넣으면 가려진 채 노출이 잡힌다 (TH-1465).
+                                sections = if (showHeaderButtons) storePreviewSections else emptyList(),
+                                onAdClick = { storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnAdClick(it)) },
+                                onImpression = { key, log ->
+                                    storeDetailViewModel.dispatch(StoreDetailSduiUiIntent.OnImpression(key, log))
+                                },
                             )
                         }
                     },
