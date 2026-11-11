@@ -8,7 +8,10 @@ object InAppBrowserHeaders {
 
     private const val TRUSTED_DOMAIN = "threedollars.co.kr"
     private val TRUSTED_HOSTS = setOf("boong-village.3dollarinmypocket.workers.dev")
-    private val TRUSTED_DEV_HOSTS = setOf("boong-village-dev.3dollarinmypocket.workers.dev")
+    private val TRUSTED_DEV_HOSTS = setOf(
+        "boong-village-dev.3dollarinmypocket.workers.dev",
+        "3dollars-web-dev.netlify.app",
+    )
 
     fun build(url: String, token: String?, userAgent: String, isDebug: Boolean): InAppBrowserRequest {
         if (!isTrustedHost(url, isDebug)) return InAppBrowserRequest(userAgent = null, headers = emptyMap())
