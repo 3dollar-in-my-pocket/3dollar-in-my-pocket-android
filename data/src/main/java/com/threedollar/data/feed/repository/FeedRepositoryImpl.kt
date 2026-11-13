@@ -15,6 +15,7 @@ class FeedRepositoryImpl @Inject constructor(
         cursor: String?,
         mapLatitude: Double?,
         mapLongitude: Double?,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
         size: Int,
@@ -25,6 +26,7 @@ class FeedRepositoryImpl @Inject constructor(
             size = size,
             mapLatitude = mapLatitude,
             mapLongitude = mapLongitude,
+            maxDistanceM = maxDistanceM,
             deviceLatitude = deviceLatitude,
             deviceLongitude = deviceLongitude,
         )

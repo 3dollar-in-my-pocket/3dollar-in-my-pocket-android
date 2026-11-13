@@ -230,6 +230,7 @@ interface ServerApi {
         @Path("tabId") tabId: String,
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
+        @Query("maxDistanceM") maxDistanceM: Double? = null,
         @Header("X-Device-Latitude") deviceLatitude: Double? = null,
         @Header("X-Device-Longitude") deviceLongitude: Double? = null,
     ): Response<BaseResponse<HomeCurationSectionResponse>>
@@ -241,6 +242,7 @@ interface ServerApi {
         @Query("categoryId") categoryId: String,
         @Query("mapLatitude") mapLatitude: Double,
         @Query("mapLongitude") mapLongitude: Double,
+        @Query("maxDistanceM") maxDistanceM: Double? = null,
         @Header("X-Device-Latitude") deviceLatitude: Double? = null,
         @Header("X-Device-Longitude") deviceLongitude: Double? = null,
     ): Response<BaseResponse<HomeCurationCardsResponse>>

@@ -35,6 +35,7 @@ interface ScreenRemoteDataSource {
         tabId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>>
@@ -45,6 +46,7 @@ interface ScreenRemoteDataSource {
         categoryId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationCardsResponse>>
