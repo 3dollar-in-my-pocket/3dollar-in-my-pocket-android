@@ -192,10 +192,10 @@ class SplashActivity :
     }
 
     private fun tryLogin() {
-        val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
+        val deepLink = intent.getStringExtra(PUSH_LINK).orEmpty()
         when {
-            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) ||
-                deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
+            // 카카오 공유 링크. iOS·현재 공유는 storeType 없이 storeId 만 보내므로 storeId extra 유무로 판단한다(TH-1602).
+            intent.hasExtra(STORE_ID) -> {
                 val storeId = intent.getStringExtra(STORE_ID)
                 if (storeId.isNullOrBlank()) {
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
@@ -230,12 +230,7 @@ class SplashActivity :
 
     private fun pendingLinkForLogin(): String? = SplashPendingLink.resolve(
         pushLink = intent.getStringExtra(PUSH_LINK),
-        storeType = intent.getStringExtra(STORE_TYPE),
-        storeId = intent.getStringExtra(STORE_ID),
-        kakaoStoreTypes = setOf(
-            getString(CommonR.string.scheme_host_kakao_link_food_truck_type),
-            getString(CommonR.string.scheme_host_kakao_link_road_food_type),
-        ),
+        kakaoStoreId = if (intent.hasExtra(STORE_ID)) intent.getStringExtra(STORE_ID).orEmpty() else null,
     )
 
     companion object {
