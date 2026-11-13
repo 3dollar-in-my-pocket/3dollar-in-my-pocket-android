@@ -19,6 +19,7 @@ import com.threedollar.common.sdui.model.section.SDStoreInfoV1SectionModel
 import com.threedollar.common.sdui.model.section.SDStoreInfoV2SectionModel
 import com.threedollar.common.sdui.model.section.SDStoreMarginSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePostSectionModel
+import com.threedollar.common.sdui.model.section.SDStorePreviewMoreSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreReviewSectionModel
 import com.threedollar.common.sdui.model.section.SDStoreTabSectionModel
@@ -49,6 +50,7 @@ class SDSectionDeserializer : JsonDeserializer<SDSectionModel> {
 
     private fun SDSectionType.modelClass(): Class<out SDSectionModel>? = when (this) {
         SDSectionType.PREVIEW -> SDStorePreviewSectionModel::class.java
+        SDSectionType.PREVIEW_MORE -> SDStorePreviewMoreSectionModel::class.java
         SDSectionType.TAB -> SDStoreTabSectionModel::class.java
         SDSectionType.EDIT -> SDStoreEditSectionModel::class.java
         SDSectionType.COUPON -> SDStoreCouponSectionModel::class.java
