@@ -126,6 +126,7 @@ class FeedListViewModel @Inject constructor(
         cursor = cursor,
         mapLatitude = location.mapLatitude,
         mapLongitude = location.mapLongitude,
+        maxDistanceM = location.maxDistanceM,
         deviceLatitude = location.deviceLatitude,
         deviceLongitude = location.deviceLongitude,
         size = size,

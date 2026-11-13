@@ -45,6 +45,7 @@ data class HomeCurationRequestLocation(
     val mapLongitude: Double,
     val deviceLatitude: Double?,
     val deviceLongitude: Double?,
+    val maxDistanceM: Double? = null,
 )
 
 object HomeCurationStateReducer {
