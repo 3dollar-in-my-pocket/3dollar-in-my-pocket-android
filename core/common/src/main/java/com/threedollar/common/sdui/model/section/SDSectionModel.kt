@@ -11,6 +11,7 @@ import com.threedollar.common.sdui.model.element.SDSurfaceStyleModel
  */
 enum class SDSectionType {
     PREVIEW,
+    PREVIEW_MORE,
     TAB,
     EDIT,
     COUPON,
