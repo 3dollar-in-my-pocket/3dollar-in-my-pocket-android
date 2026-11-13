@@ -161,4 +161,35 @@ class StorePreviewSectionsTest {
         assertTrue(withoutLog.isEmpty())
         assertEquals(listOf("${StorePreviewSections.IMPRESSION_KEY_PREFIX}PREVIEW_MORE" to log), withLog)
     }
+
+    // TH-1584 TC5
+    @Test
+    fun `TH1584_TC5_시트에_알리는_높이는_티저를_빼꼼높이까지만_넣고_티저가_없으면_본문그대로다`() {
+        // Given
+        val bodyPx = 900
+        val maxPeekPx = 156
+
+        // When
+        val tallPeek = StorePreviewSections.peekLayoutHeight(bodyPx = bodyPx, peekPx = 400, maxPeekPx = maxPeekPx)
+        val shortPeek = StorePreviewSections.peekLayoutHeight(bodyPx = bodyPx, peekPx = 100, maxPeekPx = maxPeekPx)
+        val noPeek = StorePreviewSections.peekLayoutHeight(bodyPx = bodyPx, peekPx = null, maxPeekPx = maxPeekPx)
+
+        // Then
+        assertEquals(1_056, tallPeek)
+        assertEquals(1_000, shortPeek)
+        assertEquals(900, noPeek)
+    }
+
+    // TH-1584 TC6
+    @Test
+    fun `TH1584_TC6_상세화면은_PREVIEW_MORE와_모르는섹션을_그리지_않는다`() {
+        // Given
+        val sections = screen.sections.orEmpty() + SDUnknownSectionModel("NEW_TYPE")
+
+        // When
+        val detail = StorePreviewSections.detailSections(sections)
+
+        // Then
+        assertEquals(listOf(SDSectionType.AD_MOB, SDSectionType.PREVIEW), detail.map { it.type })
+    }
 }

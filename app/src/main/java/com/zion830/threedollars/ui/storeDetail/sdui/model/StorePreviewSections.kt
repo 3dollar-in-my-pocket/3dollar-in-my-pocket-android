@@ -2,6 +2,7 @@ package com.zion830.threedollars.ui.storeDetail.sdui.model
 
 import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
+import com.threedollar.common.sdui.model.section.SDSectionType
 import com.threedollar.common.sdui.model.section.SDStoreAdmobSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewMoreSectionModel
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
@@ -30,6 +31,17 @@ object StorePreviewSections {
         val more = sections.orEmpty().filterIsInstance<SDStorePreviewMoreSectionModel>().firstOrNull()
         return if (more != null && hasPreview) body + more else body
     }
+
+    /**
+     * 티저를 붙인 미리보기가 부모(시트)에 알릴 높이. 티저는 [maxPeekPx] 까지만 넣어서
+     * 시트가 그 위치에 멈추고 나머지는 화면 밖으로 잘리게 한다. 티저가 없으면 본문 높이 그대로다.
+     */
+    fun peekLayoutHeight(bodyPx: Int, peekPx: Int?, maxPeekPx: Int): Int =
+        bodyPx + (peekPx?.coerceIn(0, maxPeekPx) ?: 0)
+
+    /** 상세(full) 화면이 그릴 섹션. 미리보기 전용 티저(PREVIEW_MORE)가 섞여 와도 상세 노출로 잡히지 않게 뺀다. */
+    fun detailSections(sections: List<SDSectionModel>?): List<SDSectionModel> =
+        sections.orEmpty().filter { it.type != SDSectionType.UNKNOWN && it.type != SDSectionType.PREVIEW_MORE }
 
     fun impressionLogs(index: Int, section: SDSectionModel): List<Pair<String, SDLogModel>> =
         StoreDetailSectionImpressions.logs("$index-${section.type}", section)

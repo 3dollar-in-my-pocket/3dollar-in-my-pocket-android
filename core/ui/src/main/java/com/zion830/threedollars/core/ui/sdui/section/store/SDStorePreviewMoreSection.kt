@@ -15,7 +15,7 @@ import com.zion830.threedollars.core.ui.sdui.component.SDSectionHeader
 import com.zion830.threedollars.core.ui.sdui.foundation.sdSurface
 
 /**
- * PREVIEW_MORE 섹션. 상세 섹션과 같은 머리 배치로 그리고, 아래에 내용이 이어지는 것처럼 여백을 둔다.
+ * PREVIEW_MORE 섹션. 상세 섹션과 같은 머리 배치(제목·부제)로 그리고, 아래에 내용이 이어지는 것처럼 여백을 둔다.
  * 시트는 [SDStorePreviewMoreSectionDefaults.PeekHeight] 만큼만 보여 주고 나머지는 화면 밖으로 잘린다.
  */
 @Composable
@@ -29,7 +29,8 @@ fun SDStorePreviewMoreSection(
             .sdSurface(style = model.style, defaultBackground = ColorWhite)
             .padding(top = SDSectionDefaults.VerticalPadding),
     ) {
-        SDSectionHeader(model = model.header, onAction = {})
+        // 티저는 탭하면 시트가 상세로 펼쳐져야 하므로 탭을 가로채는 trailingAction 버튼은 그리지 않는다.
+        SDSectionHeader(model = model.header?.copy(trailingAction = null), onAction = {})
         Spacer(modifier = Modifier.height(SDStorePreviewMoreSectionDefaults.HiddenBodyHeight))
     }
 }

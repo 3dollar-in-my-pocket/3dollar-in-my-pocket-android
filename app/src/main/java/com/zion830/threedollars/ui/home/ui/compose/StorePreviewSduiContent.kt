@@ -144,9 +144,12 @@ private fun PeekBottomLayout(
         val childConstraints = constraints.copy(minHeight = 0, maxHeight = Constraints.Infinity)
         val bodyPlaceable = measurables[0].measure(childConstraints)
         val peekPlaceable = measurables.getOrNull(1)?.measure(childConstraints)
-        val visiblePeekHeight = peekPlaceable?.height?.coerceAtMost(peekHeight.roundToPx()) ?: 0
         val width = maxOf(bodyPlaceable.width, peekPlaceable?.width ?: 0).coerceIn(constraints.minWidth, constraints.maxWidth)
-        val height = (bodyPlaceable.height + visiblePeekHeight).coerceIn(constraints.minHeight, constraints.maxHeight)
+        val height = StorePreviewSections.peekLayoutHeight(
+            bodyPx = bodyPlaceable.height,
+            peekPx = peekPlaceable?.height,
+            maxPeekPx = peekHeight.roundToPx(),
+        ).coerceIn(constraints.minHeight, constraints.maxHeight)
         layout(width, height) {
             bodyPlaceable.placeRelative(0, 0)
             peekPlaceable?.placeRelative(0, bodyPlaceable.height)
