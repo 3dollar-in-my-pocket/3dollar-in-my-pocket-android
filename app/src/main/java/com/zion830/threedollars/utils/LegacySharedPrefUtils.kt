@@ -12,7 +12,6 @@ object LegacySharedPrefUtils {
     private const val ACCESS_TOKEN_KEY = "access_token_key"
     private const val FIRST_PERMISSION_CHECK = "first_permission_check"
     private const val LOGIN_TYPE = "login_type"
-    private const val FIRST_MARKETING = "first_marketing"
 
     private val sharedPreferences = GlobalApplication.getContext()
         .getSharedPreferences(PREFERENCE_FILE_KEY, Context.MODE_PRIVATE)
@@ -46,14 +45,6 @@ object LegacySharedPrefUtils {
     }
 
     fun getLoginType() = sharedPreferences.getString(LOGIN_TYPE, "")
-
-    fun getFirstMarketing(): Boolean = sharedPreferences.getBoolean(FIRST_MARKETING, false)
-    fun setFirstMarketing() {
-        sharedPreferences.edit {
-            putBoolean(FIRST_MARKETING, true)
-            commit()
-        }
-    }
 
     fun <T> saveList(list: List<T?>?, key: String?) {
         if (list.isNullOrEmpty()) {

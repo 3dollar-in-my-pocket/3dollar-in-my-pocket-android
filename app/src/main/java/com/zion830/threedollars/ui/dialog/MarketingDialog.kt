@@ -11,7 +11,6 @@ import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseDialogFragment
 import com.zion830.threedollars.GlobalApplication.Companion.eventTracker
 import com.zion830.threedollars.databinding.DialogMarketingBinding
-import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import zion830.com.common.base.onSingleClick
 import com.threedollar.common.R as CommonR
@@ -166,7 +165,6 @@ class MarketingDialog : BaseDialogFragment<DialogMarketingBinding>() {
             }
             agreeContinueTextView.onSingleClick {
                 eventTracker.setUserProperty("isPushEnable", "true")
-                subscribeToTopicFirebase(check2)
                 listener?.accept(check2)
                 dismiss()
             }
