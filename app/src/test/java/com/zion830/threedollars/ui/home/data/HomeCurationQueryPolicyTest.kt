@@ -1,8 +1,10 @@
 package com.zion830.threedollars.ui.home.data
 
+import com.zion830.threedollars.utils.NaverMapUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -213,5 +215,40 @@ class HomeCurationQueryPolicyTest {
         assertFalse(differentRevision)
         assertFalse(differentLocation)
         assertFalse(differentTab)
+    }
+
+    // TH-1601 TC3
+    @Test
+    fun `TH1601_TC3_뷰포트반경이_있으면_그대로_쓰고_초기값이면_생략한다`() {
+        // Given
+        val viewport = 4_520.5
+        val initial = NaverMapUtils.DEFAULT_DISTANCE_M
+
+        // When
+        val measured = HomeCurationQueryPolicy.maxDistanceM(viewport)
+        val unmeasured = HomeCurationQueryPolicy.maxDistanceM(initial)
+        val invalid = HomeCurationQueryPolicy.maxDistanceM(0.0)
+
+        // Then
+        assertEquals(viewport, measured!!, 0.0)
+        assertNull(unmeasured)
+        assertNull(invalid)
+    }
+
+    // TH-1601 TC3
+    @Test
+    fun `TH1601_TC3_반경이_바뀐_새위치는_같은위치로_재사용하지_않는다`() {
+        // Given
+        val near = HomeCurationTestFixtures.location.copy(maxDistanceM = 3_000.0)
+        val far = near.copy(maxDistanceM = 12_000.0)
+
+        // When
+        val first = HomeCurationQueryPolicy.commit(previous = null, location = near, refresh = true)
+        val second = HomeCurationQueryPolicy.commit(previous = first, location = far, refresh = true)
+
+        // Then
+        assertEquals(12_000.0, second.location.maxDistanceM!!, 0.0)
+        assertNotSame(first.location, second.location)
+        assertEquals(first.revision + 1, second.revision)
     }
 }

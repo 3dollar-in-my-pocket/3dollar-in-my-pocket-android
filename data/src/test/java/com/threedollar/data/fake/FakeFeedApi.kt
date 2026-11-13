@@ -25,10 +25,11 @@ class FakeFeedApi : FeedApi {
         size: Int,
         mapLatitude: Double?,
         mapLongitude: Double?,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Response<BaseResponse<FeedListResponse>> {
-        requests += Request(ticketId, cursor, size, mapLatitude, mapLongitude)
+        requests += Request(ticketId, cursor, size, mapLatitude, mapLongitude, maxDistanceM)
         return response
     }
 
@@ -38,5 +39,6 @@ class FakeFeedApi : FeedApi {
         val size: Int,
         val mapLatitude: Double?,
         val mapLongitude: Double?,
+        val maxDistanceM: Double? = null,
     )
 }
