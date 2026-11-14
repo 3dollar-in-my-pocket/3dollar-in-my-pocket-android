@@ -1,0 +1,168 @@
+name: Play Release
+
+# release/** 브랜치에서 수동 실행한다. release AAB 를 내부 테스트·프로덕션에 올리고 프로덕션 심사 제출까지 한다.
+# 관리형 게시가 꺼져 있으면 심사 통과 즉시 출시된다. 출시 후 Release PR 을 develop 에 머지한다(docs/process/play-release.md).
+#   gh workflow run "Play Release" --ref release/v4.37.0 -f whats_new="$(cat whats_new.txt)"
+
+on:
+  workflow_dispatch:
+    inputs:
+      whats_new:
+        description: '이번 버전의 새로운 기능 (스토어 노출, 500자 이하)'
+        required: true
+      dry_run:
+        description: '업로드·검증만 하고 커밋하지 않기'
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: play-release
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  JAVA_VERSION: '17'
+  PACKAGE_NAME: com.zion830.threedollars
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Check branch
+        if: ${{ !startsWith(github.ref_name, 'release/') }}
+        run: |
+          echo "::error::release/** 브랜치에서만 실행한다 (현재 ${{ github.ref_name }})"
+          exit 1
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read release version
+        id: version
+        run: |
+          VERSION_NAME=$(grep -E '^version_name=' gradle.properties | cut -d'=' -f2)
+          VERSION_CODE=$(grep -E '^version_code=' gradle.properties | cut -d'=' -f2)
+          if [ -z "$VERSION_NAME" ] || [ -z "$VERSION_CODE" ]; then
+            echo "version_name/version_code missing from gradle.properties" >&2
+            exit 1
+          fi
+          echo "version_name=$VERSION_NAME" >> "$GITHUB_OUTPUT"
+          echo "version_code=$VERSION_CODE" >> "$GITHUB_OUTPUT"
+          echo "tag_name=v${VERSION_NAME}" >> "$GITHUB_OUTPUT"
+
+      - name: Write release notes
+        env:
+          WHATS_NEW: ${{ inputs.whats_new }}
+        run: |
+          mkdir -p distribution
+          printf '%s' "$WHATS_NEW" > distribution/whats_new.txt
+          python3 -c "import sys; t=open(sys.argv[1],encoding='utf-8').read().strip(); n=len(t); print(f'{n}자'); sys.exit(0 if 0<n<=500 else '새로운 기능 문구는 1~500자여야 한다')" distribution/whats_new.txt
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode Keystore
+        run: |
+          printf '%s' "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/3dollor-android-key.jks
+
+      - name: Create local.properties
+        run: |
+          cat > local.properties <<EOF
+          sdk.dir=${ANDROID_HOME}
+          google_map_key=${{ secrets.GOOGLE_MAP_KEY }}
+          nmf_client_id=${{ secrets.NMF_CLIENT_ID }}
+          admob_id=${{ secrets.ADMOB_ID }}
+          kakao_key_dev=${{ secrets.KAKAO_KEY_DEV }}
+          kakao_map_key=${{ secrets.KAKAO_MAP_KEY }}
+          develop_url=${{ secrets.DEVELOP_URL }}
+          deep_link=${{ secrets.DEEP_LINK }}
+          application_id_dev=${{ secrets.APPLICATION_ID_DEV }}
+          kakao_key_release=${{ secrets.KAKAO_KEY_RELEASE }}
+          kakao_map_key_release=${{ secrets.KAKAO_MAP_KEY_RELEASE }}
+          release_url=${{ secrets.RELEASE_URL }}
+          deep_link_release=${{ secrets.DEEP_LINK_RELEASE }}
+          EOF
+
+      - name: Restore google-services.json (release)
+        env:
+          GOOGLE_SERVICES_BASE64: ${{ secrets.GOOGLE_SERVICES_RELEASE_BASE64 }}
+        run: |
+          if [ -z "$GOOGLE_SERVICES_BASE64" ]; then
+            echo "::error::GOOGLE_SERVICES_RELEASE_BASE64 시크릿이 없습니다. AGENTS.md 'Build Config' 를 참고해 등록하세요."
+            exit 1
+          fi
+          mkdir -p "$(dirname app/src/google-services.json)"
+          printf '%s' "$GOOGLE_SERVICES_BASE64" | base64 -d > app/src/google-services.json
+
+      - name: Build release AAB
+        run: |
+          chmod +x gradlew
+          ./gradlew bundleRelease --no-daemon --stacktrace
+          test -f app/build/outputs/bundle/release/app-release.aab
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Upload and submit for review
+        id: play
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+          AAB_PATH: app/build/outputs/bundle/release/app-release.aab
+          RELEASE_NAME: ${{ steps.version.outputs.tag_name }}
+          WHATS_NEW_PATH: distribution/whats_new.txt
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          pip install -q google-api-python-client==2.151.0 google-auth==2.36.0
+          python .github/scripts/play_release.py
+
+      - name: Notify Discord
+        if: ${{ always() && !inputs.dry_run }}
+        continue-on-error: true
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          OUTCOME: ${{ job.status }}
+          SUBMITTED: ${{ steps.play.outputs.submitted }}
+          TAG_NAME: ${{ steps.version.outputs.tag_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          WORKFLOW_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          if [ "$OUTCOME" != "success" ]; then
+            TITLE="Play Store 업로드 실패"; COLOR=15158332
+          elif [ "$SUBMITTED" = "true" ]; then
+            TITLE="Play Store 심사 제출 완료"; COLOR=3066993
+          else
+            TITLE="Play Store 업로드 완료 — 콘솔에서 검토를 위해 보내기 필요"; COLOR=15105570
+          fi
+          PAYLOAD=$(jq -n \
+            --arg title "$TITLE" --argjson color "$COLOR" \
+            --arg tag_name "${TAG_NAME:-?}" --arg version_code "${VERSION_CODE:-?}" --arg url "$WORKFLOW_URL" \
+            '{
+              username: "가슴속삼천원 배포 알림",
+              allowed_mentions: {parse: []},
+              embeds: [{
+                title: $title,
+                color: $color,
+                description: ("[워크플로 실행 결과](" + $url + ")"),
+                fields: [
+                  {name: "Version", value: $tag_name, inline: true},
+                  {name: "Version Code", value: $version_code, inline: true}
+                ]
+              }]
+            }')
+          curl --fail-with-body --silent --show-error --retry 2 \
+            --header "Content-Type: application/json" \
+            --data "$PAYLOAD" \
+            "${DISCORD_WEBHOOK_URL}?wait=true" > /dev/null

@@ -84,7 +84,7 @@
 ## Build Config
 
 - 환경별 값은 커밋하지 않는다. 로컬은 `local.properties`, Firebase 설정은 `app/src/google-services.json`(release)·`app/src/debug/google-services.json`(debug)을 팀 내부에서 받아 둔다. 둘 다 `.gitignore` 대상이다.
-- GitHub Actions 는 시크릿에서 복원한다: `GOOGLE_SERVICES_DEBUG_BASE64`(test·Firebase App Distribution), `GOOGLE_SERVICES_RELEASE_BASE64`(Play 내부 테스트 배포). 값은 `base64 -i <파일> | tr -d '\n'` 결과를 넣는다.
+- GitHub Actions 는 시크릿에서 복원한다: `GOOGLE_SERVICES_DEBUG_BASE64`(test·Firebase App Distribution), `GOOGLE_SERVICES_RELEASE_BASE64`(Play 릴리즈, `play-release.yml`). 값은 `base64 -i <파일> | tr -d '\n'` 결과를 넣는다.
 
 ## Safety
 
