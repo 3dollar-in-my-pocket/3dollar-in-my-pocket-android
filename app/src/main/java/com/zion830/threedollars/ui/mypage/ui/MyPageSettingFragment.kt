@@ -32,7 +32,6 @@ import com.zion830.threedollars.ui.splash.ui.SplashActivity
 import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.getMarketingDate
 import com.zion830.threedollars.utils.showToast
-import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.threedollar.common.R as CommonR
@@ -164,7 +163,6 @@ class MyPageSettingFragment :
         binding.layoutPushMarketing.setOnClickListener {
             if (!binding.pushMarketingSwitchButton.isSelected) {
                 binding.pushMarketingSwitchButton.isSelected = !binding.pushMarketingSwitchButton.isSelected
-                subscribeToTopicFirebase(true)
                 viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "APPROVE"))
                 eventTracker.setUserProperty("isPushEnable", "true")
                 showToast(getString(CommonR.string.marketing_approve_toast, getMarketingDate()))
@@ -178,7 +176,6 @@ class MyPageSettingFragment :
                     }
                     .setPositiveButton(zion830.com.common.R.string.ok) { _, _ ->
                         binding.pushMarketingSwitchButton.isSelected = !binding.pushMarketingSwitchButton.isSelected
-                        subscribeToTopicFirebase(false)
                         viewModel.patchPushInformation(PatchPushInformationRequest(binding.pushSwitchButton.isSelected, "DENY"))
                         eventTracker.setUserProperty("isPushEnable", "false")
                         showToast(getString(CommonR.string.marketing_deny_toast, getMarketingDate()))
