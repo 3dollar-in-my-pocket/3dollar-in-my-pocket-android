@@ -5,7 +5,6 @@ import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.UdfViewModel
 import com.threedollar.common.sdui.model.element.SDLogModel
 import com.threedollar.common.sdui.model.section.SDSectionModel
-import com.threedollar.common.sdui.model.section.SDSectionType
 import com.threedollar.common.sdui.model.section.SDStorePreviewSectionModel
 import com.threedollar.common.sdui.text.SDHtmlText
 import com.threedollar.domain.home.request.ReportReasonsGroupType
@@ -201,7 +200,7 @@ class StoreDetailSduiViewModel @Inject constructor(
             result
                 .onSuccess { screen ->
                     val sections = threadPostEmbedLoader.applyEmbeds(
-                        screen.sections.orEmpty().filter { it.type != SDSectionType.UNKNOWN }
+                        StorePreviewSections.detailSections(screen.sections)
                     )
                     val preview = sections.filterIsInstance<SDStorePreviewSectionModel>().firstOrNull()
                     viewLog = screen.viewLog
