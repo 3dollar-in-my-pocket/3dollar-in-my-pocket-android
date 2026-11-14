@@ -17,6 +17,7 @@ interface FeedApi {
         @Query("size") size: Int,
         @Query("mapLatitude") mapLatitude: Double?,
         @Query("mapLongitude") mapLongitude: Double?,
+        @Query("maxDistanceM") maxDistanceM: Double?,
         @Header("X-Device-Latitude") deviceLatitude: Double?,
         @Header("X-Device-Longitude") deviceLongitude: Double?,
     ): Response<BaseResponse<FeedListResponse>>

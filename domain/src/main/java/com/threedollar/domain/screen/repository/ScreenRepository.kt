@@ -35,6 +35,7 @@ interface ScreenRepository {
         tabId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double? = null,
         deviceLatitude: Double? = null,
         deviceLongitude: Double? = null,
     ): Flow<BaseResponse<SDHomeCurationSectionModel>>
@@ -45,6 +46,7 @@ interface ScreenRepository {
         categoryId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double? = null,
         deviceLatitude: Double? = null,
         deviceLongitude: Double? = null,
     ): Flow<BaseResponse<SDHomeCurationCardsModel>>

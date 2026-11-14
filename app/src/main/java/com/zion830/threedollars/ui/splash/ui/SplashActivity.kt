@@ -25,6 +25,7 @@ import com.threedollar.common.utils.SharedPrefUtils
 import com.zion830.threedollars.BuildConfig
 import com.zion830.threedollars.DynamicLinkActivity
 import com.zion830.threedollars.MainActivity
+import com.zion830.threedollars.PendingDeepLink
 import com.zion830.threedollars.databinding.ActivitySplashBinding
 import com.zion830.threedollars.ui.login.ui.LoginActivity
 import com.zion830.threedollars.ui.splash.viewModel.SplashViewModel
@@ -169,9 +170,8 @@ class SplashActivity :
                                                 showToast(it)
                                             }
                                         }
-                                        // TH-1070: 백그라운드 푸시 링크를 로그인 뒤까지 넘긴다
-                                        val pushLink = intent.getStringExtra(PUSH_LINK)?.takeIf { it.contains("dollars") }
-                                        startActivity(LoginActivity.getIntent(this@SplashActivity, pendingLink = pushLink))
+                                        // TH-1070·TH-1602: 푸시·카카오 공유 링크를 로그인 뒤까지 넘긴다
+                                        startActivity(LoginActivity.getIntent(this@SplashActivity, pendingLink = pendingLinkForLogin()))
                                         finish()
                                     }
                                 }
@@ -192,14 +192,15 @@ class SplashActivity :
     }
 
     private fun tryLogin() {
-        val deepLink = intent.getStringExtra(STORE_TYPE) ?: intent.getStringExtra(PUSH_LINK) ?: ""
+        val deepLink = intent.getStringExtra(PUSH_LINK).orEmpty()
         when {
-            deepLink == getString(CommonR.string.scheme_host_kakao_link_food_truck_type) ||
-                deepLink == getString(CommonR.string.scheme_host_kakao_link_road_food_type) -> {
+            // 카카오 공유 링크. iOS·현재 공유는 storeType 없이 storeId 만 보내므로 storeId extra 유무로 판단한다(TH-1602).
+            intent.hasExtra(STORE_ID) -> {
                 val storeId = intent.getStringExtra(STORE_ID)
                 if (storeId.isNullOrBlank()) {
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                 } else {
+                    SplashPendingLink.storeDetailLink(storeId)?.let(PendingDeepLink::record)
                     startActivity(StoreDetailSduiActivity.getIntent(this@SplashActivity, storeId))
                 }
             }
@@ -226,6 +227,11 @@ class SplashActivity :
             .create()
             .show()
     }
+
+    private fun pendingLinkForLogin(): String? = SplashPendingLink.resolve(
+        pushLink = intent.getStringExtra(PUSH_LINK),
+        kakaoStoreId = if (intent.hasExtra(STORE_ID)) intent.getStringExtra(STORE_ID).orEmpty() else null,
+    )
 
     companion object {
         private const val STORE_ID = "storeId"

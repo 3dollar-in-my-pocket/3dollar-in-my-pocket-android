@@ -94,14 +94,12 @@ import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiEffects
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiNavigationBarRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.ui.StoreDetailSduiRoute
 import com.zion830.threedollars.ui.storeDetail.sdui.viewModel.StoreDetailSduiViewModel
-import com.zion830.threedollars.utils.LegacySharedPrefUtils
 import com.zion830.threedollars.utils.NaverMapUtils
 import com.zion830.threedollars.utils.SizeUtils
 import com.zion830.threedollars.utils.getCurrentLocationName
 import com.zion830.threedollars.utils.goToPermissionSetting
 import com.zion830.threedollars.utils.isLocationAvailable
 import com.zion830.threedollars.utils.showToast
-import com.zion830.threedollars.utils.subscribeToTopicFirebase
 import dagger.hilt.android.AndroidEntryPoint
 import base.compose.AppTheme
 import kotlinx.coroutines.delay
@@ -569,9 +567,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                         if (it.marketingConsent == "UNVERIFIED") {
                             showMarketingDialog()
                         }
-                        if (!LegacySharedPrefUtils.getFirstMarketing()) {
-                            if (it.marketingConsent == "APPROVE") subscribeToTopicFirebase(true)
-                        }
                     }
                 }
                 launch {
@@ -596,6 +591,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             device = location.deviceLatitude?.let { latitude ->
                                 location.deviceLongitude?.let { longitude -> latitude to longitude }
                             },
+                            maxDistanceM = location.maxDistanceM,
                         )
                         feedListViewModel.dispatch(FeedListUiIntent.OnLocationChanged(feedLocation, query.revision))
                     }

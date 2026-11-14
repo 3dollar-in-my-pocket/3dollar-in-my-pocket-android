@@ -18,7 +18,7 @@ class FeedRepositoryImplTest {
 
     private fun load(path: String) = runBlocking {
         feedApi.givenFixture(path)
-        repository.getLocalNewsFeeds(cursor = null, mapLatitude = 37.36, mapLongitude = 126.93, deviceLatitude = 37.36, deviceLongitude = 126.93)
+        repository.getLocalNewsFeeds(cursor = null, mapLatitude = 37.36, mapLongitude = 126.93, maxDistanceM = null, deviceLatitude = 37.36, deviceLongitude = 126.93)
             .getOrThrow()
     }
 
@@ -155,6 +155,7 @@ class FeedRepositoryImplTest {
                 cursor = null,
                 mapLatitude = 37.36,
                 mapLongitude = 126.93,
+                maxDistanceM = null,
                 deviceLatitude = null,
                 deviceLongitude = null,
                 size = 1,
@@ -167,5 +168,22 @@ class FeedRepositoryImplTest {
         assertNull(request.cursor)
         assertEquals(37.36, request.mapLatitude!!, 0.0)
         assertEquals(126.93, request.mapLongitude!!, 0.0)
+    }
+
+    // TH-1601 TC2
+    @Test
+    fun `TH1601_TC2_피드조회는_지도반경을_maxDistanceM으로_넘기고_없으면_생략한다`() {
+        // Given
+        feedApi.givenFixture("feed/LocalNewsFeeds.json")
+
+        // When
+        runBlocking {
+            repository.getLocalNewsFeeds(cursor = null, mapLatitude = 37.36, mapLongitude = 126.93, maxDistanceM = 4_500.0, deviceLatitude = null, deviceLongitude = null)
+            repository.getLocalNewsFeeds(cursor = null, mapLatitude = 37.36, mapLongitude = 126.93, maxDistanceM = null, deviceLatitude = null, deviceLongitude = null)
+        }
+
+        // Then
+        assertEquals(4_500.0, feedApi.requests[0].maxDistanceM!!, 0.0)
+        assertNull(feedApi.requests[1].maxDistanceM)
     }
 }

@@ -63,10 +63,11 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         tabId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>> = flow {
-        emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude)))
+        emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
     }
 
     override fun getHomeCurationCards(
@@ -75,9 +76,10 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         categoryId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationCardsResponse>> = flow {
-        emit(apiResult(serverApi.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude)))
+        emit(apiResult(serverApi.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
     }
 }

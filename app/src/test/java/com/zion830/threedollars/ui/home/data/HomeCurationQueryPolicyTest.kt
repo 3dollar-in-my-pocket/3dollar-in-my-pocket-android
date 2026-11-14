@@ -1,8 +1,10 @@
 package com.zion830.threedollars.ui.home.data
 
+import com.zion830.threedollars.utils.NaverMapUtils
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotSame
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -213,5 +215,40 @@ class HomeCurationQueryPolicyTest {
         assertFalse(differentRevision)
         assertFalse(differentLocation)
         assertFalse(differentTab)
+    }
+
+    // TH-1601 TC3
+    @Test
+    fun `TH1601_TC3_뷰포트반경이_있으면_그대로_쓰고_초기값이면_생략한다`() {
+        // Given
+        val viewport = 4_520.5
+        val zoomedOut = 150_000.0
+        val initial = NaverMapUtils.DEFAULT_DISTANCE_M
+
+        // When
+        val measured = HomeCurationQueryPolicy.maxDistanceM(viewport)
+        val measuredWide = HomeCurationQueryPolicy.maxDistanceM(zoomedOut)
+        val unmeasured = HomeCurationQueryPolicy.maxDistanceM(initial)
+        val invalid = HomeCurationQueryPolicy.maxDistanceM(0.0)
+
+        // Then
+        assertEquals(viewport, measured!!, 0.0)
+        assertEquals(zoomedOut, measuredWide!!, 0.0)
+        assertNull(unmeasured)
+        assertNull(invalid)
+    }
+
+    // TH-1601 TC3
+    @Test
+    fun `TH1601_TC3_반경만_다른_조회결과는_재사용하지_않는다`() {
+        // Given (같은 좌표·탭·revision 으로 이미 받아 둔 결과가 있고, 반경만 넓어진 조건)
+        val loaded = HomeCurationTestFixtures.loadedState()
+        val widened = HomeCurationQuerySnapshot(HomeCurationTestFixtures.location.copy(maxDistanceM = 12_000.0), 3L)
+
+        // When
+        val reusable = HomeCurationQueryPolicy.canReuse(loaded, widened, requestedRevision = 3L, tabId = "CURATION")
+
+        // Then
+        assertFalse(reusable)
     }
 }
