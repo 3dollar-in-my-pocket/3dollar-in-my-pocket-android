@@ -59,8 +59,8 @@ PR 본문 첫 줄 `위험도:`에 적는다. `/3dollars:pr-body`가 아래 기�
 ## 개발 배포와 릴리즈 마무리
 
 - **개발 배포**: 확인할 브랜치가 여럿이면 `temp/{티켓키들}-verify`로 합쳐 `firebase-distribution.yml`로 올린다(`/3dollars:deploy-dev-build`). temp 브랜치는 확인용이라 PR을 만들지 않는다.
-- **릴리즈**: develop push가 곧 플레이스토어 내부 테스트 배포라 기능 PR은 `release/vX.Y.Z`로 머지하고, `Release vX.Y.Z` PR을 develop으로 머지한다. master는 쓰지 않는다.
-- **심사 통과 후 마무리**: develop의 Release PR 머지 커밋에 `vX.Y.Z` 태그 → push → `gh release create vX.Y.Z --verify-tag --generate-notes --notes-start-tag <이전 태그> --latest` → 포함 티켓 Done, 지라 버전 `[유저앱/AOS] vX.Y.Z` 릴리즈 → 다음 `release/vX.Y+1.0` 준비.
+- **릴리즈**: 기능 PR은 `release/vX.Y.Z`로 머지한다. release 브랜치에서 `play-release.yml`을 실행하면 내부 테스트·프로덕션 업로드와 심사 제출까지 한다(`/3dollars:release-playstore`, 디스코드 `/upload-playstore`). develop은 스토어 출시 후에만 바뀐다. master는 쓰지 않는다. 자세한 건 `docs/process/play-release.md`.
+- **스토어 출시 후 마무리**(디스코드 `/finish-playstore`): `Release vX.Y.Z` PR을 develop으로 머지 → 그 머지 커밋에 `vX.Y.Z` 태그 → push → `gh release create vX.Y.Z --verify-tag --generate-notes --notes-start-tag <이전 태그> --latest` → 포함 티켓 Done, 지라 버전 `[유저앱/AOS] vX.Y.Z` 릴리즈 → 다음 `release/vX.Y+1.0` 준비.
 - **릴리즈 공개 때 자동으로 도는 것**
   - `discord-release-notify.yml`: 디스코드 출시 알림
   - `cleanup-temp-branches.yml`: `temp/*` 중 작업(병합 커밋 제외)이 전부 이번 릴리즈 태그에 들어간 브랜치를 지운다. 아직 릴리즈에 없는 작업이나 temp 전용 커밋(버전 올림·확인용 로그 등)이 있는 temp는 남으니 손으로 지운다. 미리 보려면 `sh scripts/cleanup-released-temp-branches.sh vX.Y.Z --dry-run`
