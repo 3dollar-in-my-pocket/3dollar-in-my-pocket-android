@@ -302,6 +302,7 @@ class HomeViewModel @Inject constructor(
                 mapLongitude = state.mapPosition.longitude,
                 deviceLatitude = state.userLocation.latitude.takeIf { hasDeviceLocation },
                 deviceLongitude = state.userLocation.longitude.takeIf { hasDeviceLocation },
+                maxDistanceM = HomeCurationQueryPolicy.maxDistanceM(state.currentDistanceM),
             ),
             refresh = refreshCuration,
         )
@@ -402,6 +403,7 @@ class HomeViewModel @Inject constructor(
                     tabId = tab.tabId,
                     mapLatitude = location.mapLatitude,
                     mapLongitude = location.mapLongitude,
+                    maxDistanceM = location.maxDistanceM,
                     deviceLatitude = location.deviceLatitude,
                     deviceLongitude = location.deviceLongitude,
                 ).collect { response ->
@@ -452,6 +454,7 @@ class HomeViewModel @Inject constructor(
                     categoryId = categoryId,
                     mapLatitude = location.mapLatitude,
                     mapLongitude = location.mapLongitude,
+                    maxDistanceM = location.maxDistanceM,
                     deviceLatitude = location.deviceLatitude,
                     deviceLongitude = location.deviceLongitude,
                 ).collect { response ->

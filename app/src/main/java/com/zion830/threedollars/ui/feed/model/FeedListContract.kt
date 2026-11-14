@@ -119,9 +119,14 @@ data class FeedLocation(
     val mapLongitude: Double?,
     val deviceLatitude: Double?,
     val deviceLongitude: Double?,
+    val maxDistanceM: Double? = null,
 ) {
     companion object {
-        fun of(map: Pair<Double, Double>?, device: Pair<Double, Double>?): FeedLocation {
+        fun of(
+            map: Pair<Double, Double>?,
+            device: Pair<Double, Double>?,
+            maxDistanceM: Double? = null,
+        ): FeedLocation {
             val validMap = map?.takeIf { it.isValid() }
             val validDevice = device?.takeIf { it.isValid() }
             val mapPoint = validMap ?: validDevice
@@ -130,6 +135,7 @@ data class FeedLocation(
                 mapLongitude = mapPoint?.second,
                 deviceLatitude = (validDevice ?: validMap)?.first,
                 deviceLongitude = (validDevice ?: validMap)?.second,
+                maxDistanceM = maxDistanceM,
             )
         }
 

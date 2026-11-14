@@ -3,6 +3,7 @@ package com.threedollar.network.api
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -33,10 +34,10 @@ class ServerApiTest {
         assertNotNull("큐레이션 섹션 API가 있어야 한다", method)
         assertEquals("/api/v1/screen/home/section/curation/{tabId}", path)
         assertEquals("tabId", method!!.parameterAnnotations[0].filterIsInstance<Path>().single().value)
-        assertEquals(listOf("mapLatitude", "mapLongitude"), method.parameterAnnotations.flatMap { it.filterIsInstance<Query>() }.map { it.value })
+        assertEquals(listOf("mapLatitude", "mapLongitude", "maxDistanceM"), method.parameterAnnotations.flatMap { it.filterIsInstance<Query>() }.map { it.value })
         assertEquals(listOf("X-Device-Latitude", "X-Device-Longitude"), method.parameterAnnotations.flatMap { it.filterIsInstance<Header>() }.map { it.value })
-        assertEquals(java.lang.Double::class.java, method.parameterTypes[3])
         assertEquals(java.lang.Double::class.java, method.parameterTypes[4])
+        assertEquals(java.lang.Double::class.java, method.parameterTypes[5])
     }
 
     // TH-1401 TC5
@@ -52,9 +53,31 @@ class ServerApiTest {
         assertNotNull("캐러셀 카드 API가 있어야 한다", method)
         assertEquals("/api/v1/screen/home/section/curation/{tabId}/carousel/{carouselId}/cards", path)
         assertEquals(listOf("tabId", "carouselId"), method!!.parameterAnnotations.flatMap { it.filterIsInstance<Path>() }.map { it.value })
-        assertEquals(listOf("categoryId", "mapLatitude", "mapLongitude"), method.parameterAnnotations.flatMap { it.filterIsInstance<Query>() }.map { it.value })
+        assertEquals(listOf("categoryId", "mapLatitude", "mapLongitude", "maxDistanceM"), method.parameterAnnotations.flatMap { it.filterIsInstance<Query>() }.map { it.value })
         assertEquals(listOf("X-Device-Latitude", "X-Device-Longitude"), method.parameterAnnotations.flatMap { it.filterIsInstance<Header>() }.map { it.value })
-        assertEquals(java.lang.Double::class.java, method.parameterTypes[5])
         assertEquals(java.lang.Double::class.java, method.parameterTypes[6])
+        assertEquals(java.lang.Double::class.java, method.parameterTypes[7])
+    }
+
+    // TH-1601 TC1
+    @Test
+    fun `TH1601_TC1_큐레이션과_피드조회는_선택_maxDistanceM쿼리를_보낸다`() {
+        // Given
+        val methods = listOf(
+            ServerApi::class.java.declaredMethods.first { it.name == "getHomeCurationSection" },
+            ServerApi::class.java.declaredMethods.first { it.name == "getHomeCurationCards" },
+            FeedApi::class.java.declaredMethods.first { it.name == "getFeeds" },
+        )
+
+        methods.forEach { method ->
+            // When
+            val index = method.parameterAnnotations.indexOfFirst { annotations ->
+                annotations.filterIsInstance<Query>().any { it.value == "maxDistanceM" }
+            }
+
+            // Then
+            assertTrue("${method.name} 에 maxDistanceM 쿼리가 있어야 한다", index >= 0)
+            assertEquals(java.lang.Double::class.java, method.parameterTypes[index])
+        }
     }
 }

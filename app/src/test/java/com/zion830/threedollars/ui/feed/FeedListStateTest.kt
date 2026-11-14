@@ -118,4 +118,19 @@ class FeedListStateTest {
         assertNull(none.mapLatitude)
         assertNull(none.deviceLongitude)
     }
+
+    // TH-1601 TC4
+    @Test
+    fun `TH1601_TC4_피드위치는_홈의_지도반경을_함께_들고간다`() {
+        // Given
+        val map = 37.50 to 127.00
+
+        // When
+        val withRadius = FeedLocation.of(map = map, device = null, maxDistanceM = 6_000.0)
+        val withoutRadius = FeedLocation.of(map = map, device = null)
+
+        // Then
+        assertEquals(6_000.0, withRadius.maxDistanceM!!, 0.0)
+        assertNull(withoutRadius.maxDistanceM)
+    }
 }

@@ -596,6 +596,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                             device = location.deviceLatitude?.let { latitude ->
                                 location.deviceLongitude?.let { longitude -> latitude to longitude }
                             },
+                            maxDistanceM = location.maxDistanceM,
                         )
                         feedListViewModel.dispatch(FeedListUiIntent.OnLocationChanged(feedLocation, query.revision))
                     }

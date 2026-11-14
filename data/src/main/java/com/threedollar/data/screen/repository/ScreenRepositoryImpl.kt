@@ -92,10 +92,11 @@ class ScreenRepositoryImpl @Inject constructor(
         tabId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<SDHomeCurationSectionModel>> =
-        screenRemoteDataSource.getHomeCurationSection(tabId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude).map {
+        screenRemoteDataSource.getHomeCurationSection(tabId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asCurationModel(),
@@ -111,10 +112,11 @@ class ScreenRepositoryImpl @Inject constructor(
         categoryId: String,
         mapLatitude: Double,
         mapLongitude: Double,
+        maxDistanceM: Double?,
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<SDHomeCurationCardsModel>> =
-        screenRemoteDataSource.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, deviceLatitude, deviceLongitude).map {
+        screenRemoteDataSource.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asCurationCardsModel(),
