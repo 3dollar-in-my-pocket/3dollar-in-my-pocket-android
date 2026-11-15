@@ -97,4 +97,60 @@ class InAppBrowserHeadersTest {
         assertEquals(InAppBrowserRequest(userAgent = userAgent, headers = emptyMap()), withoutToken)
         assertEquals(InAppBrowserRequest(userAgent = userAgent, headers = emptyMap()), blankToken)
     }
+
+    // TH-1600 TC1
+    @Test
+    fun `TH1600_TC1_디버그빌드는_웹개발환경에_토큰과_앱UA를_싣는다`() {
+        // Given
+        val url = "https://3dollars-web-dev.netlify.app/events/my-siblings-romance-2"
+
+        // When
+        val request = InAppBrowserHeaders.build(url, token = "token", userAgent = userAgent, isDebug = true)
+
+        // Then
+        assertEquals(InAppBrowserRequest(userAgent = userAgent, headers = mapOf("Authorization" to "token")), request)
+    }
+
+    // TH-1600 TC2
+    @Test
+    fun `TH1600_TC2_릴리즈빌드는_웹개발환경에_토큰과_앱UA를_싣지_않는다`() {
+        // Given
+        val url = "https://3dollars-web-dev.netlify.app/events/my-siblings-romance-2"
+
+        // When
+        val request = InAppBrowserHeaders.build(url, token = "token", userAgent = userAgent, isDebug = false)
+
+        // Then
+        assertEquals(InAppBrowserRequest(userAgent = null, headers = emptyMap()), request)
+    }
+
+    // TH-1600 TC3
+    @Test
+    fun `TH1600_TC3_디버그빌드라도_다른_netlify주소에는_토큰을_싣지_않는다`() {
+        // Given
+        val urls = listOf(
+            "https://evil.netlify.app/events/my-siblings-romance-2",
+            "https://3dollars-web.netlify.app/events/my-siblings-romance-2",
+            "https://3dollars-web-dev.netlify.app.evil.com/events/my-siblings-romance-2",
+        )
+
+        // When
+        val requests = urls.map { InAppBrowserHeaders.build(it, token = "token", userAgent = userAgent, isDebug = true) }
+
+        // Then
+        requests.forEach { assertEquals(InAppBrowserRequest(userAgent = null, headers = emptyMap()), it) }
+    }
+
+    // TH-1600 TC4
+    @Test
+    fun `TH1600_TC4_디버그빌드라도_웹개발환경을_http로_열면_토큰을_싣지_않는다`() {
+        // Given
+        val url = "http://3dollars-web-dev.netlify.app/events/my-siblings-romance-2"
+
+        // When
+        val request = InAppBrowserHeaders.build(url, token = "token", userAgent = userAgent, isDebug = true)
+
+        // Then
+        assertEquals(InAppBrowserRequest(userAgent = null, headers = emptyMap()), request)
+    }
 }
