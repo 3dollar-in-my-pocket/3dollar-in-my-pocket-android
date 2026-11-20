@@ -50,16 +50,16 @@ AI 에이전트와 개발자가 UI 코드를 작성할 때 읽는 문서입니�
 |---|---|---|
 | 30/bold | `pretendard_bold.size_30dp` | `FontWeight.Bold`, 30 |
 | 24/bold | `pretendard_bold.size_24dp` | `FontWeight.Bold`, 24 |
-| 20/semi-bold | `pretendard_bold.size_20dp` ⚠️ | `FontWeight.SemiBold`, 20 ⚠️ |
+| 20/semi-bold | `pretendard_semibold.size_20dp` | `FontWeight.SemiBold`, 20 |
 | 16/bold | `pretendard_bold.size_16dp` | `FontWeight.Bold`, 16 |
 | 16/medium | `pretendard_medium.size_16dp` | `FontWeight.Medium`, 16 |
-| 14/semi-bold | — ⚠️ | `FontWeight.SemiBold`, 14 ⚠️ |
-| 14/regular | `pretendard_medium.size_14dp` ⚠️ | `FontWeight.Normal`, 14 ⚠️ |
+| 14/semi-bold | `pretendard_semibold.size_14dp` | `FontWeight.SemiBold`, 14 |
+| 14/regular | `pretendard_regular.size_14dp` | `FontWeight.Normal`, 14 |
 | 12/bold | `pretendard_bold.size_12dp` | `FontWeight.Bold`, 12 |
 | 12/medium | `pretendard_medium.size_12dp` | `FontWeight.Medium`, 12 |
 | 10/medium | `pretendard_medium.size_10dp` | `FontWeight.Medium`, 10 |
 
-⚠️ 레포에는 Pretendard **Medium · Bold 두 파일만** 있습니다(`res/font`). `PretendardFontFamily`도 이 둘만 등록돼 있어서 Regular · SemiBold를 지정하면 가까운 굵기로 대신 그려집니다. 피그마의 regular · semi-bold를 정확히 맞추려면 폰트 파일 추가가 필요합니다(후속 작업).
+Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `PretendardFontFamily`에 모두 등록돼 있습니다. 기존 XML 중 semi-bold 자리에 `pretendard_bold.size_20dp`를 쓰는 화면은 아직 그대로라 새 스타일로 옮겨야 합니다.
 
 ## 아이콘
 
