@@ -9,6 +9,11 @@ data class HomeCurationSectionResponse(
     val impressionLog: SDImpressionLogResponse? = null,
 )
 
+data class HomeNewsSectionResponse(
+    @SerializedName("impressionLog")
+    val impressionLog: SDImpressionLogResponse? = null,
+)
+
 data class HomeCurationItemResponse(
     @SerializedName("type") val type: String? = null,
     @SerializedName("carouselId") val carouselId: String? = null,
