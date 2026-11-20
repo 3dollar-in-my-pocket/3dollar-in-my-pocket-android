@@ -157,7 +157,7 @@ private fun CompletionScreenContent(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(56.dp)
+                .height(64.dp)
                 .background(Pink)
                 .clickable { onComplete() },
             contentAlignment = Alignment.Center
