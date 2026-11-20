@@ -610,7 +610,6 @@ class HomeViewModel @Inject constructor(
                                 ?.let { updateStorePreviewFromCard(previousSelectedStoreId, it) }
                         }
                     }
-                    sendHomeListImpressionLogs(section.cards)
                     homeListSectionImpression.offer(section.impressionLog, isVisible = _curationState.value.isStoreListVisible)
                         ?.let { SDClickLogger.send(it) }
                 } else {
@@ -876,14 +875,12 @@ class HomeViewModel @Inject constructor(
         card.clickLog?.let { SDClickLogger.send(it) }
     }
 
-    private fun sendHomeListImpressionLogs(cards: List<HomeListCardModel>) {
-        cards.forEach { card ->
-            when (card) {
-                is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.AdCard -> SDLogSender.sendImpression(card.card.impressionLog)
-            }
+    fun onHomeListCardVisible(card: HomeListCardModel) {
+        when (card) {
+            is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.AdCard -> SDLogSender.sendImpression(card.card.impressionLog)
         }
     }
 
