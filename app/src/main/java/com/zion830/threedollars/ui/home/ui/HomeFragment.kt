@@ -427,6 +427,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onAdMobClick = viewModel::sendClickAdMobCard,
                     onAdCardClick = viewModel::openAdCard,
+                    onHomeListCardVisible = viewModel::onHomeListCardVisible,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
