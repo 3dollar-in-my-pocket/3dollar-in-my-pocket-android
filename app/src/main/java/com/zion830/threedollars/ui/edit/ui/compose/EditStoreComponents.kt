@@ -632,6 +632,8 @@ fun RetrySubmitDialog(
     }
 }
 
+val MainButtonHeight = 64.dp
+
 /**
  * 하단 메인 버튼 (수정 완료)
  */
@@ -645,7 +647,7 @@ fun MainButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(MainButtonHeight)
             .background(if (enabled) Pink else Gray30)
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center
