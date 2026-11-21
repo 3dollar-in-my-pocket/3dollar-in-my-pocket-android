@@ -23,13 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray100
 import base.compose.Gray40
 import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.PretendardFontFamily
-import base.compose.Red
 import base.compose.dpToSp
 
 /**
@@ -167,17 +168,20 @@ private fun DialogActionButton(
     button: DialogButton,
     modifier: Modifier = Modifier
 ) {
+    if (button.isPrimary) {
+        AppButton(
+            text = button.text,
+            onClick = button.onClick,
+            modifier = modifier,
+            style = AppButtonStyle.Destructive,
+        )
+        return
+    }
     Button(
         onClick = button.onClick,
         modifier = modifier.height(48.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = if (button.isPrimary) {
-                Red
-            } else {
-                ColorWhite
-            }
-        ),
-        border = if (button.isPrimary) null else BorderStroke(1.dp, Gray40),
+        colors = ButtonDefaults.buttonColors(containerColor = ColorWhite),
+        border = BorderStroke(1.dp, Gray40),
         shape = RoundedCornerShape(12.dp)
     ) {
         Text(
@@ -185,7 +189,7 @@ private fun DialogActionButton(
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.W600,
             fontSize = dpToSp(14),
-            color = if (button.isPrimary) Color.White else Gray50,
+            color = Gray50,
             textAlign = TextAlign.Center
         )
     }

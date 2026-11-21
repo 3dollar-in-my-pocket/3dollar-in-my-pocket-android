@@ -57,6 +57,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import base.compose.AppButton
+import base.compose.AppButtonSize
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
@@ -64,7 +66,6 @@ import base.compose.Gray100
 import base.compose.Gray40
 import base.compose.Gray70
 import base.compose.Gray80
-import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
@@ -238,23 +239,11 @@ fun MenuExtractionBanner(
             color = Gray100,
             modifier = Modifier.weight(1f),
         )
-        Box(
-            modifier = Modifier
-                .height(34.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Pink)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 12.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(CommonR.string.menu_extraction_banner_button),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = ColorWhite,
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.menu_extraction_banner_button),
+            onClick = onClick,
+            size = AppButtonSize.Small,
+        )
     }
 }
 
@@ -451,24 +440,13 @@ private fun MenuExtractionResultScreen(
                 )
             }
         }
-        Box(
+        AppButton(
+            text = stringResource(CommonR.string.menu_extraction_register),
+            onClick = onRegister,
             modifier = Modifier
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Pink)
-                .clickable(onClick = onRegister),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(CommonR.string.menu_extraction_register),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = ColorWhite,
-            )
-        }
+                .fillMaxWidth(),
+        )
     }
 }
 

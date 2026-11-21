@@ -35,12 +35,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray100
 import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
-import base.compose.Red
 import base.compose.dpToSp
 import com.threedollar.domain.store.model.IssuedCouponModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
@@ -107,23 +108,11 @@ internal fun CouponUseBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
                 CouponTicket(coupon = coupon, showTrailing = false)
                 Spacer(modifier = Modifier.height(32.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Pink)
-                        .noRippleClickable(enabled = !isUsing, onClick = onUseClick),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(CommonR.string.store_detail_coupon_use),
-                        color = ColorWhite,
-                        fontFamily = PretendardFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = dpToSp(16),
-                    )
-                }
+                AppButton(
+                    text = stringResource(CommonR.string.store_detail_coupon_use),
+                    onClick = { if (!isUsing) onUseClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             if (isUsing) {
                 CircularProgressIndicator(color = Pink, modifier = Modifier.align(Alignment.Center))
@@ -181,11 +170,11 @@ internal fun CouponUseConfirmDialog(
                     onClick = onCancel,
                     modifier = Modifier.weight(1f),
                 )
-                ConfirmButton(
+                AppButton(
                     text = stringResource(CommonR.string.store_detail_coupon_use),
-                    background = Red,
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Destructive,
                 )
             }
         }
