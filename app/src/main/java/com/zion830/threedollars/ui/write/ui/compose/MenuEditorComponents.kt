@@ -4,8 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -37,23 +34,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppTextField
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
-import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
 import base.compose.Gray95
-import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import coil3.compose.AsyncImage
@@ -330,7 +324,7 @@ private fun MenuInputRow(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        MenuTextField(
+        AppTextField(
             value = menu.name.orEmpty(),
             onValueChange = onUpdateName,
             placeholder = stringResource(CommonR.string.add_store_menu_name_placeholder),
@@ -343,7 +337,7 @@ private fun MenuInputRow(
             var countText by remember(menu.count) { mutableStateOf(menu.count?.toString().orEmpty()) }
             var priceText by remember(menu.price) { mutableStateOf(menu.price?.takeIf { it != "-" }.orEmpty()) }
 
-            MenuTextField(
+            AppTextField(
                 value = countText,
                 onValueChange = { newValue ->
                     if (newValue.isMenuNumber()) {
@@ -352,11 +346,11 @@ private fun MenuInputRow(
                     }
                 },
                 placeholder = stringResource(CommonR.string.add_store_count_placeholder),
-                unit = stringResource(CommonR.string.unit_count),
-                keyboardType = KeyboardType.Number,
+                suffix = stringResource(CommonR.string.unit_count),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.width(90.dp),
             )
-            MenuTextField(
+            AppTextField(
                 value = priceText,
                 onValueChange = { newValue ->
                     if (newValue.isMenuNumber()) {
@@ -365,8 +359,8 @@ private fun MenuInputRow(
                     }
                 },
                 placeholder = stringResource(CommonR.string.add_store_price_placeholder),
-                unit = stringResource(CommonR.string.unit_currency_won),
-                keyboardType = KeyboardType.Number,
+                suffix = stringResource(CommonR.string.unit_currency_won),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.weight(1f),
             )
         }
@@ -374,55 +368,6 @@ private fun MenuInputRow(
 }
 
 private fun String.isMenuNumber(): Boolean = all { it.isDigit() } && length <= MENU_NUMBER_MAX_LENGTH
-
-@Composable
-private fun MenuTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-    unit: String? = null,
-    keyboardType: KeyboardType = KeyboardType.Text,
-) {
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    val textStyle = TextStyle(
-        fontSize = 14.sp,
-        fontWeight = FontWeight.W400,
-        fontFamily = PretendardFontFamily,
-        color = Gray100,
-    )
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        textStyle = textStyle,
-        cursorBrush = SolidColor(Pink),
-        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
-        interactionSource = interactionSource,
-        modifier = modifier
-            .height(44.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(Gray10)
-            .border(BorderStroke(1.dp, if (isFocused) Pink else Color.Transparent), RoundedCornerShape(8.dp)),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Box(modifier = Modifier.weight(1f)) {
-                    if (value.isEmpty()) {
-                        Text(text = placeholder, style = textStyle.copy(color = Gray50))
-                    }
-                    innerTextField()
-                }
-                if (unit != null) {
-                    Text(text = unit, style = textStyle.copy(color = Gray70))
-                }
-            }
-        },
-    )
-}
 
 /**
  * 메뉴 상세 정보 추가 화면 상단의 [이미지로 메뉴 추가] 버튼.

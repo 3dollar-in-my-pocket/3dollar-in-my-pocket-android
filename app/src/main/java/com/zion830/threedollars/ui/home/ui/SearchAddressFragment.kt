@@ -2,19 +2,33 @@ package com.zion830.threedollars.ui.home.ui
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.ViewCompositionStrategy
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.core.view.isVisible
-import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.PagingData
+import base.compose.AppSearchField
 import com.google.android.gms.ads.AdRequest
 import com.naver.maps.geometry.LatLng
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ParameterName
 import com.threedollar.common.analytics.ScreenName
 import com.threedollar.common.base.BaseFragment
+import com.threedollar.common.R as CommonR
 import com.threedollar.common.listener.OnItemClickListener
 import com.threedollar.common.utils.Constants
 import com.threedollar.domain.home.data.place.PlaceModel
@@ -45,22 +59,46 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
     private lateinit var recentSearchAdapter: RecentSearchAdapter
 
     override fun initView() {
-        binding.etSearch.requestFocus()
+        initSearchField()
         searchViewModel.getPlace()
 
         initAdapter()
         initButton()
         initFlow()
         initAdmob()
-        binding.etSearch.doOnTextChanged { text, _, _, _ ->
-            if (text.isNullOrEmpty()) {
-                binding.recentSearchLinearLayout.isVisible = true
-                binding.searchResultLinearLayout.isVisible = false
-            } else {
-                binding.recentSearchLinearLayout.isVisible = false
-                binding.searchResultLinearLayout.isVisible = true
-                searchViewModel.updateSearchAddress(binding.etSearch.text.toString())
+    }
+
+    private fun initSearchField() {
+        binding.searchFieldComposeView.apply {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                var keyword by rememberSaveable { mutableStateOf("") }
+                val focusRequester = remember { FocusRequester() }
+                AppSearchField(
+                    value = keyword,
+                    onValueChange = {
+                        keyword = it
+                        onSearchKeywordChanged(it)
+                    },
+                    modifier = Modifier.focusRequester(focusRequester),
+                    placeholder = stringResource(CommonR.string.search_by_address_hint),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                )
+                LaunchedEffect(Unit) {
+                    focusRequester.requestFocus()
+                }
             }
+        }
+    }
+
+    private fun onSearchKeywordChanged(keyword: String) {
+        if (keyword.isEmpty()) {
+            binding.recentSearchLinearLayout.isVisible = true
+            binding.searchResultLinearLayout.isVisible = false
+        } else {
+            binding.recentSearchLinearLayout.isVisible = false
+            binding.searchResultLinearLayout.isVisible = true
+            searchViewModel.updateSearchAddress(keyword)
         }
     }
 
