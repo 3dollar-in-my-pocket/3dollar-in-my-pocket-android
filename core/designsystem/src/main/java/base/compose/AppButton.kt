@@ -1,6 +1,7 @@
 package base.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -57,10 +58,13 @@ enum class AppButtonSize(
 enum class AppButtonStyle(
     val backgroundColor: Color,
     val contentColor: Color,
+    val borderColor: Color? = null,
 ) {
     Primary(backgroundColor = Pink, contentColor = ColorWhite),
     Secondary(backgroundColor = Gray10, contentColor = Gray70),
     Destructive(backgroundColor = Red, contentColor = ColorWhite),
+    Outline(backgroundColor = ColorWhite, contentColor = Gray50, borderColor = Gray40),
+    Dark(backgroundColor = Gray50, contentColor = ColorWhite),
 }
 
 @Composable
@@ -76,12 +80,15 @@ fun AppButton(
 ) {
     val backgroundColor = if (enabled) style.backgroundColor else Gray30
     val contentColor = if (enabled) style.contentColor else ColorWhite
+    val borderColor = if (enabled) style.borderColor else null
+    val shape = RoundedCornerShape(size.cornerRadius)
 
     Row(
         modifier = modifier
             .height(size.height)
-            .clip(RoundedCornerShape(size.cornerRadius))
+            .clip(shape)
             .background(backgroundColor)
+            .then(if (borderColor != null) Modifier.border(1.dp, borderColor, shape) else Modifier)
             .clickable(enabled = enabled, role = Role.Button, onClick = onClick)
             .padding(horizontal = size.horizontalPadding),
         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
