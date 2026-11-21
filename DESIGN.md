@@ -64,7 +64,9 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 ## 아이콘
 
 - 원본은 피그마 `ㄴ Icons` 페이지의 `Icon` 프레임이고, 이름은 소문자 `snake_case`, 형태 접미어는 `_line` · `_solid`입니다. 방향은 `chevron_*`(꺾쇠) · `arrow_*`(화살표), 닫기는 `close`입니다.
-- Android drawable은 아직 옛 이름(`ic_arrow_left`, `ic_close_white`, 크기·색이 붙은 `ic_arrow_down_16_black` 등)을 씁니다. 피그마 이름으로 맞추는 작업은 후속입니다.
+- drawable 이름은 `ic_` + 피그마 이름입니다. 예: 피그마 `chevron_left` = `ic_chevron_left`, 일러스트 `face_gloomy` = `ic_face_gloomy`. iOS는 접두어 없이 `chevron_left`입니다.
+- 피그마 이름으로 맞춘 것: `ic_chevron_left` · `ic_chevron_right` · `ic_location_solid` · `ic_location_current` · `ic_delete` · `ic_information` · `ic_fire_solid` · `ic_bookmark_line` · `ic_bookmark_solid`, 일러스트 `ic_face_gloomy` · `ic_bungeoppang_default` · `ic_face_colored_sad` · `ic_face_colored_smile`. 원래부터 같은 이름: `ic_heart_fill` · `ic_heart_line` · `ic_fire_line` · `ic_mappin_focused_on` · `ic_mappin_focused_off` · `ic_check` · `ic_change` · `ic_map` · `ic_list` · `ic_plus` · `ic_zoom` · `ic_kakao`.
+- 아직 옛 이름인 것: 색·크기가 붙은 변형(`ic_arrow_down_16_black`, `ic_close_24_gray40`, `ic_copy_18`, `ic_star_solid_pink_12` 등)과, 피그마 이름이 이미 다른 모양에 쓰이는 것(`ic_close`는 원 안의 X라 피그마 `delete_x` 모양, 피그마 `close` 모양은 `ic_store_preview_close`). tint·크기로 합치면서 정리합니다.
 - 하단 탭 아이콘은 tint가 아니라 벡터 `fillColor`에 색이 들어 있습니다(`ic_*` 선택, `ic_*_off` 비선택). 그래서 `itemIconTintList = null`이 필요합니다.
 
 ## 컴포넌트
