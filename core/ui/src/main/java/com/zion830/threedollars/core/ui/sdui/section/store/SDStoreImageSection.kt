@@ -141,7 +141,7 @@ internal fun SDStoreSectionEmptyView(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_photo_review_empty),
+            painter = painterResource(DesignSystemR.drawable.ic_bungeoppang_default),
             contentDescription = null,
             modifier = Modifier.size(SDStoreSectionEmptyDefaults.IconSize)
         )

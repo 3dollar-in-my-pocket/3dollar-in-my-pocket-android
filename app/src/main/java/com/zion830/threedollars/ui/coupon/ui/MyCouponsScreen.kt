@@ -247,7 +247,7 @@ private fun CouponEmptyView(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_empty_100),
+            painter = painterResource(DesignSystemR.drawable.ic_face_gloomy),
             contentDescription = null,
             modifier = Modifier.size(100.dp),
         )

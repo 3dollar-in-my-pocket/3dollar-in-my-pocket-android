@@ -481,7 +481,7 @@ fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPr
     ) {
         Image(
             modifier = Modifier.size(14.dp),
-            painter = painterResource(id = if (visitedData.isExists) LegacyCommonR.drawable.ic_face_smile else LegacyCommonR.drawable.ic_face_sad),
+            painter = painterResource(id = if (visitedData.isExists) LegacyCommonR.drawable.ic_face_colored_smile else LegacyCommonR.drawable.ic_face_colored_sad),
             contentDescription = "방문 상태"
         )
         Spacer(modifier = Modifier.width(4.dp))
