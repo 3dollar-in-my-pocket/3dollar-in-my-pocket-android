@@ -16,8 +16,16 @@
         <item name="fontFamily">@font/apple_gothic_bold</item>
     </style>
 
+    <style name="pretendard_regular" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
     <style name="pretendard_medium" parent="TextAppearance.AppCompat">
         <item name="fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="pretendard_semibold" parent="TextAppearance.AppCompat">
+        <item name="fontFamily">@font/pretendard_semibold</item>
     </style>
 
     <style name="pretendard_bold" parent="TextAppearance.AppCompat">
@@ -82,6 +90,11 @@
     </style>
 
 
+    <!--- pretendard regular font styles -->
+    <style name="pretendard_regular.size_14dp">
+        <item name="android:textSize">14dp</item>
+    </style>
+
     <!--- pretendard medium font styles -->
     <style name="pretendard_medium.size_10dp">
         <item name="android:textSize">10dp</item>
@@ -104,6 +117,15 @@
 
     <style name="pretendard_medium.size_16dp">
         <item name="android:textSize">16dp</item>
+    </style>
+
+    <!--- pretendard semibold font styles -->
+    <style name="pretendard_semibold.size_14dp">
+        <item name="android:textSize">14dp</item>
+    </style>
+
+    <style name="pretendard_semibold.size_20dp">
+        <item name="android:textSize">20dp</item>
     </style>
 
     <!--- pretendard bold font styles -->
