@@ -77,9 +77,9 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | BottomCTA (Full) | 높이 64, 배경 main/pink(비활성 gray/30), 글자 bold 16 흰색 | `AddStoreFlowScreen` · `EditStoreComponents` · `CompletionScreen` (화면마다 직접) |
 | Bottom (하단 탭) | 높이 60, 아이콘 24 + 라벨 12 medium, 선택 main/red · 미선택 gray/40, My 탭만 배경 gray/100 · 구분선 gray/80 | `activity_home.xml` `nav_view` + `MainActivity` |
 | SearchField | 높이 50, radius 12 | `fragment_search_by_address.xml` |
-| Tabs | 탭 폭은 글자 길이(Hug), 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` (아직 균등 분할) |
+| Tabs | Width 속성: Fill = 같은 폭, Hug = 글자 길이에 맞춤(넘치면 가로 스크롤). 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | Fill: `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` / Hug: 가게 상세 탭 · 가게 제보 메뉴 카테고리 탭 |
 | Button | Medium 48 · Small 34, radius 12 | 공용 컴포넌트 없음 |
-| Chip · Badge · Rating · Checkbox · SelectRow · TextField · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+| Chip · Badge · Rating · SelectRow · TextField · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
 
 - 홈 인디케이터(Home bar)와 상태바는 시스템 요소라 디자인 시스템에 넣지 않습니다.
 - iOS는 하단 탭에 시스템 탭바를 쓰고 색·아이콘만 맞춥니다. Android는 피그마 Bottom을 그대로 그립니다.
