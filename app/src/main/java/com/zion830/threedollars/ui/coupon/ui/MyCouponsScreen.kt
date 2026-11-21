@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.coupon.ui
 
-import base.compose.AppTopTheme
-import base.compose.AppTop
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,12 +31,12 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import base.compose.ColorWhite
+import base.compose.AppTop
+import base.compose.AppTopTheme
 import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray50
@@ -120,6 +118,7 @@ private fun MyCouponsTopBar(onBack: () -> Unit) {
         title = stringResource(CommonR.string.my_coupons_title),
         theme = AppTopTheme.Dark,
         onBackClick = onBack,
+        backContentDescription = stringResource(CommonR.string.cd_back),
     )
 }
 

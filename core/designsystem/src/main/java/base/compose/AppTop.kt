@@ -2,7 +2,6 @@ package base.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,13 +15,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,6 +36,8 @@ enum class AppTopTheme(val background: Color, val content: Color) {
 }
 
 private val LocalAppTopContentColor = staticCompositionLocalOf { Gray100 }
+
+private val IconTouchInset = 12.dp
 
 @Composable
 fun AppTop(
@@ -59,11 +60,7 @@ fun AppTop(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
                         .size(56.dp)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                            onClick = onBackClick,
-                        ),
+                        .clickable(role = Role.Button, onClick = onBackClick),
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
@@ -94,8 +91,8 @@ fun AppTop(
             Row(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
-                    .padding(end = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    .padding(end = 16.dp - IconTouchInset),
+                horizontalArrangement = Arrangement.spacedBy(8.dp - IconTouchInset * 2),
                 verticalAlignment = Alignment.CenterVertically,
                 content = actions,
             )
@@ -111,18 +108,19 @@ fun AppTopIcon(
     modifier: Modifier = Modifier,
     tint: Color = LocalAppTopContentColor.current,
 ) {
-    Icon(
-        painter = painter,
-        contentDescription = contentDescription,
-        tint = tint,
+    Box(
         modifier = modifier
-            .size(24.dp)
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick,
-            ),
-    )
+            .size(24.dp + IconTouchInset * 2)
+            .clickable(role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painter,
+            contentDescription = contentDescription,
+            tint = tint,
+            modifier = Modifier.size(24.dp),
+        )
+    }
 }
 
 @Preview(showBackground = true)

@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.write.menuextraction
 
-import base.compose.AppTopIcon
-import base.compose.AppTop
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.widget.Toast
@@ -31,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -59,6 +55,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import base.compose.AppHeader
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
@@ -424,13 +423,8 @@ private fun MenuExtractionResultScreen(
         val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
         LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
             item {
-                Text(
-                    text = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.W700,
-                    fontFamily = PretendardFontFamily,
-                    color = Gray100,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 16.dp),
+                AppHeader(
+                    title = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
                 )
             }
             stickyHeader {

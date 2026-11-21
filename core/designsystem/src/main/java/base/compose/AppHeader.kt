@@ -30,7 +30,7 @@ fun AppHeader(
 ) {
     AppHeader(
         title = title,
-        subtitle = subtitle?.let { AnnotatedString(it) },
+        annotatedSubtitle = subtitle?.let { AnnotatedString(it) },
         description = description,
         modifier = modifier,
     )
@@ -39,7 +39,7 @@ fun AppHeader(
 @Composable
 fun AppHeader(
     title: String,
-    subtitle: AnnotatedString?,
+    annotatedSubtitle: AnnotatedString?,
     modifier: Modifier = Modifier,
     description: String? = null,
 ) {
@@ -63,9 +63,9 @@ fun AppHeader(
                 lineHeight = dpToSp(32),
                 letterSpacing = (-0.01).em,
             )
-            if (!subtitle.isNullOrEmpty()) {
+            if (!annotatedSubtitle.isNullOrEmpty()) {
                 Text(
-                    text = subtitle,
+                    text = annotatedSubtitle,
                     color = Gray40,
                     fontFamily = PretendardFontFamily,
                     fontWeight = FontWeight.Bold,
@@ -98,7 +98,7 @@ private fun AppHeaderPreview() {
         AppHeader(title = "메뉴 상세 정보 추가", subtitle = "(선택)")
         AppHeader(
             title = "음식 카테고리 선택",
-            subtitle = buildAnnotatedString {
+            annotatedSubtitle = buildAnnotatedString {
                 append("(")
                 withStyle(SpanStyle(color = Pink)) { append("3") }
                 append("/10)")

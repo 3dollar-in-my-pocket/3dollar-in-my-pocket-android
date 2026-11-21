@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.edit.ui.compose
 
-import base.compose.AppTopIcon
-import base.compose.AppTop
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -50,7 +50,6 @@ import base.compose.Green100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
-import base.compose.dpToSp
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -67,6 +66,7 @@ fun EditStoreTopBar(
         title = title,
         modifier = modifier,
         onBackClick = onBackClick.takeIf { showBackButton },
+        backContentDescription = stringResource(id = CommonR.string.cd_back),
     ) {
         AppTopIcon(
             painter = painterResource(id = DesignSystemR.drawable.ic_close_gray100_24),

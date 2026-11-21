@@ -38,7 +38,6 @@ import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray40
 import base.compose.Gray50
-import base.compose.Gray70
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.domain.home.data.store.SalesType

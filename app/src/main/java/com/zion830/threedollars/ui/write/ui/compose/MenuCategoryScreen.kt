@@ -15,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.sp
 import base.compose.AppHeader
 import base.compose.Gray100
 import com.threedollar.common.R as CommonR
-import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
@@ -99,7 +97,7 @@ private fun MenuCategoryContent(
     ) {
         AppHeader(
             title = stringResource(CommonR.string.add_store_select_category_title),
-            subtitle = buildAnnotatedString {
+            annotatedSubtitle = buildAnnotatedString {
                 if (selectedCount == 10) {
                     withStyle(style = SpanStyle(color = Red)) {
                         append("($selectedCount/10)")
@@ -117,7 +115,7 @@ private fun MenuCategoryContent(
                 }
             },
         )
-        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
             Spacer(modifier = Modifier.height(4.dp))
 
             if (onMenuExtractionClick != null) {
