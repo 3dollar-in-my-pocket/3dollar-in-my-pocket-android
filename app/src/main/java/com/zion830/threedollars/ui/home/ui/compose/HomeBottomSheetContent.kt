@@ -123,7 +123,6 @@ import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.ui.FeedListScreen
-import com.zion830.threedollars.ui.home.data.HomeSheetTabScrollPolicy
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
@@ -275,13 +274,6 @@ fun HomeBottomSheetContent(
             curationState.isNewsTabSelected -> newsListState
             curationState.isCurationTabSelected -> curationListState
             else -> nearbyListState
-        }
-        var lastSelectedTabId by rememberSaveable { mutableStateOf(curationState.selectedTabId) }
-        LaunchedEffect(curationState.selectedTabId) {
-            if (HomeSheetTabScrollPolicy.shouldScrollToTop(lastSelectedTabId, curationState.selectedTabId)) {
-                listState.scrollToItem(0)
-            }
-            lastSelectedTabId = curationState.selectedTabId
         }
         val carouselListStates = remember(curationState.sectionRequestId, curationState.section) {
             curationState.section?.items.orEmpty().filterIsInstance<SDHomeCurationItemModel.Carousel>()
