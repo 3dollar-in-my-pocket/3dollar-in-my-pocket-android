@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.feed.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,17 +25,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import base.compose.AppRating
+import base.compose.AppRatingStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
 import base.compose.Gray40
+import base.compose.Gray70
 import base.compose.Gray95
 import base.compose.Pink
 import base.compose.PretendardFontFamily
@@ -52,7 +52,6 @@ import com.threedollar.domain.feed.model.FeedHeaderModel
 import com.threedollar.domain.feed.model.FeedImageModel
 import com.threedollar.domain.feed.model.FeedModel
 import com.threedollar.domain.feed.model.FeedRatingModel
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
 import com.zion830.threedollars.core.ui.sdui.element.SDText
 import com.zion830.threedollars.ui.feed.model.FeedBadgeText
@@ -343,23 +342,13 @@ private fun FeedBodyText(
 
 @Composable
 private fun FeedRatingStars(rating: FeedRatingModel) {
-    val filled = rating.filledColor.toColor(fallback = Pink)
-    val empty = rating.emptyColor.toColor(fallback = Gray20)
-    val filledCount = rating.starRating.roundToInt().coerceIn(0, rating.maxRating)
-    Row(
-        modifier = Modifier.height(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(rating.maxRating) { index ->
-            Image(
-                painter = painterResource(DesignSystemR.drawable.ic_star_solid_12),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(if (index < filledCount) filled else empty),
-                modifier = Modifier.size(12.dp),
-            )
-        }
-    }
+    AppRating(
+        value = rating.starRating.roundToInt(),
+        style = AppRatingStyle.None,
+        filledColor = rating.filledColor.toColor(fallback = Pink),
+        emptyColor = rating.emptyColor.toColor(fallback = Gray70),
+        maxValue = rating.maxRating,
+    )
 }
 
 @Composable
