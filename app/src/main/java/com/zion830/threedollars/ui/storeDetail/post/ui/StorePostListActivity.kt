@@ -225,7 +225,7 @@ private fun StorePostListTopBar(
             .background(ColorWhite),
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+            painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterStart)

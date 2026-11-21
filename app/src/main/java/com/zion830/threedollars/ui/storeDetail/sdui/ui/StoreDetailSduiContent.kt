@@ -285,7 +285,7 @@ fun StoreDetailNavigationBar(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+            painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
             contentDescription = null,
             modifier = Modifier
                 .size(StoreDetailSduiDefaults.BackIconSize)
@@ -305,7 +305,7 @@ fun StoreDetailNavigationBar(
         )
         Row(horizontalArrangement = Arrangement.spacedBy(StoreDetailSduiDefaults.TrailingIconSpacing)) {
             NavigationIcon(
-                iconRes = if (isFavorite) DesignSystemR.drawable.ic_store_preview_bookmark_solid else DesignSystemR.drawable.ic_store_preview_bookmark_line,
+                iconRes = if (isFavorite) DesignSystemR.drawable.ic_bookmark_solid else DesignSystemR.drawable.ic_bookmark_line,
                 tint = if (isFavorite) Pink else Gray100,
                 onClick = onFavoriteClick
             )

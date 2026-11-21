@@ -129,7 +129,7 @@
             android:paddingVertical="8dp"
             android:text="@string/dest"
             android:textColor="@color/white"
-            app:drawableStartCompat="@drawable/ic_location_soild"
+            app:drawableStartCompat="@drawable/ic_location_solid"
             app:layout_constraintBottom_toBottomOf="@id/distanceReviewLinearLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/distanceReviewLinearLayout"

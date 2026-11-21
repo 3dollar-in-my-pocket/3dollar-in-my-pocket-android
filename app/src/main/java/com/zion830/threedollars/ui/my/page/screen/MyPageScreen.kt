@@ -189,7 +189,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             MyPageSectionTitle(
                 MyPageSectionTitleData(
                     topTitle = stringResource(CommonR.string.str_section_title_vote),
-                    topIcon = LegacyCommonR.drawable.ic_fire,
+                    topIcon = LegacyCommonR.drawable.ic_fire_solid,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
                 ) {})
             Spacer(modifier = Modifier.height(16.dp))
@@ -549,7 +549,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
     ) {
         Image(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = LegacyCommonR.drawable.ic_fire),
+            painter = painterResource(id = LegacyCommonR.drawable.ic_fire_solid),
             contentDescription = "투표"
         )
         Text(

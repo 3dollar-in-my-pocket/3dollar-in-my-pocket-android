@@ -487,7 +487,7 @@ private fun MenuExtractionTopBar(
         if (onBack != null) {
             IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
                 Icon(
-                    painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+                    painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
                     contentDescription = stringResource(CommonR.string.cd_back),
                     tint = Gray100,
                     modifier = Modifier.size(24.dp),

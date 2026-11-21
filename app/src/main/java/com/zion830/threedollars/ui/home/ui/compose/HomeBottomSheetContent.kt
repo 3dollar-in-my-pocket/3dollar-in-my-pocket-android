@@ -954,9 +954,9 @@ private fun HomeListBasicCard(
                     card.storeInfo?.let { storeInfo ->
                         StorePreviewIconButton(
                             iconRes = if (storeInfo.isSubscriber) {
-                                DesignSystemR.drawable.ic_store_preview_bookmark_solid
+                                DesignSystemR.drawable.ic_bookmark_solid
                             } else {
-                                DesignSystemR.drawable.ic_store_preview_bookmark_line
+                                DesignSystemR.drawable.ic_bookmark_line
                             },
                             tint = if (storeInfo.isSubscriber) Pink else Gray100,
                             onClick = onFavoriteClick,

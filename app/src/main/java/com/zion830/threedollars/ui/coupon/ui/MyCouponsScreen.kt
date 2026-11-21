@@ -120,7 +120,7 @@ private fun MyCouponsTopBar(onBack: () -> Unit) {
             .height(56.dp),
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+            painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
             contentDescription = null,
             colorFilter = ColorFilter.tint(ColorWhite),
             modifier = Modifier

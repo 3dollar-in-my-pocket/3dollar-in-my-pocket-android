@@ -302,7 +302,7 @@ private fun TopBar(
             shape = CircleShape,
         ) {
             Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+                painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
                 modifier = Modifier.size(24.dp),
                 contentDescription = "뒤로가기"
             )
