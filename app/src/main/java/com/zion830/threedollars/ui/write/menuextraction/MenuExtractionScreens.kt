@@ -314,7 +314,6 @@ private fun MenuPhotoSourceDialog(
     }
 }
 
-
 @Composable
 private fun MenuExtractionLoadingScreen(
     title: String,
