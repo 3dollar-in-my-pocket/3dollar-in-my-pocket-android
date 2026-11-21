@@ -116,6 +116,7 @@
     <style name="ThreeDollars.Divider">
         <item name="android:background">@color/gray20</item>
         <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 
     <!-- Dialog Style (from community module) -->

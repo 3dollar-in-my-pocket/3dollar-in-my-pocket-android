@@ -40,7 +40,7 @@ fun AppSearchField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     placeholder: String? = null,
-    leadingIcon: Painter? = painterResource(R.drawable.ic_search),
+    leadingIcon: Painter? = painterResource(R.drawable.ic_reading_glasses),
     onClear: (() -> Unit)? = { onValueChange("") },
     clearContentDescription: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,

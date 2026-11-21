@@ -45,7 +45,6 @@ fun AppTextField(
     suffix: String? = null,
     helperText: String? = null,
     isError: Boolean = false,
-    singleLine: Boolean = true,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -90,7 +89,7 @@ fun AppTextField(
                 .clip(shape)
                 .background(Gray10)
                 .border(1.dp, borderColor, shape),
-            singleLine = singleLine,
+            singleLine = true,
             textStyle = textStyle,
             cursorBrush = SolidColor(Pink),
             keyboardOptions = keyboardOptions,
