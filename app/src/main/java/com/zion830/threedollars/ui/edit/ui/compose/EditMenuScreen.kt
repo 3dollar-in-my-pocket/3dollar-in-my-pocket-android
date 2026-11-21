@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppHeader
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -133,14 +134,7 @@ fun EditMenuScreen(
                 val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
                 LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
                     item {
-                        Text(
-                            text = stringResource(CommonR.string.add_store_menu_detail_title),
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.W600,
-                            fontFamily = PretendardFontFamily,
-                            color = Gray100,
-                            modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 16.dp)
-                        )
+                        AppHeader(title = stringResource(CommonR.string.add_store_menu_detail_title))
                         if (onImageMenuAddClick != null) {
                             MenuImageAddButton(
                                 onClick = onImageMenuAddClick,
