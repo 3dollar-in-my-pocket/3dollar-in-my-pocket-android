@@ -101,7 +101,9 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 
 - `size`는 Filled에만 의미가 있습니다(Outline·Filter는 크기가 하나).
 - 서버가 색을 내려주는 칩은 `colors = AppChipColors(...)`에 서버의 배경·테두리(색·두께)·글자색을 그대로 넣습니다. 테두리가 없으면 `border = null`.
-- 서버 값으로 그리는 칩(`SDHomeCurationCategoryChip` · `HomeFilterChips` · 상세·미리보기 액션 바)은 아이콘 크기·글자까지 서버·화면 코드가 정하고 있어 아직 화면 코드에 그대로 둡니다. 글자가 피그마(semi-bold 14)와 달리 12인 곳이 있어 옮길 때 디자이너 확인이 필요합니다.
+- 서버 값으로 그리는 칩 3곳은 `AppChip`으로 바꾸지 않고, 그리는 곳에서 앱이 정하는 값만 피그마 규격에 맞춥니다: 요즘 뜨는 간식 카테고리(`SDHomeCurationCategoryChip`, Outline) · 홈 지도 상단 필터(`HomeFilterChips`, Filter: 아이콘-글자 간격 4) · 가게 상세·미리보기 액션 바(`SDActionBarRow`, Save: 좌우 여백 12).
+- 이 칩들의 글자 크기·굵기·색은 서버가 글자 서식(`<span style="font-size:…; font-weight:…">`)으로 정합니다. `SDText`가 서식을 그대로 따르고, 서식이 없는 글자일 때만 semi-bold 14 / 줄 높이 20으로 그립니다. 아이콘 크기도 서버 값입니다.
+- 2026-11 기준 서버는 필터·카테고리 칩에 12px/500, 액션 바에 14px/600(방문 인증·리뷰 작성)·14px/400(공유·길안내)을 내려줍니다. 피그마(semi-bold 14)와 맞추려면 서버 값을 바꿔야 합니다.
 - `:core:ui`의 `SDChip`(서버 이미지 + 글자 한 줄, 배경 없음)과 `SDRatingChip`(서버가 별 이미지를 개수만큼 내려줌)은 서버가 내용과 모양을 정하는 요소라 `AppChip`·`AppRating`과 별개로 둡니다.
 
 ### Badge
