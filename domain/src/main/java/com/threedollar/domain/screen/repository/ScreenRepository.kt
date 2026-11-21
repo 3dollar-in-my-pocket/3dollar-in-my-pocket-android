@@ -7,6 +7,7 @@ import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
 import kotlinx.coroutines.flow.Flow
 
 interface ScreenRepository {
@@ -39,6 +40,8 @@ interface ScreenRepository {
         deviceLatitude: Double? = null,
         deviceLongitude: Double? = null,
     ): Flow<BaseResponse<SDHomeCurationSectionModel>>
+
+    fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<SDHomeNewsSectionModel>>
 
     fun getHomeCurationCards(
         tabId: String,

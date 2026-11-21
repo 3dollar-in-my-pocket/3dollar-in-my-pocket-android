@@ -4,6 +4,7 @@ import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
+import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
@@ -39,6 +40,8 @@ interface ScreenRemoteDataSource {
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>>
+
+    fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>>
 
     fun getHomeCurationCards(
         tabId: String,

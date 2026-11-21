@@ -27,6 +27,7 @@ import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
+import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
 import com.threedollar.network.data.store.AroundStoreResponse
@@ -246,6 +247,11 @@ interface ServerApi {
         @Header("X-Device-Latitude") deviceLatitude: Double? = null,
         @Header("X-Device-Longitude") deviceLongitude: Double? = null,
     ): Response<BaseResponse<HomeCurationCardsResponse>>
+
+    @GET("/api/v1/screen/home/section/news/{newsTabId}")
+    suspend fun getHomeNewsSection(
+        @Path("newsTabId") newsTabId: String,
+    ): Response<BaseResponse<HomeNewsSectionResponse>>
 
     @GET("/api/v1/screen/home/section/list")
     suspend fun getHomeListSection(

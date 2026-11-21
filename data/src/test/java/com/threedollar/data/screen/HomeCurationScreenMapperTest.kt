@@ -8,6 +8,7 @@ import com.threedollar.common.sdui.model.element.SDLinkType
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
+import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
@@ -27,6 +28,39 @@ class HomeCurationScreenMapperTest {
         requireNotNull(javaClass.classLoader?.getResource("screen/$name")).readText(),
         HomeCurationCardsResponse::class.java,
     )
+
+    // TH-1614 TC1
+    @Test
+    fun `TH1614_TC1_실서버소식섹션이면_노출로그를_그대로_보존한다`() {
+        // Given
+        val response = gson.fromJson(
+            requireNotNull(javaClass.classLoader?.getResource("screen/HomeNewsSection.json")).readText(),
+            HomeNewsSectionResponse::class.java,
+        )
+
+        // When
+        val log = requireNotNull(response.asNewsModel().impressionLog)
+
+        // Then
+        assertEquals("IMPRESSION", log.eventType)
+        assertEquals("home", log.screenName)
+        assertEquals("section", log.objectType)
+        assertEquals("home_news", log.objectId)
+        assertEquals(mapOf("tabId" to "NEWS"), log.extraParameters)
+    }
+
+    // TH-1614 TC1
+    @Test
+    fun `TH1614_TC1_노출로그가없으면_null로_매핑한다`() {
+        // Given
+        val response = gson.fromJson("{}", HomeNewsSectionResponse::class.java)
+
+        // When
+        val model = response.asNewsModel()
+
+        // Then
+        assertNull(model.impressionLog)
+    }
 
     // TH-1401 TC4
     @Test
