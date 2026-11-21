@@ -36,7 +36,8 @@ fun AppRating(
     emptyColor: Color = Gray70,
     maxValue: Int = APP_RATING_MAX,
 ) {
-    val filledCount = value.coerceIn(0, maxValue)
+    val starCount = maxValue.coerceAtLeast(0)
+    val filledCount = value.coerceIn(0, starCount)
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(4.dp))
@@ -44,7 +45,7 @@ fun AppRating(
             .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        repeat(maxValue) { index ->
+        repeat(starCount) { index ->
             Image(
                 painter = painterResource(R.drawable.ic_star_solid_12),
                 contentDescription = null,

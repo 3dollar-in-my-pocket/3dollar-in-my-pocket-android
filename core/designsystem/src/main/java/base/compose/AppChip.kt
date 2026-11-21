@@ -3,6 +3,7 @@ package base.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -93,6 +94,7 @@ fun AppChip(
     colors: AppChipColors = appChipColors(style, selected),
     onClick: (() -> Unit)? = null,
     onCloseClick: (() -> Unit)? = null,
+    closeContentDescription: String? = null,
     leadingIcon: (@Composable (Modifier) -> Unit)? = null,
 ) {
     val metrics = metricsOf(style, size)
@@ -110,7 +112,7 @@ fun AppChip(
             )
             .then(
                 if (onClick != null) {
-                    Modifier.clickable(role = Role.Button, onClick = onClick)
+                    Modifier.selectable(selected = selected, role = Role.Button, onClick = onClick)
                 } else {
                     Modifier
                 }
@@ -134,7 +136,7 @@ fun AppChip(
         if (onCloseClick != null) {
             Icon(
                 painter = painterResource(R.drawable.ic_close_chip),
-                contentDescription = null,
+                contentDescription = closeContentDescription,
                 tint = colors.content,
                 modifier = Modifier
                     .size(14.dp)

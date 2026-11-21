@@ -280,7 +280,7 @@ fun CategoryChip(
         leadingIcon = { iconModifier ->
             AsyncImage(
                 model = category.imageUrl,
-                contentDescription = category.name,
+                contentDescription = null,
                 modifier = iconModifier,
             )
         },

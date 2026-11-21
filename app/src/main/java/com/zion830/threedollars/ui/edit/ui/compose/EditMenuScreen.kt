@@ -340,7 +340,7 @@ private fun EditCategorySelectChip(
         leadingIcon = { iconModifier ->
             AsyncImage(
                 model = category.imageUrl,
-                contentDescription = category.name,
+                contentDescription = null,
                 modifier = iconModifier
             )
         }
