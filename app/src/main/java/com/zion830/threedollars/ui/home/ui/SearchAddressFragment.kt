@@ -6,12 +6,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -73,20 +69,17 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 var keyword by rememberSaveable { mutableStateOf("") }
-                val focusRequester = remember { FocusRequester() }
                 AppSearchField(
                     value = keyword,
                     onValueChange = {
                         keyword = it
                         onSearchKeywordChanged(it)
                     },
-                    modifier = Modifier.focusRequester(focusRequester),
                     placeholder = stringResource(CommonR.string.search_by_address_hint),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, showKeyboardOnFocus = false),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 )
                 LaunchedEffect(Unit) {
                     if (keyword.isNotEmpty()) onSearchKeywordChanged(keyword)
-                    focusRequester.requestFocus()
                 }
             }
         }
