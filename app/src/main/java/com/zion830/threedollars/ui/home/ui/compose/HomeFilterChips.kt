@@ -213,7 +213,7 @@ private fun HomeFilterButtonChip(
     ) {
         button.image?.let { image ->
             HomeFilterImage(image = image)
-            Spacer(modifier = Modifier.width(6.dp))
+            Spacer(modifier = Modifier.width(4.dp))
         }
         HomeFilterText(text = button.text)
     }
@@ -258,7 +258,7 @@ private fun HomeFilterChipSurface(
 private fun HomeFilterChipContent(chip: SDChipModel) {
     chip.image?.let { image ->
         HomeFilterImage(image = image)
-        Spacer(modifier = Modifier.width(6.dp))
+        Spacer(modifier = Modifier.width(4.dp))
     }
     HomeFilterText(text = chip.text)
     chip.additionalText?.let { additionalText ->
@@ -287,9 +287,9 @@ private fun HomeFilterText(text: SDTextModel) {
         text = text.displayText(),
         color = text.fontColor.toColor(fallback = Gray70),
         fontFamily = PretendardFontFamily,
-        fontWeight = FontWeight.Medium,
-        fontSize = dpToSp(12),
-        lineHeight = dpToSp(18),
+        fontWeight = FontWeight.SemiBold,
+        fontSize = dpToSp(14),
+        lineHeight = dpToSp(20),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
     )
