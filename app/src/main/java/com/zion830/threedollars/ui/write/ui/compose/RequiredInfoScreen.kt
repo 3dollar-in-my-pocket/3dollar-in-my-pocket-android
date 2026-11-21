@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
+import base.compose.AppHeader
 import base.compose.Red
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -93,125 +94,112 @@ private fun RequiredInfoContent(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(20.dp)
     ) {
-        Text(
-            text = stringResource(CommonR.string.add_store_info_input_title),
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W700,
-            fontSize = 24.sp,
-            color = Gray100
+        AppHeader(
+            title = stringResource(CommonR.string.add_store_info_input_title),
+            description = stringResource(CommonR.string.add_store_name_hint_description),
         )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = stringResource(CommonR.string.add_store_name_hint_description),
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W400,
-            fontSize = 14.sp,
-            color = Gray70
-        )
-
-        Spacer(modifier = Modifier.height(36.dp))
-
-        Text(
-            text = stringResource(CommonR.string.store_name),
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp,
-            color = Gray100
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = storeName,
-            onValueChange = { if (it.length <= 150) onStoreNameChange(it) },
-            modifier = Modifier.fillMaxWidth(),
-            placeholder = {
-                Text(
-                    text = stringResource(CommonR.string.add_store_name_placeholder),
-                    fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight.W400,
-                    fontSize = 14.sp,
-                    color = Gray50
-                )
-            },
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                backgroundColor = Gray10,
-                focusedBorderColor = Red,
-                unfocusedBorderColor = Color.Transparent,
-                textColor = Gray100
-            ),
-            shape = RoundedCornerShape(8.dp),
-            singleLine = true
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = stringResource(CommonR.string.store_type),
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp,
-            color = Gray100
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            storeTypes.forEach { type ->
-                StoreTypeChip(
-                    text = type.title,
-                    isSelected = selectedStoreType == type,
-                    onClick = { onStoreTypeSelect(type) }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = stringResource(CommonR.string.add_store_location_confirm),
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = 14.sp,
-            color = Gray100
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(8.dp))
-                .background(Gray10)
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = address,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W400,
-                fontSize = 14.sp,
-                color = Gray100,
-                modifier = Modifier.weight(1f)
-            )
+        Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
+            Spacer(modifier = Modifier.height(20.dp))
 
             Text(
-                text = stringResource(CommonR.string.add_store_change_location),
+                text = stringResource(CommonR.string.store_name),
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.W600,
                 fontSize = 14.sp,
-                color = Pink,
-                modifier = Modifier.clickable { onLocationChangeClick() }
+                color = Gray100
             )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = storeName,
+                onValueChange = { if (it.length <= 150) onStoreNameChange(it) },
+                modifier = Modifier.fillMaxWidth(),
+                placeholder = {
+                    Text(
+                        text = stringResource(CommonR.string.add_store_name_placeholder),
+                        fontFamily = PretendardFontFamily,
+                        fontWeight = FontWeight.W400,
+                        fontSize = 14.sp,
+                        color = Gray50
+                    )
+                },
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    backgroundColor = Gray10,
+                    focusedBorderColor = Red,
+                    unfocusedBorderColor = Color.Transparent,
+                    textColor = Gray100
+                ),
+                shape = RoundedCornerShape(8.dp),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(CommonR.string.store_type),
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = 14.sp,
+                color = Gray100
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                storeTypes.forEach { type ->
+                    StoreTypeChip(
+                        text = type.title,
+                        isSelected = selectedStoreType == type,
+                        onClick = { onStoreTypeSelect(type) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            Text(
+                text = stringResource(CommonR.string.add_store_location_confirm),
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = 14.sp,
+                color = Gray100
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Gray10)
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = address,
+                    fontFamily = PretendardFontFamily,
+                    fontWeight = FontWeight.W400,
+                    fontSize = 14.sp,
+                    color = Gray100,
+                    modifier = Modifier.weight(1f)
+                )
+
+                Text(
+                    text = stringResource(CommonR.string.add_store_change_location),
+                    fontFamily = PretendardFontFamily,
+                    fontWeight = FontWeight.W600,
+                    fontSize = 14.sp,
+                    color = Pink,
+                    modifier = Modifier.clickable { onLocationChangeClick() }
+                )
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.zion830.threedollars.ui.storeDetail.post.ui
 
+import base.compose.AppTop
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -218,35 +219,10 @@ private fun StorePostListTopBar(
     storeName: String,
     onBack: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(ColorWhite),
-    ) {
-        Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 16.dp)
-                .size(24.dp)
-                .noRippleClickable(onClick = onBack),
-        )
-        if (storeName.isNotBlank()) {
-            Text(
-                text = stringResource(CommonR.string.store_post_list_title, storeName),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 56.dp),
-                color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = dpToSp(16),
-                maxLines = 1,
-            )
-        }
-    }
+    AppTop(
+        title = if (storeName.isNotBlank()) stringResource(CommonR.string.store_post_list_title, storeName) else null,
+        onBackClick = onBack,
+    )
 }
 
 @Composable

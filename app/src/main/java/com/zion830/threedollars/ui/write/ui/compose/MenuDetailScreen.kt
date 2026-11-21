@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
+import base.compose.AppHeader
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray30
@@ -116,19 +117,7 @@ private fun MenuDetailScreenContent(
         item {
             val menuDetailTitle = stringResource(CommonR.string.add_store_menu_detail_title)
             val optionalText = stringResource(CommonR.string.add_store_optional)
-            Text(
-                text = buildAnnotatedString {
-                    append("$menuDetailTitle ")
-                    withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                        append(optionalText)
-                    }
-                },
-                fontSize = 24.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Gray100,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 16.dp),
-            )
+            AppHeader(title = menuDetailTitle, subtitle = optionalText)
             if (onImageMenuAddClick != null) {
                 MenuImageAddButton(
                     onClick = onImageMenuAddClick,

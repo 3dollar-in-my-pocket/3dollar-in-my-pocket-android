@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.coupon.ui
 
+import base.compose.AppTopTheme
+import base.compose.AppTop
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -114,30 +116,11 @@ internal fun MyCouponsScreen(
 
 @Composable
 private fun MyCouponsTopBar(onBack: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp),
-    ) {
-        Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-            contentDescription = null,
-            colorFilter = ColorFilter.tint(ColorWhite),
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 16.dp)
-                .size(24.dp)
-                .noRippleClickable(onClick = onBack),
-        )
-        Text(
-            text = stringResource(CommonR.string.my_coupons_title),
-            modifier = Modifier.align(Alignment.Center),
-            color = ColorWhite,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = dpToSp(16),
-        )
-    }
+    AppTop(
+        title = stringResource(CommonR.string.my_coupons_title),
+        theme = AppTopTheme.Dark,
+        onBackClick = onBack,
+    )
 }
 
 @Composable

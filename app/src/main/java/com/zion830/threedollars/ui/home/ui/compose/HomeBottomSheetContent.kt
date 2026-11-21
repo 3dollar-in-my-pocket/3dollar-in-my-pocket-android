@@ -84,6 +84,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
+import base.compose.AppHandleBar
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
@@ -793,20 +794,9 @@ private fun HomeBottomSheetHandle(
     onHandleDrag: (Float) -> Unit,
     onHandleDragEnd: (Float) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(HomeSheetLayout.HANDLE_HEIGHT_DP.dp)
-            .homeSheetDragGesture(onDrag = onHandleDrag, onDragEnd = onHandleDragEnd),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(width = 40.dp, height = 5.dp)
-                .clip(RoundedCornerShape(3.dp))
-                .background(Gray20),
-        )
-    }
+    AppHandleBar(
+        modifier = Modifier.homeSheetDragGesture(onDrag = onHandleDrag, onDragEnd = onHandleDragEnd),
+    )
 }
 
 @Composable

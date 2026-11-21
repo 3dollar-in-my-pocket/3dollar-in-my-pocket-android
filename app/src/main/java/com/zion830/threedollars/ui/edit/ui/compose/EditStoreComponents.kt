@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.edit.ui.compose
 
+import base.compose.AppTopIcon
+import base.compose.AppTop
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -61,39 +63,15 @@ fun EditStoreTopBar(
     showBackButton: Boolean = false,
     onBackClick: (() -> Unit)? = null
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 16.dp),
+    AppTop(
+        title = title,
+        modifier = modifier,
+        onBackClick = onBackClick.takeIf { showBackButton },
     ) {
-        if (showBackButton && onBackClick != null) {
-            Icon(
-                painter = painterResource(id = DesignSystemR.drawable.ic_arrow_left),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterStart)
-                    .size(24.dp)
-                    .clickable { onBackClick() },
-                tint = Gray100
-            )
-        }
-        Text(
-            text = title,
-            fontSize = dpToSp(16),
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100,
-            modifier = Modifier.align(alignment = Alignment.Center)
-        )
-        Icon(
+        AppTopIcon(
             painter = painterResource(id = DesignSystemR.drawable.ic_close_gray100_24),
             contentDescription = stringResource(id = CommonR.string.close),
-            modifier = Modifier
-                .align(alignment = Alignment.CenterEnd)
-                .size(24.dp)
-                .clickable { onCloseClick() },
-            tint = Gray100
+            onClick = onCloseClick,
         )
     }
 }

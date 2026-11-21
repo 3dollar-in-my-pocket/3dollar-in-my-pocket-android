@@ -1,5 +1,7 @@
 package com.zion830.threedollars.ui.write.menuextraction
 
+import base.compose.AppTopIcon
+import base.compose.AppTop
 import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.widget.Toast
@@ -478,37 +480,16 @@ private fun MenuExtractionTopBar(
     onBack: (() -> Unit)?,
     onClose: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(ColorWhite),
+    AppTop(
+        title = title,
+        onBackClick = onBack,
+        backContentDescription = stringResource(CommonR.string.cd_back),
     ) {
-        if (onBack != null) {
-            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
-                Icon(
-                    painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-                    contentDescription = stringResource(CommonR.string.cd_back),
-                    tint = Gray100,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        }
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100,
-            modifier = Modifier.align(Alignment.Center),
+        AppTopIcon(
+            painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
+            contentDescription = stringResource(CommonR.string.close),
+            onClick = onClose,
         )
-        IconButton(onClick = onClose, modifier = Modifier.align(Alignment.CenterEnd)) {
-            Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
-                contentDescription = stringResource(CommonR.string.close),
-                tint = Color.Unspecified,
-            )
-        }
     }
 }
 
