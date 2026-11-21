@@ -1003,7 +1003,7 @@ private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
             text = title,
             color = card.header?.title?.fontColor.toColor(fallback = Gray100),
             fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
             fontSize = dpToSp(16),
             lineHeight = dpToSp(24),
             maxLines = 2,

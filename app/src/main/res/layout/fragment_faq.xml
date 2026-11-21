@@ -16,7 +16,7 @@
         android:fontFamily="@font/app_pretendard_font"
         android:text="@string/faq"
         android:textColor="@color/color_white"
-        android:textFontWeight="400"
+        android:textFontWeight="500"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@id/btn_back"
         app:layout_constraintEnd_toEndOf="parent"
