@@ -20,7 +20,6 @@ import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,10 +42,10 @@ import base.compose.ColorWhite
 import base.compose.Gray30
 import base.compose.Gray70
 import base.compose.Pink
-import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
 import com.threedollar.common.compose.utils.toColor
+import com.threedollar.common.sdui.model.element.SDTextModel as SduiTextModel
 import com.threedollar.common.serverdriven.ext.displayText
 import com.threedollar.common.serverdriven.model.HomeFilterCurrentCategory
 import com.threedollar.common.serverdriven.model.SDButtonModel
@@ -55,6 +54,7 @@ import com.threedollar.common.serverdriven.model.SDImageModel
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDSurfaceStyleModel
 import com.threedollar.common.serverdriven.model.SDTextModel
+import com.zion830.threedollars.core.ui.sdui.element.SDText
 import com.zion830.threedollars.ui.home.data.ChipAction
 import com.zion830.threedollars.ui.home.data.HomeFilterCellType
 import kotlinx.coroutines.launch
@@ -283,11 +283,10 @@ private fun HomeFilterImage(image: SDImageModel) {
 
 @Composable
 private fun HomeFilterText(text: SDTextModel) {
-    Text(
-        text = text.displayText(),
+    SDText(
+        model = SduiTextModel(text = text.text, isHtml = text.isHtml, fontColor = text.fontColor),
         color = text.fontColor.toColor(fallback = Gray70),
-        fontFamily = PretendardFontFamily,
-        fontWeight = FontWeight.SemiBold,
+        fontWeight = text.fontWeight.toServerDrivenFontWeight(FontWeight.SemiBold),
         fontSize = dpToSp(14),
         lineHeight = dpToSp(20),
         maxLines = 1,
