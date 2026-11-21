@@ -52,18 +52,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.AppTheme
-import base.compose.ColorB7B7B7
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
+import base.compose.Gray40
 import base.compose.Gray60
 import base.compose.Gray95
 import base.compose.PretendardFontFamily
 import base.compose.Red
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
+import com.threedollar.common.R as CommonR
 import com.threedollar.domain.home.data.store.ImageModel
 import com.threedollar.domain.home.data.store.NewsPostModel
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
 import com.zion830.threedollars.core.ui.component.compose.components.FlowWithLifecycleEffect
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
@@ -79,8 +81,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map
-import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 /**
  * 사장님 가게 소식 목록 (딥링크 `postList?storeId=`). iOS `BossStorePostListViewController` 와 같은 화면.
@@ -332,7 +332,7 @@ private fun StorePostHeader(
             )
             Text(
                 text = storePostTimeText(post.updatedAt),
-                color = ColorB7B7B7,
+                color = Gray40,
                 fontFamily = PretendardFontFamily,
                 fontWeight = FontWeight.Normal,
                 fontSize = dpToSp(12),
