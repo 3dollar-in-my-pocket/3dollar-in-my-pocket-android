@@ -46,51 +46,27 @@
 
         <RadioButton
             android:id="@+id/btn_reason1"
-            style="@style/apple_gothic_regular.size_14dp"
+            style="@style/ThreeDollars.SelectRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:layout_marginTop="16dp"
-            android:background="@drawable/selector_radio"
-            android:button="@null"
-            android:drawableStart="@drawable/selector_checked_icon"
-            android:layoutDirection="rtl"
-            android:padding="12dp"
-            android:text="@string/request_delete_reason1"
-            android:textAlignment="textStart"
-            android:textColor="@color/gray40" />
+            android:text="@string/request_delete_reason1" />
 
         <RadioButton
             android:id="@+id/btn_reason2"
-            style="@style/apple_gothic_regular.size_14dp"
+            style="@style/ThreeDollars.SelectRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:layout_marginTop="6dp"
-            android:background="@drawable/selector_radio"
-            android:button="@null"
-            android:drawableStart="@drawable/selector_checked_icon"
-            android:layoutDirection="rtl"
-            android:padding="12dp"
-            android:text="@string/request_delete_reason2"
-            android:textAlignment="textStart"
-            android:textColor="@color/gray40" />
+            android:text="@string/request_delete_reason2" />
 
         <RadioButton
             android:id="@+id/btn_reason3"
-            style="@style/apple_gothic_regular.size_14dp"
+            style="@style/ThreeDollars.SelectRow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
             android:layout_marginTop="6dp"
-            android:background="@drawable/selector_radio"
-            android:button="@null"
-            android:drawableStart="@drawable/selector_checked_icon"
-            android:layoutDirection="rtl"
-            android:padding="12dp"
-            android:text="@string/request_delete_reason3"
-            android:textAlignment="textStart"
-            android:textColor="@color/gray40" />
+            android:text="@string/request_delete_reason3" />
     </RadioGroup>
 
     <Button

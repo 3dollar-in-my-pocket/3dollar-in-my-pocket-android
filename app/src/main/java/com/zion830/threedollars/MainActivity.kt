@@ -149,7 +149,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
                 R.id.navigation_mypage -> {
                     binding.navHostFragment.findNavController().navigate(R.id.navigation_mypage)
-                    binding.navView.itemBackgroundResource = android.R.color.black
+                    binding.navView.itemBackgroundResource = DesignSystemR.color.gray100
                     showBottomNavigation(true)
                 }
             }
@@ -213,13 +213,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     private fun initNavController(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
-                android.R.color.black
+                DesignSystemR.color.gray100
             } else {
                 android.R.color.white
             }
             binding.divider.setBackgroundColor(
                 if (destination.id == R.id.navigation_mypage) {
-                    ContextCompat.getColor(this, DesignSystemR.color.gray90)
+                    ContextCompat.getColor(this, DesignSystemR.color.gray80)
                 } else {
                     ContextCompat.getColor(this, DesignSystemR.color.gray20)
                 }

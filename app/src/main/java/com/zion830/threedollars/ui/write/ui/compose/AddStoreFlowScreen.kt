@@ -511,7 +511,7 @@ private fun MainButton(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(64.dp)
             .background(color = backgroundColor)
             .clickable(enabled = enabled, onClick = onClick),
         verticalArrangement = Arrangement.Center,

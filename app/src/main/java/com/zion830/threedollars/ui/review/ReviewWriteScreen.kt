@@ -33,9 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import base.compose.ColorB7B7B7
 import base.compose.ColorF9737E
 import base.compose.ColorFf858F
 import base.compose.ColorWhite
@@ -58,12 +57,13 @@ import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
 import base.compose.Gray30
+import base.compose.Gray40
 import base.compose.Gray50
 import base.compose.Gray70
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.threedollar.common.R as CommonR
+import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 private val ContentShape = RoundedCornerShape(12.dp)
 private val PhotoSize = 72.dp
@@ -213,7 +213,7 @@ private fun AddPhotoTile(count: Int, enabled: Boolean, onClick: () -> Unit) {
                 append("/${ReviewWriteState.MAX_PHOTO_COUNT}")
             },
             style = pretendard(size = 16, weight = FontWeight.Normal, lineHeight = 24),
-            color = ColorB7B7B7,
+            color = Gray40,
         )
     }
 }
@@ -272,7 +272,7 @@ private fun ReviewContentsField(contents: String, onContentsChange: (String) -> 
             decorationBox = { innerTextField ->
                 Box {
                     if (contents.isEmpty()) {
-                        Text(text = stringResource(CommonR.string.review_write_hint), style = textStyle, color = ColorB7B7B7)
+                        Text(text = stringResource(CommonR.string.review_write_hint), style = textStyle, color = Gray40)
                     }
                     innerTextField()
                 }
