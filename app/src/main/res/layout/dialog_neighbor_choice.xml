@@ -12,7 +12,7 @@
         android:id="@+id/districtBackImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_arrow_left"
+        android:src="@drawable/ic_chevron_left"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="parent"

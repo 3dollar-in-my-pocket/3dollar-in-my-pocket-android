@@ -232,7 +232,7 @@ private fun PostBody(
         fontFamily = PretendardFontFamily
     )
     val moreText = stringResource(CommonR.string.more)
-    val moreColor = colorResource(DesignSystemR.color.color_B7B7B7)
+    val moreColor = colorResource(DesignSystemR.color.gray40)
     val textMeasurer = rememberTextMeasurer()
     BoxWithConstraints(modifier = modifier) {
         val maxWidth = constraints.maxWidth

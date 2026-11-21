@@ -399,7 +399,7 @@ private fun AddStoreTopBar(
             navigationIcon = {
                 IconButton(onClick = onBackClick) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
+                        painter = painterResource(R.drawable.ic_chevron_left),
                         modifier = Modifier.size(24.dp),
                         contentDescription = stringResource(CommonR.string.cd_back),
                         tint = Gray100
@@ -511,7 +511,7 @@ private fun MainButton(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(64.dp)
             .background(color = backgroundColor)
             .clickable(enabled = enabled, onClick = onClick),
         verticalArrangement = Arrangement.Center,

@@ -69,7 +69,7 @@ fun EditStoreTopBar(
     ) {
         if (showBackButton && onBackClick != null) {
             Icon(
-                painter = painterResource(id = DesignSystemR.drawable.ic_arrow_left),
+                painter = painterResource(id = DesignSystemR.drawable.ic_chevron_left),
                 contentDescription = null,
                 modifier = Modifier
                     .align(alignment = Alignment.CenterStart)
@@ -632,6 +632,8 @@ fun RetrySubmitDialog(
     }
 }
 
+val MainButtonHeight = 64.dp
+
 /**
  * 하단 메인 버튼 (수정 완료)
  */
@@ -645,7 +647,7 @@ fun MainButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(MainButtonHeight)
             .background(if (enabled) Pink else Gray30)
             .clickable(enabled = enabled) { onClick() },
         contentAlignment = Alignment.Center
@@ -694,7 +696,7 @@ private fun EditSectionCardPreview() {
         EditSectionCard(
             title = "가게 정보",
             description = "붕어빵 가게 · 현금, 카드 · 월, 화, 수",
-            iconResId = DesignSystemR.drawable.ic_info,
+            iconResId = DesignSystemR.drawable.ic_information,
             onClick = {}
         )
     }

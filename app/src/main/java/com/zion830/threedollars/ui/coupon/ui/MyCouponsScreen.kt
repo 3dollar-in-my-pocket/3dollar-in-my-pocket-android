@@ -120,7 +120,7 @@ private fun MyCouponsTopBar(onBack: () -> Unit) {
             .height(56.dp),
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+            painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
             contentDescription = null,
             colorFilter = ColorFilter.tint(ColorWhite),
             modifier = Modifier
@@ -247,7 +247,7 @@ private fun CouponEmptyView(modifier: Modifier = Modifier) {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Image(
-            painter = painterResource(DesignSystemR.drawable.ic_empty_100),
+            painter = painterResource(DesignSystemR.drawable.ic_face_gloomy),
             contentDescription = null,
             modifier = Modifier.size(100.dp),
         )

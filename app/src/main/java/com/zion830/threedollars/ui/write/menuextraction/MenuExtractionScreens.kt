@@ -8,6 +8,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -24,7 +25,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -57,11 +57,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
-import base.compose.ColorB7B7B7
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
+import base.compose.Gray40
 import base.compose.Gray70
 import base.compose.Gray80
 import base.compose.Pink
@@ -77,8 +77,8 @@ import com.threedollar.common.compose.dialog.DialogButton
 import com.threedollar.domain.home.data.store.SelectCategoryModel
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 import com.zion830.threedollars.core.ui.component.compose.LottieFishLoading
-import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
 import com.zion830.threedollars.ui.write.ui.compose.MenuCategoryStickyHeader
+import com.zion830.threedollars.ui.write.ui.compose.menuCategoryEditorItems
 import com.zion830.threedollars.ui.write.ui.compose.rememberScrollToAddedMenu
 import java.io.File
 
@@ -332,7 +332,7 @@ private fun PhotoSourceButton(
             .fillMaxWidth()
             .height(48.dp)
             .clip(RoundedCornerShape(12.dp))
-            .border(BorderStroke(1.dp, ColorB7B7B7), RoundedCornerShape(12.dp))
+            .border(BorderStroke(1.dp, Gray40), RoundedCornerShape(12.dp))
             .clickable(onClick = onClick),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
@@ -487,7 +487,7 @@ private fun MenuExtractionTopBar(
         if (onBack != null) {
             IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
                 Icon(
-                    painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
+                    painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
                     contentDescription = stringResource(CommonR.string.cd_back),
                     tint = Gray100,
                     modifier = Modifier.size(24.dp),

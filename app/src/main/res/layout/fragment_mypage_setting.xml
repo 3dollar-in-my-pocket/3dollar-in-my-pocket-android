@@ -34,7 +34,7 @@
             android:layout_margin="16dp"
             android:background="@android:color/transparent"
             android:foreground="?attr/actionBarItemBackground"
-            android:src="@drawable/ic_arrow_left"
+            android:src="@drawable/ic_chevron_left"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/white"

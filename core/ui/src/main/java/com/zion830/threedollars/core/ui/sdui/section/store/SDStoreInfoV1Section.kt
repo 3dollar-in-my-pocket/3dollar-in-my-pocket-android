@@ -174,7 +174,7 @@ private fun CircleChip(chip: SDChipModel) {
 @Composable
 private fun BulletText(item: SDStoreInfoV1SectionModel.SelectableText) {
     val text = item.text ?: return
-    val bulletColor = text.fontColor.toColor(fallback = colorResource(DesignSystemR.color.color_B7B7B7))
+    val bulletColor = text.fontColor.toColor(fallback = colorResource(DesignSystemR.color.gray40))
     Row(verticalAlignment = Alignment.CenterVertically) {
         Spacer(modifier = Modifier.width(SDStoreInfoV1SectionDefaults.OptionSpacing))
         Box(

@@ -133,7 +133,7 @@ private fun FallbackCurrentLocationButton(onClick: () -> Unit) {
 @Composable
 private fun CurrentLocationIcon() {
     Icon(
-        painter = painterResource(DesignSystemR.drawable.ic_search),
+        painter = painterResource(DesignSystemR.drawable.ic_location_current),
         contentDescription = null,
         tint = ColorBlack,
         modifier = Modifier.size(24.dp),

@@ -144,7 +144,7 @@ internal fun CouponTicket(
 private fun CouponTrailing(status: IssuedCouponStatus) {
     when (status) {
         IssuedCouponStatus.ISSUED -> Image(
-            painter = painterResource(DesignSystemR.drawable.ic_chevron_right_30),
+            painter = painterResource(DesignSystemR.drawable.ic_chevron_right),
             contentDescription = null,
             modifier = Modifier.size(30.dp),
         )
