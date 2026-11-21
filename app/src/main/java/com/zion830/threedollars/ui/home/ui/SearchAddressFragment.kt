@@ -82,7 +82,7 @@ class SearchAddressFragment : BaseFragment<FragmentSearchByAddressBinding, HomeV
                     },
                     modifier = Modifier.focusRequester(focusRequester),
                     placeholder = stringResource(CommonR.string.search_by_address_hint),
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, showKeyboardOnFocus = false),
                 )
                 LaunchedEffect(Unit) {
                     if (keyword.isNotEmpty()) onSearchKeywordChanged(keyword)
