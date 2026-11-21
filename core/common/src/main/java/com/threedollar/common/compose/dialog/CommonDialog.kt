@@ -175,23 +175,23 @@ private fun DialogActionButton(
             modifier = modifier,
             style = AppButtonStyle.Destructive,
         )
-        return
-    }
-    Button(
-        onClick = button.onClick,
-        modifier = modifier.height(48.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = ColorWhite),
-        border = BorderStroke(1.dp, Gray40),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Text(
-            text = button.text,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W600,
-            fontSize = dpToSp(14),
-            color = Gray50,
-            textAlign = TextAlign.Center
-        )
+    } else {
+        Button(
+            onClick = button.onClick,
+            modifier = modifier.height(48.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = ColorWhite),
+            border = BorderStroke(1.dp, Gray40),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Text(
+                text = button.text,
+                fontFamily = PretendardFontFamily,
+                fontWeight = FontWeight.W600,
+                fontSize = dpToSp(14),
+                color = Gray50,
+                textAlign = TextAlign.Center
+            )
+        }
     }
 }
 

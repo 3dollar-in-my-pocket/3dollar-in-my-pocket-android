@@ -24,7 +24,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -164,9 +163,8 @@ internal fun CouponUseConfirmDialog(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ConfirmButton(
+                CancelButton(
                     text = stringResource(CommonR.string.cancel),
-                    background = Gray50,
                     onClick = onCancel,
                     modifier = Modifier.weight(1f),
                 )
@@ -182,9 +180,8 @@ internal fun CouponUseConfirmDialog(
 }
 
 @Composable
-private fun ConfirmButton(
+private fun CancelButton(
     text: String,
-    background: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -192,7 +189,7 @@ private fun ConfirmButton(
         modifier = modifier
             .height(48.dp)
             .clip(RoundedCornerShape(12.dp))
-            .background(background)
+            .background(Gray50)
             .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {

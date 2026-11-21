@@ -78,7 +78,7 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | Bottom (하단 탭) | 높이 60, 아이콘 24 + 라벨 12 medium, 선택 main/red · 미선택 gray/40, My 탭만 배경 gray/100 · 구분선 gray/80 | `activity_home.xml` `nav_view` + `MainActivity` |
 | SearchField | 높이 50, radius 12 | `fragment_search_by_address.xml` |
 | Tabs | Width 속성: Fill = 같은 폭, Hug = 글자 길이에 맞춤(넘치면 가로 스크롤). 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | Fill: `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` / Hug: 가게 상세 탭 · 가게 제보 메뉴 카테고리 탭 |
-| Button | Style(Primary · Secondary · Destructive) × Size(Medium 48 · Small 34) × State(Enabled · Disabled). Medium 모서리 12, Small 모서리 10 | `base.compose.AppButton` (`core/designsystem`, Compose). XML 화면은 아직 직접 그림 |
+| Button | Style(Primary · Secondary · Destructive) × Size(Medium 48 · Small 34) × State(Enabled · Disabled). Medium 모서리 12, Small 모서리 10 | `base.compose.AppButton` (`core/designsystem`, Compose). XML 화면과 일부 Compose 화면(가게 정보 수정 나가기·재시도 다이얼로그)은 아직 직접 그림 |
 | Chip · Badge · Rating · SelectRow · TextField · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
 
 **`AppButton` 규격** (피그마 `ㄴ Button`)

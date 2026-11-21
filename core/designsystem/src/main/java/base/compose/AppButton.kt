@@ -31,6 +31,7 @@ enum class AppButtonSize(
     val horizontalPadding: Dp,
     val iconSize: Dp,
     val fontSize: Int,
+    val lineHeight: Int,
     val fontWeight: FontWeight,
 ) {
     Medium(
@@ -39,6 +40,7 @@ enum class AppButtonSize(
         horizontalPadding = 12.dp,
         iconSize = 24.dp,
         fontSize = 14,
+        lineHeight = 20,
         fontWeight = FontWeight.SemiBold,
     ),
     Small(
@@ -47,6 +49,7 @@ enum class AppButtonSize(
         horizontalPadding = 10.dp,
         iconSize = 16.dp,
         fontSize = 12,
+        lineHeight = 18,
         fontWeight = FontWeight.Bold,
     ),
 }
@@ -93,9 +96,11 @@ fun AppButton(
             fontFamily = PretendardFontFamily,
             fontWeight = size.fontWeight,
             fontSize = dpToSp(size.fontSize),
+            lineHeight = dpToSp(size.lineHeight),
             letterSpacing = (-0.01).em,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false),
         )
         trailingIcon?.let {
             Icon(painter = it, contentDescription = null, tint = contentColor, modifier = Modifier.size(size.iconSize))
