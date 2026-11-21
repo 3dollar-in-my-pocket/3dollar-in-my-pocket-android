@@ -59,11 +59,11 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
 import base.compose.AppButton
 import base.compose.AppButtonSize
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray40
 import base.compose.Gray70
 import base.compose.Gray80
 import base.compose.PretendardFontFamily
@@ -295,53 +295,25 @@ private fun MenuPhotoSourceDialog(
                     .clip(RoundedCornerShape(12.dp)),
             )
             Spacer(modifier = Modifier.height(20.dp))
-            PhotoSourceButton(
+            AppButton(
                 text = stringResource(CommonR.string.menu_extraction_pick_gallery),
-                iconRes = DesignSystemR.drawable.ic_menu_extraction_gallery,
                 onClick = onPickGallery,
+                modifier = Modifier.fillMaxWidth(),
+                style = AppButtonStyle.Outline,
+                leadingIcon = painterResource(DesignSystemR.drawable.ic_menu_extraction_gallery),
             )
             Spacer(modifier = Modifier.height(12.dp))
-            PhotoSourceButton(
+            AppButton(
                 text = stringResource(CommonR.string.menu_extraction_take_photo),
-                iconRes = DesignSystemR.drawable.ic_menu_extraction_camera,
                 onClick = onTakePhoto,
+                modifier = Modifier.fillMaxWidth(),
+                style = AppButtonStyle.Outline,
+                leadingIcon = painterResource(DesignSystemR.drawable.ic_menu_extraction_camera),
             )
         }
     }
 }
 
-@Composable
-private fun PhotoSourceButton(
-    text: String,
-    iconRes: Int,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(BorderStroke(1.dp, Gray40), RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            tint = Gray70,
-            modifier = Modifier.size(18.dp),
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W600,
-            fontFamily = PretendardFontFamily,
-            color = Gray70,
-        )
-    }
-}
 
 @Composable
 private fun MenuExtractionLoadingScreen(

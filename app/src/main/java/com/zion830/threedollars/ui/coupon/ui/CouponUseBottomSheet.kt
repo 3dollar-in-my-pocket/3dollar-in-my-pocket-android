@@ -163,10 +163,11 @@ internal fun CouponUseConfirmDialog(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                CancelButton(
+                AppButton(
                     text = stringResource(CommonR.string.cancel),
                     onClick = onCancel,
                     modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Dark,
                 )
                 AppButton(
                     text = stringResource(CommonR.string.store_detail_coupon_use),
@@ -179,26 +180,3 @@ internal fun CouponUseConfirmDialog(
     }
 }
 
-@Composable
-private fun CancelButton(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .height(48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(Gray50)
-            .noRippleClickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            color = ColorWhite,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(14),
-        )
-    }
-}
