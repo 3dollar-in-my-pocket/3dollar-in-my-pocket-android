@@ -79,7 +79,11 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | SearchField | 높이 50, radius 12 | `fragment_search_by_address.xml` |
 | Tabs | Width 속성: Fill = 같은 폭, Hug = 글자 길이에 맞춤(넘치면 가로 스크롤). 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | Fill: `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` / Hug: 가게 상세 탭 · 가게 제보 메뉴 카테고리 탭 |
 | Button | Medium 48 · Small 34, radius 12 | 공용 컴포넌트 없음 |
-| Chip · Badge · Rating · SelectRow · TextField · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+| Header | 여백 위 20 · 좌우 20 · 아래 16. 제목 bold 24(행간 32) gray/100 + 간격 4 + 서브타이틀(선택) bold 16(행간 24) gray/40, 세로 가운데. 설명(선택) regular 14 gray/80, 제목 아래 8 | `base.compose.AppHeader`. 일부 글자 색을 바꿀 때는 `annotatedSubtitle`. 쓰는 곳: 가게 제보 단계(가게 정보 · 카테고리 (n/10) · 메뉴 (선택) · 상세 정보 (선택)), 메뉴판 인식 결과, 메뉴 정보 수정 |
+| Top | 높이 56. Light = 흰 배경·글자/아이콘 gray/100, Dark = gray/100 배경·흰 글자/아이콘. 뒤로 24(누르는 영역 56), 제목 16/medium 가운데(좌우 72 안쪽), 오른쪽 아이콘 24 간격 8 · 오른쪽 여백 16 | `base.compose.AppTop`(`AppTopTheme`), 오른쪽 아이콘은 `AppTopIcon`(누르는 영역 48). 쓰는 곳: Light = 가게 제보 · 메뉴판 인식 · 가게 정보 수정 · 가게 소식 목록 / Dark = 내 쿠폰함. 아직 직접 그리는 곳: 회원가입, 팀 소개, 가게 기여자, 웹뷰, 마이페이지 제목, XML 화면(투표 목록 등) |
+| HandleBar | 영역 높이 20, 손잡이 40×5 · radius 2.5 · gray/20, 위 여백 7 | `base.compose.AppHandleBar`(드래그는 `modifier`로). 쓰는 곳: 홈 리스트·가게 미리보기 시트 |
+| ProgressBar | 두께 2, 트랙 gray/30, 채움 main/pink, 단계 수만큼 같은 폭(기본 4) | `base.compose.AppProgressBar(step)`. 쓰는 곳: 가게 제보 상단 |
+| Chip · Badge · Rating · SelectRow · TextField | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
 
 - 홈 인디케이터(Home bar)와 상태바는 시스템 요소라 디자인 시스템에 넣지 않습니다.
 - iOS는 하단 탭에 시스템 탭바를 쓰고 색·아이콘만 맞춥니다. Android는 피그마 Bottom을 그대로 그립니다.
