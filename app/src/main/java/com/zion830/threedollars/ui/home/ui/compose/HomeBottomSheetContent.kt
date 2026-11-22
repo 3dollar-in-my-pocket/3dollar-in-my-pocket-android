@@ -90,6 +90,7 @@ import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
 import base.compose.Gray30
+import base.compose.Gray40
 import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
@@ -151,7 +152,7 @@ import kotlin.math.roundToInt
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-private val MetadataSeparatorColor = Color(0xFFB7B7B7)
+private val MetadataSeparatorColor = Gray40
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
 private val HomeListCardHorizontalPadding = 20.dp
 private val PreviewImageDefaultSize = 120.dp
