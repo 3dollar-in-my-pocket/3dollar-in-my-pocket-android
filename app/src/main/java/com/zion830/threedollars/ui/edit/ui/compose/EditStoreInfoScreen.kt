@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import base.compose.AppTextField
 import base.compose.ColorWhite
 import base.compose.Pink
 import com.threedollar.common.R as CommonR
@@ -110,9 +111,10 @@ fun EditStoreInfoScreen(
 
                     SectionHeader(title = stringResource(CommonR.string.store_name))
                     Spacer(modifier = Modifier.height(8.dp))
-                    EditStoreTextField(
+                    AppTextField(
                         value = state.tempStoreName ?: state.storeName,
                         onValueChange = { onIntent(EditStoreContract.Intent.UpdateStoreName(it)) },
+                        modifier = Modifier.fillMaxWidth(),
                         placeholder = stringResource(CommonR.string.add_store_name_placeholder)
                     )
 

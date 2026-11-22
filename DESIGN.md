@@ -76,13 +76,15 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | Toast | 배경 gray/95, radius 10, 글자 14 흰색 | `custom_toast_black.xml` (`showCustomBlackToast`) |
 | BottomCTA (Full) | 높이 64, 배경 main/pink(비활성 gray/30), 글자 bold 16 흰색 | `AddStoreFlowScreen` · `EditStoreComponents` · `CompletionScreen` (화면마다 직접) |
 | Bottom (하단 탭) | 높이 60, 아이콘 24 + 라벨 12 medium, 선택 main/red · 미선택 gray/40, My 탭만 배경 gray/100 · 구분선 gray/80 | `activity_home.xml` `nav_view` + `MainActivity` |
-| SearchField | 높이 50, radius 12 | `fragment_search_by_address.xml` |
+| SearchField | 높이 50, radius 12, 배경 흰색 + 테두리 gray/30 1, 좌우 여백 12 · 간격 10, 왼쪽 아이콘 24 gray/100, 글자 medium 16 gray/100 · 플레이스홀더 gray/40, 지우기 `close` 20(입력값 있을 때만) | `base.compose.AppSearchField` — 주소 검색(`SearchAddressFragment`, XML 안 `ComposeView`) |
+| SelectRow | 높이 44, radius 12, 배경 흰색, 좌우 여백 16. Off = 테두리 gray/40 · 글자 regular 14 gray/60, On = 테두리 main/red · 글자 gray/100 · 오른쪽 체크 20 main/red | XML `@style/ThreeDollars.SelectRow`(`RadioButton`용) — 리뷰 신고(`dialog_report_review.xml`) · 가게 삭제 요청(`dialog_delete.xml`) / Compose `base.compose.AppSelectRow` |
+| TextField | 제목 semi-bold 14 gray/100(선택) + 박스 높이 44 · radius 8 · gray/10 · 좌우 여백 12, 글자 regular 14 gray/90 · 플레이스홀더 gray/50 · 단위 gray/70, 도움말 medium 12. 포커스 main/pink 테두리, 에러 main/red 테두리 + 빨간 도움말. 제목·박스·도움말 간격 7 | `base.compose.AppTextField` — 가게 제보 가게 이름(`RequiredInfoScreen`) · 메뉴 이름·개수·가격(`MenuEditorComponents`) · 가게 정보 수정 가게 이름(`EditStoreInfoScreen`) |
 | Tabs | Width 속성: Fill = 같은 폭, Hug = 글자 길이에 맞춤(넘치면 가로 스크롤). 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | Fill: `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` / Hug: 가게 상세 탭 · 가게 제보 메뉴 카테고리 탭 |
 | Button | Style(Primary · Secondary · Destructive · Outline · Dark) × Size(Medium 48 · Small 34) × State(Enabled · Disabled). Medium 모서리 12, Small 모서리 10 | `base.compose.AppButton` (`core/designsystem`, Compose). XML 화면은 아직 직접 그림 |
 | Chip | Filled 40·32 / Outline 36 / Filter 34 / Save 36 | `base.compose.AppChip` (Save는 서버가 그림). 아래 [Chip](#chip) |
 | Badge | 높이 20, radius 4, 글자 10 medium | `base.compose.AppBadge`. 아래 [Badge](#badge) |
 | Rating | 별 12 × 5, 여백 4 → 68×20, radius 4 | `base.compose.AppRating`. 아래 [Rating](#rating) |
-| SelectRow · TextField · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+| HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
 
 **`AppButton` 규격** (피그마 `ㄴ Button`)
 - `size`: `AppButtonSize.Medium` 높이 48 · 모서리 12 · 좌우 여백 12 · semi-bold 14 · 아이콘 24 / `Small` 높이 34 · 모서리 10 · 좌우 여백 10 · bold 12 · 아이콘 16. 아이콘-글자 간격 4
