@@ -32,6 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -44,7 +46,6 @@ import base.compose.Green
 import base.compose.Green100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
-import base.compose.Red
 import base.compose.dpToSp
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
@@ -473,40 +474,18 @@ fun ExitConfirmDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, Gray30, RoundedCornerShape(8.dp))
-                        .clickable { onDismiss() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.exit_confirm_dismiss),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = Gray100
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Red)
-                        .clickable { onConfirm() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.exit_confirm_exit),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = ColorWhite
-                    )
-                }
+                AppButton(
+                    text = stringResource(id = CommonR.string.exit_confirm_dismiss),
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Outline,
+                )
+                AppButton(
+                    text = stringResource(id = CommonR.string.exit_confirm_exit),
+                    onClick = onConfirm,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Destructive,
+                )
             }
         }
     }
@@ -546,40 +525,18 @@ fun RetrySubmitDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, Gray30, RoundedCornerShape(8.dp))
-                        .clickable { onDismiss() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.close),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = Gray100
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Pink)
-                        .clickable { onRetry() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.retry),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = ColorWhite
-                    )
-                }
+                AppButton(
+                    text = stringResource(id = CommonR.string.close),
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Outline,
+                )
+                AppButton(
+                    text = stringResource(id = CommonR.string.retry),
+                    onClick = onRetry,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Primary,
+                )
             }
         }
     }

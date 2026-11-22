@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
@@ -39,12 +38,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppButton
+import base.compose.AppChip
+import base.compose.AppChipSize
+import base.compose.AppChipStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray30
 import base.compose.Pink
-import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
 import com.threedollar.common.R as CommonR
@@ -298,28 +299,15 @@ private fun EditCategoryBottomSheet(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (localSelectedIds.isEmpty()) Gray30 else Pink)
-                .clickable(enabled = localSelectedIds.isNotEmpty()) {
-                    if (localSelectedIds.isNotEmpty()) {
-                        onConfirm(localSelectedIds.toList())
-                        onDismiss()
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_edit_complete),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Color.White
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.add_store_edit_complete),
+            onClick = {
+                onConfirm(localSelectedIds.toList())
+                onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = localSelectedIds.isNotEmpty(),
+        )
     }
 }
 
@@ -329,29 +317,21 @@ private fun EditCategorySelectChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .clip(CircleShape)
-            .background(if (category.isSelected) Pink200 else Gray10)
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        AsyncImage(
-            model = category.imageUrl,
-            contentDescription = category.name,
-            modifier = Modifier.size(16.dp)
-        )
-
-        Text(
-            text = category.name,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = if (category.isSelected) Pink else Gray100
-        )
-    }
+    AppChip(
+        text = category.name,
+        modifier = modifier,
+        style = AppChipStyle.Filled,
+        size = AppChipSize.Small,
+        selected = category.isSelected,
+        onClick = onClick,
+        leadingIcon = { iconModifier ->
+            AsyncImage(
+                model = category.imageUrl,
+                contentDescription = null,
+                modifier = iconModifier
+            )
+        }
+    )
 }
 
 @Preview(showBackground = true)

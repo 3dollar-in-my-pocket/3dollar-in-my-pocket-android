@@ -80,11 +80,61 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | SelectRow | 높이 44, radius 12, 배경 흰색, 좌우 여백 16. Off = 테두리 gray/40 · 글자 regular 14 gray/60, On = 테두리 main/red · 글자 gray/100 · 오른쪽 체크 20 main/red | XML `@style/ThreeDollars.SelectRow`(`RadioButton`용) — 리뷰 신고(`dialog_report_review.xml`) · 가게 삭제 요청(`dialog_delete.xml`) / Compose `base.compose.AppSelectRow` |
 | TextField | 제목 semi-bold 14 gray/100(선택) + 박스 높이 44 · radius 8 · gray/10 · 좌우 여백 12, 글자 regular 14 gray/90 · 플레이스홀더 gray/50 · 단위 gray/70, 도움말 medium 12. 포커스 main/pink 테두리, 에러 main/red 테두리 + 빨간 도움말. 제목·박스·도움말 간격 7 | `base.compose.AppTextField` — 가게 제보 가게 이름(`RequiredInfoScreen`) · 메뉴 이름·개수·가격(`MenuEditorComponents`) · 가게 정보 수정 가게 이름(`EditStoreInfoScreen`) |
 | Tabs | Width 속성: Fill = 같은 폭, Hug = 글자 길이에 맞춤(넘치면 가로 스크롤). 좌우 여백 16, 탭 안쪽 여백 12, 선택 밑줄 2 | Fill: `MyCouponsScreen` `CouponTabBar` · `fragment_my_review.xml` · `activity_poll_list.xml` · `fragment_community.xml` / Hug: 가게 상세 탭 · 가게 제보 메뉴 카테고리 탭 |
-| Button | Medium 48 · Small 34, radius 12 | 공용 컴포넌트 없음 |
-| Chip · Badge · Rating · HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+| Button | Style(Primary · Secondary · Destructive · Outline · Dark) × Size(Medium 48 · Small 34) × State(Enabled · Disabled). Medium 모서리 12, Small 모서리 10 | `base.compose.AppButton` (`core/designsystem`, Compose). XML 화면은 아직 직접 그림 |
+| Chip | Filled 40·32 / Outline 36 / Filter 34 / Save 36 | `base.compose.AppChip` (Save는 서버가 그림). 아래 [Chip](#chip) |
+| Badge | 높이 20, radius 4, 글자 10 medium | `base.compose.AppBadge`. 아래 [Badge](#badge) |
+| Rating | 별 12 × 5, 여백 4 → 68×20, radius 4 | `base.compose.AppRating`. 아래 [Rating](#rating) |
+| HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+
+**`AppButton` 규격** (피그마 `ㄴ Button`)
+- `size`: `AppButtonSize.Medium` 높이 48 · 모서리 12 · 좌우 여백 12 · semi-bold 14 · 아이콘 24 / `Small` 높이 34 · 모서리 10 · 좌우 여백 10 · bold 12 · 아이콘 16. 아이콘-글자 간격 4
+- `style`: `Primary`(배경 `Pink` · 흰 글자) · `Secondary`(배경 `Gray10` · 글자 `Gray70`) · `Destructive`(배경 `Red` · 흰 글자) · `Outline`(배경 흰색 · 테두리 `Gray40` 1 · 글자 `Gray50` — 밝은 팝업의 닫기/취소, 보조 선택) · `Dark`(배경 `Gray50` · 흰 글자 — 팝업의 회색 취소). 빨간 강조 버튼은 삭제가 아니어도 `Destructive`를 씁니다
+- `enabled = false`면 스타일과 관계없이 배경 `Gray30` · 흰 글자(테두리 없음)
+- `leadingIcon` · `trailingIcon`(Painter)은 글자색으로 칠합니다. 너비는 Medium은 화면이 정하고(`fillMaxWidth` · `weight`), Small은 글자 길이에 맞춥니다
+- 화면 아래 꽉 찬 버튼(높이 64)은 BottomCTA라 `AppButton`을 쓰지 않습니다
 
 - 홈 인디케이터(Home bar)와 상태바는 시스템 요소라 디자인 시스템에 넣지 않습니다.
 - iOS는 하단 탭에 시스템 탭바를 쓰고 색·아이콘만 맞춥니다. Android는 피그마 Bottom을 그대로 그립니다.
+
+### Chip
+
+누를 수 있는 알약입니다. 글자는 모두 semi-bold 14, 아이콘-글자 간격 4, 닫기(✕) 14는 글자색과 같은 색입니다. 상태는 `selected`, 닫기는 `onCloseClick`을 넘기면 보입니다.
+
+| 피그마 Style · Size | Compose | 높이 · 좌우 여백 · 모서리 · 아이콘 | Off | On | 쓰는 곳 |
+|---|---|---|---|---|---|
+| Filled · Medium | `AppChip(style = Filled)` | 40 · 12 · 알약 · 24 | 배경 `Gray10`, 글자 `Gray100` | 배경 `Pink200`, 글자 `Pink` | 가게 제보 음식 종류 선택(`MenuDetailScreen` · `MenuCategoryScreen`의 `CategoryChip`) |
+| Filled · Small | `AppChip(style = Filled, size = Small)` | 32 · 8 · 알약 · 24 | 〃 | 〃 | 가게 메뉴 수정 음식 종류(`EditMenuScreen`) |
+| Outline · Medium | `AppChip(style = Outline)` | 36 · 12 · 알약 · 20 | 배경 흰색, 테두리 `Gray30`, 글자 `Gray90` | 배경 `Pink100`, 테두리·글자 `Pink500` | 요즘 뜨는 간식 카테고리 칩 — 서버 값으로 그림(아래) |
+| Filter · Small | `AppChip(style = Filter)` | 34 · 10 · 10 · 20 | 배경 흰색, 테두리 `Gray30`, 글자 `Gray40` | 〃 | 홈 지도 상단 필터 — 서버 값으로 그림(아래) |
+| Save · Small | 없음 | 36 · 12 · 18 · 16 | 테두리 `Gray20`, 글자 `Gray70` | 배경 #FFF8F9(토큰 없음), 테두리 `Pink200`, 글자 `Pink` | 가게 상세·미리보기 저장·공유 — 서버 값으로 그림(아래) |
+
+- `size`는 Filled에만 의미가 있습니다(Outline·Filter는 크기가 하나).
+- 서버가 색을 내려주는 칩은 `colors = AppChipColors(...)`에 서버의 배경·테두리(색·두께)·글자색을 그대로 넣습니다. 테두리가 없으면 `border = null`.
+- 서버 값으로 그리는 칩 3곳은 `AppChip`으로 바꾸지 않고, 그리는 곳에서 앱이 정하는 값만 피그마 규격에 맞춥니다: 요즘 뜨는 간식 카테고리(`SDHomeCurationCategoryChip`, Outline) · 홈 지도 상단 필터(`HomeFilterChips`, Filter: 아이콘-글자 간격 4) · 가게 상세·미리보기 액션 바(`SDActionBarRow`, Save: 좌우 여백 12).
+- 이 칩들의 글자 크기·굵기·색은 서버가 글자 서식(`<span style="font-size:…; font-weight:…">`)으로 정합니다. `SDText`가 서식을 그대로 따르고, 서식이 없는 글자일 때만 semi-bold 14 / 줄 높이 20으로 그립니다. 아이콘 크기도 서버 값입니다.
+- 2026-11 기준 서버는 필터·카테고리 칩에 12px/500, 액션 바에 14px/600(방문 인증·리뷰 작성)·14px/400(공유·길안내)을 내려줍니다. 피그마(semi-bold 14)와 맞추려면 서버 값을 바꿔야 합니다.
+- `:core:ui`의 `SDChip`(서버 이미지 + 글자 한 줄, 배경 없음)과 `SDRatingChip`(서버가 별 이미지를 개수만큼 내려줌)은 서버가 내용과 모양을 정하는 요소라 `AppChip`·`AppRating`과 별개로 둡니다.
+
+### Badge
+
+누를 수 없는 정보 표시입니다. 높이 20, 모서리 4, 좌우 여백 4, 글자 medium 10(줄 높이 14). 앞 아이콘(16, 간격 2)은 `leadingIcon`.
+
+| 피그마 Style | Compose | 배경 · 글자 | 쓰는 곳 |
+|---|---|---|---|
+| Pink | `AppBadge(style = Pink)` | `Pink100` · `Pink` | 마이페이지 칭호(`backgroundColor = Gray80`) |
+| Gray | `AppBadge(style = Gray)` | `Gray10` · `Gray80` | 투표 댓글의 "작성자"·고른 선택지 (XML 화면이라 아직 직접 그림) |
+
+- 어두운 배경처럼 배경만 바꿀 때는 `backgroundColor`를 넘깁니다. 글자색은 Style을 따릅니다.
+- 칭호를 그리는 투표 목록·상세·댓글, 가게 리뷰 목록, 찜 목록 보기는 XML 화면이라 아직 직접 그립니다(후속).
+
+### Rating
+
+별점 표시입니다. 별 12 × 5, 여백 4 → 68×20, 모서리 4. `value`에 채운 별 개수(0~5)를 넣으면 채운 별 `Pink`, 빈 별 `Gray70`.
+
+| 피그마 Style | Compose | 배경 | 쓰는 곳 |
+|---|---|---|---|
+| Pink | `AppRating(style = Pink)` | `Pink100` | 가게 리뷰 목록 (XML `ScaleRatingBar`라 아직 직접 그림) |
+| None | `AppRating(style = None)` | 없음 | 우리 동네 소식(`FeedCard`). 별 색·개수는 서버 값(`filledColor`·`emptyColor`·`maxValue`)을 넘김 |
 
 ## 모듈
 

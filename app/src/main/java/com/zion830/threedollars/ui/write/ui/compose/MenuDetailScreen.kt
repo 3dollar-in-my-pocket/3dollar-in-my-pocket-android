@@ -1,10 +1,8 @@
 package com.zion830.threedollars.ui.write.ui.compose
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -18,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
@@ -43,12 +40,13 @@ import androidx.compose.ui.unit.sp
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
+import base.compose.AppButton
+import base.compose.AppChip
+import base.compose.AppChipStyle
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray30
 import base.compose.Gray50
 import base.compose.Pink
-import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
@@ -241,28 +239,15 @@ fun CategoryEditBottomSheet(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (localSelectedIds.isEmpty()) Gray30 else Pink)
-                .clickable(enabled = localSelectedIds.isNotEmpty()) {
-                    if (localSelectedIds.isNotEmpty()) {
-                        onConfirm(localSelectedIds.toList())
-                        onDismiss()
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_edit_complete),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Color.White
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.add_store_edit_complete),
+            onClick = {
+                onConfirm(localSelectedIds.toList())
+                onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = localSelectedIds.isNotEmpty(),
+        )
     }
 }
 
@@ -271,47 +256,21 @@ fun CategoryChip(
     category: CategoryModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    showBorder: Boolean = false,
-    isSelected: Boolean? = null
 ) {
-    val selected = isSelected ?: category.isSelected
-
-    Row(
-        modifier = modifier
-            .clip(CircleShape)
-            .then(
-                if (showBorder) {
-                    Modifier.border(1.dp, Pink, CircleShape)
-                } else {
-                    Modifier
-                }
+    AppChip(
+        text = category.name,
+        modifier = modifier,
+        style = AppChipStyle.Filled,
+        selected = category.isSelected,
+        onClick = onClick,
+        leadingIcon = { iconModifier ->
+            AsyncImage(
+                model = category.imageUrl,
+                contentDescription = null,
+                modifier = iconModifier,
             )
-            .background(
-                when {
-                    showBorder -> Color.Transparent
-                    selected -> Pink200
-                    else -> Gray10
-                }
-            )
-            .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        AsyncImage(
-            model = category.imageUrl,
-            contentDescription = category.name,
-            modifier = Modifier.size(16.dp)
-        )
-
-        Text(
-            text = category.name,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = if (selected) Pink else Gray100
-        )
-    }
+        },
+    )
 }
 
 @Preview(showBackground = true)

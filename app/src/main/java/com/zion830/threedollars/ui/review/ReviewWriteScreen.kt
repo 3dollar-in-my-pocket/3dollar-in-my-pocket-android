@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import base.compose.AppButton
 import base.compose.ColorF9737E
 import base.compose.ColorFf858F
 import base.compose.ColorWhite
@@ -56,7 +57,6 @@ import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
-import base.compose.Gray30
 import base.compose.Gray40
 import base.compose.Gray50
 import base.compose.Gray70
@@ -99,7 +99,12 @@ fun ReviewWriteScreen(
         Spacer(modifier = Modifier.height(16.dp))
         ReviewContentsField(contents = state.contents, onContentsChange = onContentsChange)
         Spacer(modifier = Modifier.height(28.dp))
-        SubmitButton(enabled = state.canSubmit, onClick = onSubmit)
+        AppButton(
+            text = stringResource(CommonR.string.review_write_submit),
+            onClick = onSubmit,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state.canSubmit,
+        )
     }
 }
 
@@ -316,25 +321,6 @@ private fun ClearFocusWhenKeyboardHides() {
         }
         view.viewTreeObserver.addOnGlobalLayoutListener(listener)
         onDispose { view.viewTreeObserver.removeOnGlobalLayoutListener(listener) }
-    }
-}
-
-@Composable
-private fun SubmitButton(enabled: Boolean, onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clip(ContentShape)
-            .background(if (enabled) ColorFf858F else Gray30)
-            .clickable(enabled = enabled, onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = stringResource(CommonR.string.review_write_submit),
-            style = pretendard(size = 14, weight = FontWeight.SemiBold, lineHeight = 20),
-            color = ColorWhite,
-        )
     }
 }
 
