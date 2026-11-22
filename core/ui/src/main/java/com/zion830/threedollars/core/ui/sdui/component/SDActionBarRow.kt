@@ -20,7 +20,7 @@ import com.zion830.threedollars.core.ui.sdui.element.SDButtonDefaults
 
 object SDActionBarRowDefaults {
     val ChipHeight = 36.dp
-    val ChipPadding = PaddingValues(horizontal = 14.dp)
+    val ChipPadding = PaddingValues(horizontal = 12.dp)
     const val CHIP_LINE_HEIGHT = 20
     val Spacing = 4.dp
 }
