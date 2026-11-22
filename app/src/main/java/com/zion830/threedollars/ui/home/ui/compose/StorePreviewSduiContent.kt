@@ -67,9 +67,9 @@ internal fun StorePreviewSduiContent(
                         if (canSave) {
                             StorePreviewIconButton(
                                 iconRes = if (isFavorite) {
-                                    DesignSystemR.drawable.ic_store_preview_bookmark_solid
+                                    DesignSystemR.drawable.ic_bookmark_solid
                                 } else {
-                                    DesignSystemR.drawable.ic_store_preview_bookmark_line
+                                    DesignSystemR.drawable.ic_bookmark_line
                                 },
                                 tint = if (isFavorite) Pink else Gray100,
                                 onClick = onFavoriteClick,

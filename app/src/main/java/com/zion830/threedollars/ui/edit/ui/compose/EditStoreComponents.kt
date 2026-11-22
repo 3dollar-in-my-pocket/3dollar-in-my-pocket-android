@@ -584,7 +584,7 @@ private fun EditSectionCardPreview() {
         EditSectionCard(
             title = "가게 정보",
             description = "붕어빵 가게 · 현금, 카드 · 월, 화, 수",
-            iconResId = DesignSystemR.drawable.ic_info,
+            iconResId = DesignSystemR.drawable.ic_information,
             onClick = {}
         )
     }

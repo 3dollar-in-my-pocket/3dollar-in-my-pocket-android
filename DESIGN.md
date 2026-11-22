@@ -65,7 +65,13 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 ## 아이콘
 
 - 원본은 피그마 `ㄴ Icons` 페이지의 `Icon` 프레임이고, 이름은 소문자 `snake_case`, 형태 접미어는 `_line` · `_solid`입니다. 방향은 `chevron_*`(꺾쇠) · `arrow_*`(화살표), 닫기는 `close`입니다.
-- Android drawable은 아직 옛 이름(`ic_arrow_left`, `ic_close_white`, 크기·색이 붙은 `ic_arrow_down_16_black` 등)을 씁니다. 피그마 이름으로 맞추는 작업은 후속입니다.
+- drawable 이름은 `ic_` + 피그마 이름입니다. 예: 피그마 `chevron_left` = `ic_chevron_left`, 일러스트 `face_gloomy` = `ic_face_gloomy`. iOS는 접두어 없이 `chevron_left`입니다.
+- 피그마 이름으로 맞춘 것: `ic_chevron_left`(24dp) · `ic_chevron_right`(30dp) · `ic_location_solid` · `ic_location_line` · `ic_location_current` · `ic_delete`(휴지통) · `ic_information` · `ic_fire_solid` · `ic_bookmark_line` · `ic_bookmark_solid`, 일러스트 `ic_face_gloomy` · `ic_bungeoppang_default` · `ic_face_colored_sad` · `ic_face_colored_smile`. 원래부터 같은 이름: `ic_heart_fill` · `ic_heart_line` · `ic_fire_line` · `ic_mappin_focused_on` · `ic_mappin_focused_off` · `ic_check` · `ic_change` · `ic_map` · `ic_list` · `ic_plus` · `ic_zoom`.
+- 아직 옛 이름인 것 (tint·크기로 합치면서 정리):
+  - 색·크기가 붙은 변형: `ic_arrow_down_16_black`, `ic_close_24_gray40`, `ic_copy_18`, `ic_refresh_20`, `ic_coupon_solid_16`, `ic_star_solid_pink_12` 등. `ic_arrow_right` · `ic_arrow_down_16*` · `ic_arrow_*_pink_20`은 꺾쇠 모양이라 `chevron_*`으로 갑니다. `ic_delete_16` · `ic_delete_20` · `ic_delete_small`은 휴지통이 아니라 원 안의 X(`delete_x`) 모양입니다. `ic_location_soild_12*`는 철자도 고칩니다.
+  - 피그마 이름이 이미 다른 모양에 쓰이는 것: `ic_close`(원 안의 X = `delete_x` 모양, 피그마 `close` 모양은 `ic_store_preview_close`), `ic_star_line`(원 안의 별), `ic_badge`(색 있는 메달 = 일러스트 Medal), `ic_write`(빨간 +), `ic_share`(옛 선 스타일, 피그마 `share` 모양은 `ic_store_preview_share`). 옛 이름을 다른 그림에 다시 쓰면 그 이름을 참조하던 코드가 에러 없이 다른 그림을 띄우므로 따로 정리합니다. 같은 이유로 돋보기 `ic_reading_glasses` → `ic_search`도 후속입니다.
+  - 일러스트 `bungeoppang_crying`(ㅠ 말풍선 붕어빵)은 `ic_empty` · `ic_list_view_empty` · `ic_no_store` 세 벌이 조금씩 다릅니다.
+  - `:common`과 `:core:designsystem`에 같은 이름이 있는 것(`ic_kakao` · `ic_apple` · `ic_setting` · `ic_no_store` 등)은 `:common`이 먼저 선언돼 `:common` 쪽이 화면에 나옵니다. 중복을 지울 때 어느 그림을 남길지 정합니다.
 - 하단 탭 아이콘은 tint가 아니라 벡터 `fillColor`에 색이 들어 있습니다(`ic_*` 선택, `ic_*_off` 비선택). 그래서 `itemIconTintList = null`이 필요합니다.
 
 ## 컴포넌트

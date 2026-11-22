@@ -72,7 +72,7 @@ class NearStoreNaverMapFragment(
                 moveToCurrentLocation()
             }
             Constants.MODE_ROAD_FOOD -> {
-                binding.btnFindLocation.setImageResource(DesignSystemR.drawable.ic_search)
+                binding.btnFindLocation.setImageResource(DesignSystemR.drawable.ic_location_current)
             }
         }
     }
