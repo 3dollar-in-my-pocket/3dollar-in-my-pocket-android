@@ -18,12 +18,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,16 +39,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
+import base.compose.AppProgressBar
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import com.threedollar.common.R as CommonR
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray70
 import base.compose.Pink
@@ -127,12 +126,12 @@ fun AddStoreFlowScreen(
         }
     }
 
-    val progress = when (currentRoute) {
-        AddStoreRoute.REQUIRED_INFO -> 0.25f
-        AddStoreRoute.MENU_CATEGORY -> 0.5f
-        AddStoreRoute.MENU_DETAIL -> 0.75f
-        AddStoreRoute.STORE_DETAIL -> 1f
-        else -> 0f
+    val progressStep = when (currentRoute) {
+        AddStoreRoute.REQUIRED_INFO -> 1
+        AddStoreRoute.MENU_CATEGORY -> 2
+        AddStoreRoute.MENU_DETAIL -> 3
+        AddStoreRoute.STORE_DETAIL -> 4
+        else -> 0
     }
 
     val buttonText = when (currentRoute) {
@@ -201,7 +200,7 @@ fun AddStoreFlowScreen(
                         if (currentRoute != AddStoreRoute.COMPLETION) {
                             AddStoreTopBar(
                                 title = stringResource(CommonR.string.title_add_store),
-                                progress = progress,
+                                progressStep = progressStep,
                                 onBackClick = {
                                     if (!navController.popBackStack()) {
                                         onNavigateBack()
@@ -378,59 +377,24 @@ fun AddStoreFlowScreen(
 @Composable
 private fun AddStoreTopBar(
     title: String,
-    progress: Float,
+    progressStep: Int,
     onBackClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
-        TopAppBar(
-            title = {
-                Text(
-                    text = title,
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    fontFamily = PretendardFontFamily,
-                    fontWeight = FontWeight.W400,
-                    fontSize = 16.sp,
-                    color = Gray100
-                )
-            },
-            navigationIcon = {
-                IconButton(onClick = onBackClick) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = stringResource(CommonR.string.cd_back),
-                        tint = Gray100
-                    )
-                }
-            },
-            actions = {
-                IconButton(onClick = onCloseClick) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_close_gray100_24),
-                        contentDescription = stringResource(CommonR.string.close)
-                    )
-                }
-            },
-            backgroundColor = Color.White,
-            contentColor = Color.Black,
-            elevation = 0.dp
-        )
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(2.dp)
-                .background(Gray30)
+        AppTop(
+            title = title,
+            onBackClick = onBackClick,
+            backContentDescription = stringResource(CommonR.string.cd_back),
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(progress)
-                    .height(2.dp)
-                    .background(Pink)
+            AppTopIcon(
+                painter = painterResource(R.drawable.ic_close_gray100_24),
+                contentDescription = stringResource(CommonR.string.close),
+                onClick = onCloseClick,
             )
         }
+        AppProgressBar(step = progressStep)
     }
 }
 
@@ -439,29 +403,7 @@ private fun AddStoreTopBar(
 private fun AddStoreTopBarPreview() {
     AddStoreTopBar(
         title = "가게 제보",
-        progress = 0.5f,
-        onBackClick = {},
-        onCloseClick = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AddStoreTopBarProgress25Preview() {
-    AddStoreTopBar(
-        title = "가게 제보",
-        progress = 0.25f,
-        onBackClick = {},
-        onCloseClick = {}
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun AddStoreTopBarProgress100Preview() {
-    AddStoreTopBar(
-        title = "가게 제보",
-        progress = 1f,
+        progressStep = 2,
         onBackClick = {},
         onCloseClick = {}
     )

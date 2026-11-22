@@ -15,7 +15,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
@@ -26,9 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppHeader
 import base.compose.Gray100
 import com.threedollar.common.R as CommonR
-import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.Red
@@ -94,77 +93,65 @@ private fun MenuCategoryContent(
         modifier = modifier
             .fillMaxSize()
             .background(Color.White)
-            .padding(horizontal = 24.dp)
-            .padding(top = 32.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_select_category_title),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W700,
-                fontSize = 24.sp,
-                color = Gray100
-            )
-            Text(
-                text = buildAnnotatedString {
-                    if (selectedCount == 10) {
-                        withStyle(style = SpanStyle(color = Red)) {
-                            append("($selectedCount/10)")
-                        }
-                    } else {
-                        append("(")
-                        val countColor = if (selectedCount == 0) Gray50 else Pink
-                        withStyle(style = SpanStyle(color = countColor)) {
+        AppHeader(
+            title = stringResource(CommonR.string.add_store_select_category_title),
+            annotatedSubtitle = buildAnnotatedString {
+                if (selectedCount == 10) {
+                    withStyle(style = SpanStyle(color = Red)) {
+                        append("($selectedCount/10)")
+                    }
+                } else {
+                    append("(")
+                    if (selectedCount > 0) {
+                        withStyle(style = SpanStyle(color = Pink)) {
                             append("$selectedCount")
                         }
-                        append("/10)")
+                    } else {
+                        append("$selectedCount")
                     }
-                },
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W700,
-                fontSize = 16.sp,
-                color = Gray100
-            )
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        if (onMenuExtractionClick != null) {
-            MenuExtractionBanner(onClick = onMenuExtractionClick)
-            Spacer(modifier = Modifier.height(32.dp))
-        } else {
-            Spacer(modifier = Modifier.height(12.dp))
-        }
-
-        categorySections.forEachIndexed { index, section ->
-            Text(
-                text = section.title,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W600,
-                fontSize = 14.sp,
-                color = Gray100
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                section.categories.forEach { category ->
-                    CategoryChip(
-                        category = category,
-                        onClick = { onCategoryClick(category) }
-                    )
+                    append("/10)")
                 }
+            },
+        )
+        Column(modifier = Modifier.padding(horizontal = 20.dp)) {
+            Spacer(modifier = Modifier.height(4.dp))
+
+            if (onMenuExtractionClick != null) {
+                MenuExtractionBanner(onClick = onMenuExtractionClick)
+                Spacer(modifier = Modifier.height(32.dp))
+            } else {
+                Spacer(modifier = Modifier.height(12.dp))
             }
 
-            if (index < categorySections.size - 1) {
-                Spacer(modifier = Modifier.height(20.dp))
+            categorySections.forEachIndexed { index, section ->
+                Text(
+                    text = section.title,
+                    fontFamily = PretendardFontFamily,
+                    fontWeight = FontWeight.W600,
+                    fontSize = 14.sp,
+                    color = Gray100
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    section.categories.forEach { category ->
+                        CategoryChip(
+                            category = category,
+                            onClick = { onCategoryClick(category) }
+                        )
+                    }
+                }
+
+                if (index < categorySections.size - 1) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                }
             }
         }
     }

@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import base.compose.AppTheme
+import base.compose.AppTop
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -218,35 +219,11 @@ private fun StorePostListTopBar(
     storeName: String,
     onBack: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(ColorWhite),
-    ) {
-        Image(
-            painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .padding(start = 16.dp)
-                .size(24.dp)
-                .noRippleClickable(onClick = onBack),
-        )
-        if (storeName.isNotBlank()) {
-            Text(
-                text = stringResource(CommonR.string.store_post_list_title, storeName),
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(horizontal = 56.dp),
-                color = Gray100,
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Medium,
-                fontSize = dpToSp(16),
-                maxLines = 1,
-            )
-        }
-    }
+    AppTop(
+        title = if (storeName.isNotBlank()) stringResource(CommonR.string.store_post_list_title, storeName) else null,
+        onBackClick = onBack,
+        backContentDescription = stringResource(CommonR.string.cd_back),
+    )
 }
 
 @Composable

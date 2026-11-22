@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -60,6 +58,9 @@ import androidx.compose.ui.window.DialogWindowProvider
 import base.compose.AppButton
 import base.compose.AppButtonSize
 import base.compose.AppButtonStyle
+import base.compose.AppHeader
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
@@ -382,13 +383,8 @@ private fun MenuExtractionResultScreen(
         val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
         LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
             item {
-                Text(
-                    text = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.W700,
-                    fontFamily = PretendardFontFamily,
-                    color = Gray100,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 16.dp),
+                AppHeader(
+                    title = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
                 )
             }
             stickyHeader {
@@ -427,37 +423,16 @@ private fun MenuExtractionTopBar(
     onBack: (() -> Unit)?,
     onClose: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(ColorWhite),
+    AppTop(
+        title = title,
+        onBackClick = onBack,
+        backContentDescription = stringResource(CommonR.string.cd_back),
     ) {
-        if (onBack != null) {
-            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
-                Icon(
-                    painter = painterResource(DesignSystemR.drawable.ic_arrow_left),
-                    contentDescription = stringResource(CommonR.string.cd_back),
-                    tint = Gray100,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        }
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100,
-            modifier = Modifier.align(Alignment.Center),
+        AppTopIcon(
+            painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
+            contentDescription = stringResource(CommonR.string.close),
+            onClick = onClose,
         )
-        IconButton(onClick = onClose, modifier = Modifier.align(Alignment.CenterEnd)) {
-            Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
-                contentDescription = stringResource(CommonR.string.close),
-                tint = Color.Unspecified,
-            )
-        }
     }
 }
 

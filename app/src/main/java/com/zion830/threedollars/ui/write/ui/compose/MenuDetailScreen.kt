@@ -29,14 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppHeader
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
@@ -45,7 +43,6 @@ import base.compose.AppChip
 import base.compose.AppChipStyle
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
@@ -114,19 +111,7 @@ private fun MenuDetailScreenContent(
         item {
             val menuDetailTitle = stringResource(CommonR.string.add_store_menu_detail_title)
             val optionalText = stringResource(CommonR.string.add_store_optional)
-            Text(
-                text = buildAnnotatedString {
-                    append("$menuDetailTitle ")
-                    withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                        append(optionalText)
-                    }
-                },
-                fontSize = 24.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Gray100,
-                modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 20.dp, bottom = 16.dp),
-            )
+            AppHeader(title = menuDetailTitle, subtitle = optionalText)
             if (onImageMenuAddClick != null) {
                 MenuImageAddButton(
                     onClick = onImageMenuAddClick,

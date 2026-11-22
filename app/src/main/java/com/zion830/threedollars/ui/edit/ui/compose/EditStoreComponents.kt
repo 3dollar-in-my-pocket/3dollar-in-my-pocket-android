@@ -34,6 +34,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import base.compose.AppButton
 import base.compose.AppButtonStyle
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -46,7 +48,6 @@ import base.compose.Green
 import base.compose.Green100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
-import base.compose.dpToSp
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -59,39 +60,16 @@ fun EditStoreTopBar(
     showBackButton: Boolean = false,
     onBackClick: (() -> Unit)? = null
 ) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .padding(horizontal = 16.dp),
+    AppTop(
+        title = title,
+        modifier = modifier,
+        onBackClick = onBackClick.takeIf { showBackButton },
+        backContentDescription = stringResource(id = CommonR.string.cd_back),
     ) {
-        if (showBackButton && onBackClick != null) {
-            Icon(
-                painter = painterResource(id = DesignSystemR.drawable.ic_arrow_left),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(alignment = Alignment.CenterStart)
-                    .size(24.dp)
-                    .clickable { onBackClick() },
-                tint = Gray100
-            )
-        }
-        Text(
-            text = title,
-            fontSize = dpToSp(16),
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100,
-            modifier = Modifier.align(alignment = Alignment.Center)
-        )
-        Icon(
+        AppTopIcon(
             painter = painterResource(id = DesignSystemR.drawable.ic_close_gray100_24),
             contentDescription = stringResource(id = CommonR.string.close),
-            modifier = Modifier
-                .align(alignment = Alignment.CenterEnd)
-                .size(24.dp)
-                .clickable { onCloseClick() },
-            tint = Gray100
+            onClick = onCloseClick,
         )
     }
 }

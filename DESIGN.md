@@ -84,7 +84,10 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
 | Chip | Filled 40·32 / Outline 36 / Filter 34 / Save 36 | `base.compose.AppChip` (Save는 서버가 그림). 아래 [Chip](#chip) |
 | Badge | 높이 20, radius 4, 글자 10 medium | `base.compose.AppBadge`. 아래 [Badge](#badge) |
 | Rating | 별 12 × 5, 여백 4 → 68×20, radius 4 | `base.compose.AppRating`. 아래 [Rating](#rating) |
-| HandleBar · ProgressBar · Header · Top | 피그마 각 페이지 참고 | 공용 컴포넌트 없음 |
+| Header | 여백 위 20 · 좌우 20 · 아래 16. 제목 bold 24(행간 32) gray/100 + 간격 4 + 서브타이틀(선택) bold 16(행간 24) gray/40, 세로 가운데. 설명(선택) regular 14 gray/80, 제목 아래 8 | `base.compose.AppHeader`. 일부 글자 색을 바꿀 때는 `annotatedSubtitle`. 쓰는 곳: 가게 제보 단계(가게 정보 · 카테고리 (n/10) · 메뉴 (선택) · 상세 정보 (선택)), 메뉴판 인식 결과, 메뉴 정보 수정 |
+| Top | 높이 56. Light = 흰 배경·글자/아이콘 gray/100, Dark = gray/100 배경·흰 글자/아이콘. 뒤로 24(누르는 영역 56), 제목 16/medium 가운데(좌우 72 안쪽), 오른쪽 아이콘 24 간격 8 · 오른쪽 여백 16 | `base.compose.AppTop`(`AppTopTheme`), 오른쪽 아이콘은 `AppTopIcon`(누르는 영역 48). 쓰는 곳: Light = 가게 제보 · 메뉴판 인식 · 가게 정보 수정 · 가게 소식 목록 / Dark = 내 쿠폰함. 아직 직접 그리는 곳: 회원가입, 팀 소개, 가게 기여자, 웹뷰, 마이페이지 제목, XML 화면(투표 목록 등) |
+| HandleBar | 영역 높이 20, 손잡이 40×5 · radius 2.5 · gray/20, 위 여백 7 | `base.compose.AppHandleBar`(드래그는 `modifier`로). 쓰는 곳: 홈 리스트·가게 미리보기 시트 |
+| ProgressBar | 두께 2, 트랙 gray/30, 채움 main/pink, 단계 수만큼 같은 폭(기본 4) | `base.compose.AppProgressBar(step)`. 쓰는 곳: 가게 제보 상단 |
 
 **`AppButton` 규격** (피그마 `ㄴ Button`)
 - `size`: `AppButtonSize.Medium` 높이 48 · 모서리 12 · 좌우 여백 12 · semi-bold 14 · 아이콘 24 / `Small` 높이 34 · 모서리 10 · 좌우 여백 10 · bold 12 · 아이콘 16. 아이콘-글자 간격 4
