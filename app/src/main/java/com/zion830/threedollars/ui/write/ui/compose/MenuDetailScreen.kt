@@ -3,7 +3,6 @@ package com.zion830.threedollars.ui.write.ui.compose
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -41,11 +40,11 @@ import androidx.compose.ui.unit.sp
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
 import com.threedollar.common.analytics.ScreenName
+import base.compose.AppButton
 import base.compose.AppChip
 import base.compose.AppChipStyle
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray30
 import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
@@ -240,28 +239,15 @@ fun CategoryEditBottomSheet(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(if (localSelectedIds.isEmpty()) Gray30 else Pink)
-                .clickable(enabled = localSelectedIds.isNotEmpty()) {
-                    if (localSelectedIds.isNotEmpty()) {
-                        onConfirm(localSelectedIds.toList())
-                        onDismiss()
-                    }
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_edit_complete),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Color.White
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.add_store_edit_complete),
+            onClick = {
+                onConfirm(localSelectedIds.toList())
+                onDismiss()
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = localSelectedIds.isNotEmpty(),
+        )
     }
 }
 
