@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppButton
 import base.compose.AppHeader
 import base.compose.Gray10
 import com.threedollar.common.R as CommonR
@@ -428,28 +429,16 @@ fun TimePickerBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Pink)
-                .clickable {
-                    val hour12 = hourOptions[selectedHourIndex]
-                    val isPm = selectedPeriodIndex == 1
-                    val hourOfDay = (hour12 % 12) + if (isPm) 12 else 0
-                    onTimeSelected(TimeUtils.formatOpeningHour(hourOfDay, minuteOptions[selectedMinuteIndex]))
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_confirm),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = Color.White
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.add_store_confirm),
+            onClick = {
+                val hour12 = hourOptions[selectedHourIndex]
+                val isPm = selectedPeriodIndex == 1
+                val hourOfDay = (hour12 % 12) + if (isPm) 12 else 0
+                onTimeSelected(TimeUtils.formatOpeningHour(hourOfDay, minuteOptions[selectedMinuteIndex]))
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
     }

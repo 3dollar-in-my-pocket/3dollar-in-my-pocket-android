@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -25,16 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.AppTop
 import base.compose.AppTopIcon
 import base.compose.ColorWhite
@@ -49,7 +48,6 @@ import base.compose.Green
 import base.compose.Green100
 import base.compose.Pink
 import base.compose.PretendardFontFamily
-import base.compose.Red
 import com.threedollar.domain.home.data.store.DayOfTheWeekType
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
@@ -386,50 +384,6 @@ private fun TimeBox(
 }
 
 /**
- * 가게 이름 입력 필드
- */
-@Composable
-fun EditStoreTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
-    placeholder: String,
-    modifier: Modifier = Modifier,
-    singleLine: Boolean = true
-) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(Gray10)
-            .padding(horizontal = 16.dp, vertical = 14.dp),
-        singleLine = singleLine,
-        textStyle = TextStyle(
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100
-        ),
-        cursorBrush = SolidColor(Pink),
-        decorationBox = { innerTextField ->
-            Box {
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeholder,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W400,
-                        fontFamily = PretendardFontFamily,
-                        color = Gray50
-                    )
-                }
-                innerTextField()
-            }
-        }
-    )
-}
-
-/**
  * 섹션 제목 + 다중선택 힌트
  */
 @Composable
@@ -498,40 +452,18 @@ fun ExitConfirmDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, Gray30, RoundedCornerShape(8.dp))
-                        .clickable { onDismiss() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.exit_confirm_dismiss),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = Gray100
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Red)
-                        .clickable { onConfirm() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.exit_confirm_exit),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = ColorWhite
-                    )
-                }
+                AppButton(
+                    text = stringResource(id = CommonR.string.exit_confirm_dismiss),
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Outline,
+                )
+                AppButton(
+                    text = stringResource(id = CommonR.string.exit_confirm_exit),
+                    onClick = onConfirm,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Destructive,
+                )
             }
         }
     }
@@ -571,40 +503,18 @@ fun RetrySubmitDialog(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .border(1.dp, Gray30, RoundedCornerShape(8.dp))
-                        .clickable { onDismiss() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.close),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = Gray100
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(Pink)
-                        .clickable { onRetry() },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = CommonR.string.retry),
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.W600,
-                        fontFamily = PretendardFontFamily,
-                        color = ColorWhite
-                    )
-                }
+                AppButton(
+                    text = stringResource(id = CommonR.string.close),
+                    onClick = onDismiss,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Outline,
+                )
+                AppButton(
+                    text = stringResource(id = CommonR.string.retry),
+                    onClick = onRetry,
+                    modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Primary,
+                )
             }
         }
     }
@@ -725,23 +635,6 @@ private fun TimePickerRowPreview() {
         onStartTimeClick = {},
         onEndTimeClick = {}
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun EditStoreTextFieldPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        EditStoreTextField(
-            value = "",
-            onValueChange = {},
-            placeholder = "가게 이름을 입력해 주세요"
-        )
-        EditStoreTextField(
-            value = "붕어빵 가게",
-            onValueChange = {},
-            placeholder = "가게 이름을 입력해 주세요"
-        )
-    }
 }
 
 @Preview(showBackground = true)

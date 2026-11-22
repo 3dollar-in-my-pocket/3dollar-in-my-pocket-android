@@ -89,25 +89,16 @@ class DeleteStoreDialog : BaseBottomSheetDialogFragment<DialogDeleteBinding>() {
             when (checkedId) {
                 R.id.btn_reason1 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
-                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
-                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
                     deleteType = DeleteType.NOSTORE
                 }
 
                 R.id.btn_reason2 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
-                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
-                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
                     deleteType = DeleteType.WRONGNOPOSITION
                 }
 
                 R.id.btn_reason3 -> {
                     binding.btnFinish.isEnabled = true
-                    binding.btnReason1.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
-                    binding.btnReason2.setTextColor(requireContext().getColor(DesignSystemR.color.gray40))
-                    binding.btnReason3.setTextColor(requireContext().getColor(DesignSystemR.color.gray100))
                     deleteType = DeleteType.OVERLAPSTORE
                 }
             }

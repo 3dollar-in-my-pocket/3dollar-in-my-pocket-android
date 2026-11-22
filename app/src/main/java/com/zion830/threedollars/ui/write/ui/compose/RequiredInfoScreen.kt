@@ -15,11 +15,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import base.compose.AppHeader
-import base.compose.Red
+import base.compose.AppTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -37,7 +35,6 @@ import com.threedollar.common.R as CommonR
 import base.compose.Gray100
 import base.compose.Gray30
 import base.compose.Gray40
-import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.domain.home.data.store.SalesType
@@ -101,37 +98,12 @@ private fun RequiredInfoContent(
         Column(modifier = Modifier.padding(start = 20.dp, end = 20.dp, bottom = 20.dp)) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(
-                text = stringResource(CommonR.string.store_name),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W600,
-                fontSize = 14.sp,
-                color = Gray100
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            OutlinedTextField(
+            AppTextField(
                 value = storeName,
                 onValueChange = { if (it.length <= 150) onStoreNameChange(it) },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = {
-                    Text(
-                        text = stringResource(CommonR.string.add_store_name_placeholder),
-                        fontFamily = PretendardFontFamily,
-                        fontWeight = FontWeight.W400,
-                        fontSize = 14.sp,
-                        color = Gray50
-                    )
-                },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    backgroundColor = Gray10,
-                    focusedBorderColor = Red,
-                    unfocusedBorderColor = Color.Transparent,
-                    textColor = Gray100
-                ),
-                shape = RoundedCornerShape(8.dp),
-                singleLine = true
+                title = stringResource(CommonR.string.store_name),
+                placeholder = stringResource(CommonR.string.add_store_name_placeholder),
             )
 
             Spacer(modifier = Modifier.height(20.dp))
