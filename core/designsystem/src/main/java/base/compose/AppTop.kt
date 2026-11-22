@@ -64,7 +64,7 @@ fun AppTop(
                     contentAlignment = Alignment.Center,
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_arrow_left),
+                        painter = painterResource(R.drawable.ic_chevron_left),
                         contentDescription = backContentDescription,
                         tint = theme.content,
                         modifier = Modifier.size(24.dp),
