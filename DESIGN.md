@@ -40,6 +40,7 @@ AI 에이전트와 개발자가 UI 코드를 작성할 때 읽는 문서입니�
 | green/100 ~ 500 | `green_100` ~ `green_500` | `Green100` ~ `Green500` | #F1FFF8 · #99E8C2 · #4DD794 · #00A455 · #00753D |
 
 - `gray40`은 2026-11 TH-1620 전까지 #878787이어서 피그마 gray/40과 달랐습니다. 피그마 값으로 맞추면서 임시 토큰 `color_B7B7B7` · `ColorB7B7B7`은 지웠습니다.
+- gray/40 글자는 흰 배경에서 옅습니다. 날짜·태그·placeholder·비선택 칩·비선택 탭·미입력 라벨처럼 보조 글자에만 씁니다. 본문과 신고·삭제 사유 같은 목록형 선택지 글자는 gray/60 이상을 씁니다. 새 화면에서 gray/40 글자를 쓰기 전에 iOS 같은 화면의 색을 확인합니다.
 - 피그마에 없는 옛 색(`color_main_red`·`ColorMainRed` #EE624C, `color_black` #1C1C1C, `color_828282` 등)은 정리 대상입니다. 이름에 main_red가 들어가도 피그마 main/red(#FF5C43)와 다르니 새 코드에서는 `red`를 씁니다.
 
 ## 타이포그래피
@@ -59,7 +60,7 @@ AI 에이전트와 개발자가 UI 코드를 작성할 때 읽는 문서입니�
 | 12/medium | `pretendard_medium.size_12dp` | `FontWeight.Medium`, 12 |
 | 10/medium | `pretendard_medium.size_10dp` | `FontWeight.Medium`, 10 |
 
-Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `PretendardFontFamily`에 모두 등록돼 있습니다. 기존 XML 중 semi-bold 자리에 `pretendard_bold.size_20dp`를 쓰는 화면은 아직 그대로라 새 스타일로 옮겨야 합니다.
+Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `PretendardFontFamily`에 모두 등록돼 있습니다. 20 크기는 피그마에 semi-bold만 있으니 XML에서 `pretendard_bold.size_20dp` 대신 `pretendard_semibold.size_20dp`를 씁니다. TH-1620 전에는 Regular·SemiBold가 없어서 Regular(400)는 Medium으로, SemiBold(600)는 Bold로 그려졌습니다. 그래서 굵기를 고를 때는 코드에 적힌 값이 아니라 피그마·iOS 값을 따릅니다.
 
 ## 아이콘
 
