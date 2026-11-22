@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import base.compose.dpToSp
@@ -23,6 +24,7 @@ fun SDChip(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = dpToSp(12),
     lineHeight: TextUnit = dpToSp(18),
+    fontWeight: FontWeight? = null,
     maxLines: Int = 1
 ) {
     val spacing = (model.contentSpacing ?: DEFAULT_CONTENT_SPACING).dp
@@ -34,10 +36,10 @@ fun SDChip(
         val image = @Composable { model.image?.let { SDImage(it) } }
         if (model.imageAlignment != SDImageAlignment.END) image()
         model.text?.let {
-            SDText(model = it, fontSize = fontSize, lineHeight = lineHeight, maxLines = maxLines)
+            SDText(model = it, fontSize = fontSize, fontWeight = fontWeight, lineHeight = lineHeight, maxLines = maxLines)
         }
         model.additionalText?.let {
-            SDText(model = it, fontSize = fontSize, lineHeight = lineHeight, maxLines = maxLines)
+            SDText(model = it, fontSize = fontSize, fontWeight = fontWeight, lineHeight = lineHeight, maxLines = maxLines)
         }
         if (model.imageAlignment == SDImageAlignment.END) image()
     }

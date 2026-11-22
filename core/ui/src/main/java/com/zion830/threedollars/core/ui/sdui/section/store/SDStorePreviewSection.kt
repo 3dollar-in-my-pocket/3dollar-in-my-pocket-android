@@ -243,6 +243,7 @@ private fun BodyCarousel(bodies: List<SDStorePreviewSectionModel.Body>) {
             SDText(
                 model = text,
                 fontSize = dpToSp(12),
+                fontWeight = FontWeight.Medium,
                 lineHeight = dpToSp(SDStorePreviewSectionDefaults.BODY_CAROUSEL_LINE_HEIGHT),
                 maxLines = SDStorePreviewSectionDefaults.BODY_CAROUSEL_MAX_LINES,
                 modifier = Modifier

@@ -44,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import base.compose.AppBadge
+import base.compose.AppBadgeStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -290,16 +292,10 @@ fun MyPageUserInformation(
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
+            AppBadge(
                 text = myPageUserInformation.medal?.name ?: "",
-                color = Pink,
-                fontSize = dpToSp(dp = 14),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W500,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Gray80)
-                    .padding(horizontal = 4.dp, vertical = 3.dp)
+                style = AppBadgeStyle.Pink,
+                backgroundColor = Gray80,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(

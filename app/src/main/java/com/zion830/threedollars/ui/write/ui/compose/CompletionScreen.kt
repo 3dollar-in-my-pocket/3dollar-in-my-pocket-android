@@ -37,6 +37,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppBadge
+import base.compose.AppBadgeStyle
 import base.compose.Gray10
 import com.threedollar.common.R as CommonR
 import base.compose.Gray100
@@ -45,7 +47,6 @@ import base.compose.Gray60
 import base.compose.Green
 import base.compose.Green200
 import base.compose.Pink
-import base.compose.Pink200
 import base.compose.PretendardFontFamily
 import coil3.compose.AsyncImage
 import com.threedollar.domain.home.data.store.CategoryModel
@@ -225,30 +226,22 @@ private fun CategoryTag(
     name: String,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .clip(RoundedCornerShape(4.dp))
-            .background(Pink200)
-            .padding(horizontal = 4.dp, vertical = 3.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        if (!imageUrl.isNullOrEmpty()) {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = name,
-                modifier = Modifier.size(16.dp)
-            )
-            Spacer(modifier = Modifier.width(2.dp))
+    AppBadge(
+        text = name,
+        modifier = modifier,
+        style = AppBadgeStyle.Pink,
+        leadingIcon = if (imageUrl.isNullOrEmpty()) {
+            null
+        } else {
+            { iconModifier ->
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    modifier = iconModifier
+                )
+            }
         }
-        Text(
-            text = name,
-            fontSize = 12.sp,
-            fontWeight = FontWeight.W500,
-            fontFamily = PretendardFontFamily,
-            color = Pink
-        )
-    }
+    )
 }
 
 @Composable

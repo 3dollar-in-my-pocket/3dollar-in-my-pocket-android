@@ -29,7 +29,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,7 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -57,14 +55,18 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.DialogWindowProvider
+import base.compose.AppButton
+import base.compose.AppButtonSize
+import base.compose.AppButtonStyle
+import base.compose.AppHeader
+import base.compose.AppTop
+import base.compose.AppTopIcon
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
-import base.compose.Gray40
 import base.compose.Gray70
 import base.compose.Gray80
-import base.compose.Pink
 import base.compose.PretendardFontFamily
 import com.threedollar.common.R as CommonR
 import com.threedollar.common.analytics.LogManager
@@ -238,23 +240,11 @@ fun MenuExtractionBanner(
             color = Gray100,
             modifier = Modifier.weight(1f),
         )
-        Box(
-            modifier = Modifier
-                .height(34.dp)
-                .clip(RoundedCornerShape(10.dp))
-                .background(Pink)
-                .clickable(onClick = onClick)
-                .padding(horizontal = 12.dp),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(CommonR.string.menu_extraction_banner_button),
-                fontSize = 12.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = ColorWhite,
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.menu_extraction_banner_button),
+            onClick = onClick,
+            size = AppButtonSize.Small,
+        )
     }
 }
 
@@ -306,51 +296,22 @@ private fun MenuPhotoSourceDialog(
                     .clip(RoundedCornerShape(12.dp)),
             )
             Spacer(modifier = Modifier.height(20.dp))
-            PhotoSourceButton(
+            AppButton(
                 text = stringResource(CommonR.string.menu_extraction_pick_gallery),
-                iconRes = DesignSystemR.drawable.ic_menu_extraction_gallery,
                 onClick = onPickGallery,
+                modifier = Modifier.fillMaxWidth(),
+                style = AppButtonStyle.Outline,
+                leadingIcon = painterResource(DesignSystemR.drawable.ic_menu_extraction_gallery),
             )
             Spacer(modifier = Modifier.height(12.dp))
-            PhotoSourceButton(
+            AppButton(
                 text = stringResource(CommonR.string.menu_extraction_take_photo),
-                iconRes = DesignSystemR.drawable.ic_menu_extraction_camera,
                 onClick = onTakePhoto,
+                modifier = Modifier.fillMaxWidth(),
+                style = AppButtonStyle.Outline,
+                leadingIcon = painterResource(DesignSystemR.drawable.ic_menu_extraction_camera),
             )
         }
-    }
-}
-
-@Composable
-private fun PhotoSourceButton(
-    text: String,
-    iconRes: Int,
-    onClick: () -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .border(BorderStroke(1.dp, Gray40), RoundedCornerShape(12.dp))
-            .clickable(onClick = onClick),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            tint = Gray70,
-            modifier = Modifier.size(18.dp),
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = text,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.W600,
-            fontFamily = PretendardFontFamily,
-            color = Gray70,
-        )
     }
 }
 
@@ -422,13 +383,8 @@ private fun MenuExtractionResultScreen(
         val markMenuAdding = rememberScrollToAddedMenu(listState = listState, selectCategory = selectedCategory)
         LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
             item {
-                Text(
-                    text = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.W700,
-                    fontFamily = PretendardFontFamily,
-                    color = Gray100,
-                    modifier = Modifier.padding(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 16.dp),
+                AppHeader(
+                    title = stringResource(CommonR.string.menu_extraction_result_title, state.recognizedMenuCount),
                 )
             }
             stickyHeader {
@@ -451,24 +407,13 @@ private fun MenuExtractionResultScreen(
                 )
             }
         }
-        Box(
+        AppButton(
+            text = stringResource(CommonR.string.menu_extraction_register),
+            onClick = onRegister,
             modifier = Modifier
                 .padding(horizontal = 20.dp, vertical = 12.dp)
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(12.dp))
-                .background(Pink)
-                .clickable(onClick = onRegister),
-            contentAlignment = Alignment.Center,
-        ) {
-            Text(
-                text = stringResource(CommonR.string.menu_extraction_register),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = ColorWhite,
-            )
-        }
+                .fillMaxWidth(),
+        )
     }
 }
 
@@ -478,37 +423,16 @@ private fun MenuExtractionTopBar(
     onBack: (() -> Unit)?,
     onClose: () -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(ColorWhite),
+    AppTop(
+        title = title,
+        onBackClick = onBack,
+        backContentDescription = stringResource(CommonR.string.cd_back),
     ) {
-        if (onBack != null) {
-            IconButton(onClick = onBack, modifier = Modifier.align(Alignment.CenterStart)) {
-                Icon(
-                    painter = painterResource(DesignSystemR.drawable.ic_chevron_left),
-                    contentDescription = stringResource(CommonR.string.cd_back),
-                    tint = Gray100,
-                    modifier = Modifier.size(24.dp),
-                )
-            }
-        }
-        Text(
-            text = title,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.W400,
-            fontFamily = PretendardFontFamily,
-            color = Gray100,
-            modifier = Modifier.align(Alignment.Center),
+        AppTopIcon(
+            painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
+            contentDescription = stringResource(CommonR.string.close),
+            onClick = onClose,
         )
-        IconButton(onClick = onClose, modifier = Modifier.align(Alignment.CenterEnd)) {
-            Icon(
-                painter = painterResource(DesignSystemR.drawable.ic_close_gray100_24),
-                contentDescription = stringResource(CommonR.string.close),
-                tint = Color.Unspecified,
-            )
-        }
     }
 }
 

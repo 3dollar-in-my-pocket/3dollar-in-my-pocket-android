@@ -467,7 +467,7 @@ private fun StoreContributorTopBar(
                 modifier = Modifier.align(Alignment.Center),
                 color = Gray100,
                 fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight.Medium,
                 fontSize = dpToSp(16),
                 lineHeight = dpToSp(24),
             )
