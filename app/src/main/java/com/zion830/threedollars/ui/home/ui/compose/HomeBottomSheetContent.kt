@@ -84,12 +84,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.LoadAdError
+import base.compose.AppHandleBar
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
 import base.compose.Gray30
+import base.compose.Gray40
 import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray70
@@ -152,7 +154,7 @@ import kotlin.math.roundToInt
 import com.threedollar.common.R as CommonR
 import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
-private val MetadataSeparatorColor = Color(0xFFB7B7B7)
+private val MetadataSeparatorColor = Gray40
 private val ImagePlaceholderColor = Color(0xFFD9D9D9)
 private val HomeListCardHorizontalPadding = 20.dp
 private val PreviewImageDefaultSize = 120.dp
@@ -797,20 +799,9 @@ private fun HomeBottomSheetHandle(
     onHandleDrag: (Float) -> Unit,
     onHandleDragEnd: (Float) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(HomeSheetLayout.HANDLE_HEIGHT_DP.dp)
-            .homeSheetDragGesture(onDrag = onHandleDrag, onDragEnd = onHandleDragEnd),
-        contentAlignment = Alignment.Center,
-    ) {
-        Box(
-            modifier = Modifier
-                .size(width = 40.dp, height = 5.dp)
-                .clip(RoundedCornerShape(3.dp))
-                .background(Gray20),
-        )
-    }
+    AppHandleBar(
+        modifier = Modifier.homeSheetDragGesture(onDrag = onHandleDrag, onDragEnd = onHandleDragEnd),
+    )
 }
 
 @Composable
@@ -976,9 +967,9 @@ private fun HomeListBasicCard(
                     card.storeInfo?.let { storeInfo ->
                         StorePreviewIconButton(
                             iconRes = if (storeInfo.isSubscriber) {
-                                DesignSystemR.drawable.ic_store_preview_bookmark_solid
+                                DesignSystemR.drawable.ic_bookmark_solid
                             } else {
-                                DesignSystemR.drawable.ic_store_preview_bookmark_line
+                                DesignSystemR.drawable.ic_bookmark_line
                             },
                             tint = if (storeInfo.isSubscriber) Pink else Gray100,
                             onClick = onFavoriteClick,
@@ -1025,7 +1016,7 @@ private fun HomeListEmptyCard(card: HomeListCardModel.EmptyCard) {
             text = title,
             color = card.header?.title?.fontColor.toColor(fallback = Gray100),
             fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.Bold,
             fontSize = dpToSp(16),
             lineHeight = dpToSp(24),
             maxLines = 2,

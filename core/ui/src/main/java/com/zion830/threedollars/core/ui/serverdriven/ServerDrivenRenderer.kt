@@ -248,6 +248,7 @@ fun SDActionButton(
             }
             SDTextRenderer(
                 text = button.text,
+                fontWeight = FontWeight.Medium,
                 fontSizeDp = 16,
                 lineHeightDp = 24,
             )

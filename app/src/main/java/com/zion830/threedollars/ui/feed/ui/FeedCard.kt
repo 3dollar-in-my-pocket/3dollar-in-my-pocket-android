@@ -1,6 +1,5 @@
 package com.zion830.threedollars.ui.feed.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,22 +25,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import base.compose.ColorB7B7B7
+import base.compose.AppRating
+import base.compose.AppRatingStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
+import base.compose.Gray40
+import base.compose.Gray70
 import base.compose.Gray95
 import base.compose.Pink
 import base.compose.PretendardFontFamily
 import base.compose.dpToSp
 import coil3.compose.AsyncImage
+import com.threedollar.common.R as CommonR
 import com.threedollar.common.compose.utils.toColor
 import com.threedollar.common.sdui.model.element.SDTextModel
 import com.threedollar.domain.feed.model.FeedBodyModel
@@ -57,8 +58,6 @@ import com.zion830.threedollars.ui.feed.model.FeedBadgeText
 import com.zion830.threedollars.ui.feed.model.FeedTime
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
-import com.threedollar.common.R as CommonR
-import com.zion830.threedollars.core.designsystem.R as DesignSystemR
 
 /** 서버 드리븐 피드 카드. 카테고리 → 헤더 → 본문 순서로 그리고, 탭하면 서버 `link` 로 이동한다. */
 @Composable
@@ -105,7 +104,7 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
             modifier = Modifier
                 .weight(1f, fill = false)
                 .padding(start = 12.dp),
-            color = ColorB7B7B7,
+            color = Gray40,
             fontFamily = PretendardFontFamily,
             fontWeight = FontWeight.Medium,
             fontSize = dpToSp(12),
@@ -162,7 +161,7 @@ private fun FeedHeader(header: FeedHeaderModel) {
                     fontWeight = FontWeight.Medium,
                     lineHeight = dpToSp(18),
                     maxLines = 1,
-                    color = it.fontColor.toColor(fallback = ColorB7B7B7),
+                    color = it.fontColor.toColor(fallback = Gray40),
                 )
             }
             header.content?.let {
@@ -212,7 +211,7 @@ private fun FeedHeaderMetadataRow(header: FeedHeaderModel) {
                         fontSize = dpToSp(12),
                         fontWeight = FontWeight.Medium,
                         maxLines = 1,
-                        color = it.fontColor.toColor(fallback = ColorB7B7B7),
+                        color = it.fontColor.toColor(fallback = Gray40),
                     )
                 }
             }
@@ -343,23 +342,13 @@ private fun FeedBodyText(
 
 @Composable
 private fun FeedRatingStars(rating: FeedRatingModel) {
-    val filled = rating.filledColor.toColor(fallback = Pink)
-    val empty = rating.emptyColor.toColor(fallback = Gray20)
-    val filledCount = rating.starRating.roundToInt().coerceIn(0, rating.maxRating)
-    Row(
-        modifier = Modifier.height(20.dp),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        repeat(rating.maxRating) { index ->
-            Image(
-                painter = painterResource(DesignSystemR.drawable.ic_star_solid_12),
-                contentDescription = null,
-                colorFilter = ColorFilter.tint(if (index < filledCount) filled else empty),
-                modifier = Modifier.size(12.dp),
-            )
-        }
-    }
+    AppRating(
+        value = rating.starRating.roundToInt(),
+        style = AppRatingStyle.None,
+        filledColor = rating.filledColor.toColor(fallback = Pink),
+        emptyColor = rating.emptyColor.toColor(fallback = Gray70),
+        maxValue = rating.maxRating,
+    )
 }
 
 @Composable

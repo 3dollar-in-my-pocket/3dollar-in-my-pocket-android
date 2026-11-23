@@ -241,7 +241,7 @@
     <string name="add_store_menu_detail_subtitle">메뉴명 • 메뉴 가격</string>
     <string name="add_store_add_store_detail">가게 세부 정보 추가하기</string>
     <string name="add_store_detail_subtitle">가게 형태 • 결제 방식 • 출몰 요일 • 출몰 시간대</string>
-    <string name="add_store_optional">선택</string>
+    <string name="add_store_optional">(선택)</string>
 
     <!-- Store Add - Descriptions & Hints -->
     <string name="add_store_name_hint_description">지금 당장 가게 이름을 알 수 없다면, 근처의 랜드마크와 함께 입력해 보세요.</string>

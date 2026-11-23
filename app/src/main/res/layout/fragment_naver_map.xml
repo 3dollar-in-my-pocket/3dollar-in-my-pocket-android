@@ -18,7 +18,7 @@
         android:layout_marginStart="20dp"
         android:background="@drawable/circle_white"
         android:elevation="8dp"
-        android:src="@drawable/ic_search"
+        android:src="@drawable/ic_location_current"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

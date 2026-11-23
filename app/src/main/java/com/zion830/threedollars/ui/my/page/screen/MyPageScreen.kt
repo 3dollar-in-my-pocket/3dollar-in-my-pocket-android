@@ -44,6 +44,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import base.compose.AppBadge
+import base.compose.AppBadgeStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
@@ -189,7 +191,7 @@ fun MyPageScreen(viewModel: MyPageViewModel) {
             MyPageSectionTitle(
                 MyPageSectionTitleData(
                     topTitle = stringResource(CommonR.string.str_section_title_vote),
-                    topIcon = LegacyCommonR.drawable.ic_fire,
+                    topIcon = LegacyCommonR.drawable.ic_fire_solid,
                     bottomTitle = stringResource(CommonR.string.str_section_bottom_vote)
                 ) {})
             Spacer(modifier = Modifier.height(16.dp))
@@ -290,16 +292,10 @@ fun MyPageUserInformation(
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
+            AppBadge(
                 text = myPageUserInformation.medal?.name ?: "",
-                color = Pink,
-                fontSize = dpToSp(dp = 14),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W500,
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Gray80)
-                    .padding(horizontal = 4.dp, vertical = 3.dp)
+                style = AppBadgeStyle.Pink,
+                backgroundColor = Gray80,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -481,7 +477,7 @@ fun MyVisitedShopDateItem(visitedData: MyPageShop.ShopVisitedData = myPageShopPr
     ) {
         Image(
             modifier = Modifier.size(14.dp),
-            painter = painterResource(id = if (visitedData.isExists) LegacyCommonR.drawable.ic_face_smile else LegacyCommonR.drawable.ic_face_sad),
+            painter = painterResource(id = if (visitedData.isExists) LegacyCommonR.drawable.ic_face_colored_smile else LegacyCommonR.drawable.ic_face_colored_sad),
             contentDescription = "방문 상태"
         )
         Spacer(modifier = Modifier.width(4.dp))
@@ -549,7 +545,7 @@ fun MyPageVoteCountItem(count: Int = 2042) {
     ) {
         Image(
             modifier = Modifier.size(32.dp),
-            painter = painterResource(id = LegacyCommonR.drawable.ic_fire),
+            painter = painterResource(id = LegacyCommonR.drawable.ic_fire_solid),
             contentDescription = "투표"
         )
         Text(

@@ -21,8 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -44,11 +42,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray0
 import base.compose.Gray20
 import base.compose.Gray40
-import base.compose.Gray50
 import base.compose.Gray60
 import base.compose.Gray80
 import base.compose.Gray100
@@ -272,29 +271,15 @@ private fun DisappearanceInquiryModal(
             }
         }
 
-        Button(
+        AppButton(
+            text = stringResource(CommonR.string.request_delete),
             onClick = onReportClick,
-            enabled = item.selectedReason != null && !item.isSubmitting,
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                backgroundColor = Red,
-                contentColor = ColorWhite,
-                disabledBackgroundColor = Gray20,
-                disabledContentColor = Gray50,
-            ),
-            elevation = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 16.dp)
-                .height(48.dp),
-        ) {
-            Text(
-                text = stringResource(CommonR.string.request_delete),
-                fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W700,
-                fontSize = 14.sp,
-            )
-        }
+                .padding(top = 16.dp),
+            style = AppButtonStyle.Destructive,
+            enabled = item.selectedReason != null && !item.isSubmitting,
+        )
     }
 }
 

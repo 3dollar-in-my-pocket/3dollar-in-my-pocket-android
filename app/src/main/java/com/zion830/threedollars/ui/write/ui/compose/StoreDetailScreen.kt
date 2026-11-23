@@ -38,14 +38,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import base.compose.AppButton
+import base.compose.AppHeader
 import base.compose.Gray10
 import com.threedollar.common.R as CommonR
 import base.compose.Gray100
@@ -105,36 +104,15 @@ fun StoreDetailContent(
             modifier = Modifier
                 .weight(1f)
                 .verticalScroll(rememberScrollState())
-                .padding(vertical = 20.dp)
+                .padding(bottom = 20.dp)
         ) {
-            val detailTitle = stringResource(CommonR.string.add_store_detail_title)
-            val optionalText = stringResource(CommonR.string.add_store_optional)
-            Text(
-                text = buildAnnotatedString {
-                    append("$detailTitle ")
-                    withStyle(style = SpanStyle(color = Gray50, fontSize = 16.sp)) {
-                        append(optionalText)
-                    }
-                },
-                fontSize = 24.sp,
-                fontWeight = FontWeight.W600,
-                fontFamily = PretendardFontFamily,
-                color = Gray100,
-                modifier = Modifier.padding(horizontal = 20.dp)
+            AppHeader(
+                title = stringResource(CommonR.string.add_store_detail_title),
+                subtitle = stringResource(CommonR.string.add_store_optional),
+                description = stringResource(CommonR.string.add_store_detail_description),
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = stringResource(CommonR.string.add_store_detail_description),
-                fontSize = 14.sp,
-                fontWeight = FontWeight.W400,
-                fontFamily = PretendardFontFamily,
-                color = Gray70,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
-
-            Spacer(modifier = Modifier.height(36.dp))
+            Spacer(modifier = Modifier.height(20.dp))
 
             PaymentMethodSection(
                 selectedPaymentMethods = selectedPaymentMethods,
@@ -451,28 +429,16 @@ fun TimePickerBottomSheet(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(Pink)
-                .clickable {
-                    val hour12 = hourOptions[selectedHourIndex]
-                    val isPm = selectedPeriodIndex == 1
-                    val hourOfDay = (hour12 % 12) + if (isPm) 12 else 0
-                    onTimeSelected(TimeUtils.formatOpeningHour(hourOfDay, minuteOptions[selectedMinuteIndex]))
-                },
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = stringResource(CommonR.string.add_store_confirm),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.W700,
-                fontFamily = PretendardFontFamily,
-                color = Color.White
-            )
-        }
+        AppButton(
+            text = stringResource(CommonR.string.add_store_confirm),
+            onClick = {
+                val hour12 = hourOptions[selectedHourIndex]
+                val isPm = selectedPeriodIndex == 1
+                val hourOfDay = (hour12 % 12) + if (isPm) 12 else 0
+                onTimeSelected(TimeUtils.formatOpeningHour(hourOfDay, minuteOptions[selectedMinuteIndex]))
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
     }
