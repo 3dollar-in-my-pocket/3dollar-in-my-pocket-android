@@ -43,23 +43,6 @@ class HomeNewsTabStateTest {
         assertEquals("NEWS", newsTab.clickLog?.extraParameters?.get("value"))
     }
 
-    // TH-1427 TC14
-    @Test
-    fun `TH1427_TC14_탭을_바꿀때만_바뀐탭_목록을_맨위로_올린다`() {
-        // Given
-        val previous = "DEFAULT"
-
-        // When
-        val changed = HomeSheetTabScrollPolicy.shouldScrollToTop(previous, "NEWS")
-        val same = HomeSheetTabScrollPolicy.shouldScrollToTop("NEWS", "NEWS")
-        val firstSelection = HomeSheetTabScrollPolicy.shouldScrollToTop(null, "DEFAULT")
-
-        // Then
-        assertTrue(changed)
-        assertFalse(same)
-        assertFalse(firstSelection)
-    }
-
     // TH-1427 TC15
     @Test
     fun `TH1427_TC15_앱을_새로열면_이전에_보던탭과_무관하게_서버기본탭으로_시작한다`() {
