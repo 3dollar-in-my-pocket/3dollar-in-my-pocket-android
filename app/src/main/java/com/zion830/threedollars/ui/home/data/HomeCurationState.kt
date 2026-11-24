@@ -158,8 +158,3 @@ object HomeCurationStateReducer {
         )
     }
 }
-
-object HomeSheetTabScrollPolicy {
-    fun shouldScrollToTop(previousTabId: String?, selectedTabId: String?): Boolean =
-        previousTabId != null && selectedTabId != null && previousTabId != selectedTabId
-}

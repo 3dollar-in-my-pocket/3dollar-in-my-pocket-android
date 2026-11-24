@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import base.compose.dpToSp
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
@@ -28,5 +29,6 @@ fun SDHomeCurationCategoryChip(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         fontSize = dpToSp(14),
         lineHeight = dpToSp(20),
+        fontWeight = FontWeight.SemiBold,
     )
 }

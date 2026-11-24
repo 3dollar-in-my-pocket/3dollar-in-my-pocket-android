@@ -175,7 +175,7 @@ private fun TopBar(
         Text(
             text = stringResource(id = CommonR.string.str_team_title), fontSize = dpToSp(dp = 16),
             fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.W400,
+            fontWeight = FontWeight.W500,
             color = Color.White, modifier = Modifier.align(Alignment.Center)
         )
     }
@@ -200,7 +200,7 @@ private fun TeamRow(
                 fontSize = dpToSp(dp = 12),
                 color = Pink200,
                 fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W400,
+                fontWeight = FontWeight.W500,
             )
             Spacer(
                 modifier = Modifier.height(4.dp)
@@ -275,7 +275,7 @@ private fun AdButton(
                 ),
                 color = Pink,
                 fontFamily = PretendardFontFamily,
-                fontWeight = FontWeight.W400,
+                fontWeight = FontWeight.W500,
                 maxLines = 1
             )
             Spacer(

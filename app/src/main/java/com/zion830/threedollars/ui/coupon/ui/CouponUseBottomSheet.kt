@@ -24,7 +24,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,12 +34,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import base.compose.AppButton
+import base.compose.AppButtonStyle
 import base.compose.ColorWhite
 import base.compose.Gray100
 import base.compose.Gray50
 import base.compose.Pink
 import base.compose.PretendardFontFamily
-import base.compose.Red
 import base.compose.dpToSp
 import com.threedollar.domain.store.model.IssuedCouponModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
@@ -107,23 +107,11 @@ internal fun CouponUseBottomSheet(
                 Spacer(modifier = Modifier.height(24.dp))
                 CouponTicket(coupon = coupon, showTrailing = false)
                 Spacer(modifier = Modifier.height(32.dp))
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .background(Pink)
-                        .noRippleClickable(enabled = !isUsing, onClick = onUseClick),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = stringResource(CommonR.string.store_detail_coupon_use),
-                        color = ColorWhite,
-                        fontFamily = PretendardFontFamily,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = dpToSp(16),
-                    )
-                }
+                AppButton(
+                    text = stringResource(CommonR.string.store_detail_coupon_use),
+                    onClick = { if (!isUsing) onUseClick() },
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
             if (isUsing) {
                 CircularProgressIndicator(color = Pink, modifier = Modifier.align(Alignment.Center))
@@ -175,44 +163,19 @@ internal fun CouponUseConfirmDialog(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                ConfirmButton(
+                AppButton(
                     text = stringResource(CommonR.string.cancel),
-                    background = Gray50,
                     onClick = onCancel,
                     modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Dark,
                 )
-                ConfirmButton(
+                AppButton(
                     text = stringResource(CommonR.string.store_detail_coupon_use),
-                    background = Red,
                     onClick = onConfirm,
                     modifier = Modifier.weight(1f),
+                    style = AppButtonStyle.Destructive,
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun ConfirmButton(
-    text: String,
-    background: Color,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .height(48.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(background)
-            .noRippleClickable(onClick = onClick),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = text,
-            color = ColorWhite,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = dpToSp(14),
-        )
     }
 }

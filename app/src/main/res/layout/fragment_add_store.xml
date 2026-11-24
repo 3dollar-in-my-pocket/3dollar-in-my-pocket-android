@@ -17,7 +17,7 @@
         android:background="@android:color/transparent"
         android:contentDescription="@null"
         android:foreground="?actionBarItemBackground"
-        android:src="@drawable/ic_arrow_left"
+        android:src="@drawable/ic_chevron_left"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
