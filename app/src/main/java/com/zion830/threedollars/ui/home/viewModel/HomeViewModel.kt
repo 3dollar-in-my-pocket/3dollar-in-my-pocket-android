@@ -73,6 +73,7 @@ import com.zion830.threedollars.ui.home.data.HomeCurationQuerySnapshot
 import com.zion830.threedollars.ui.home.data.HomeCurationCardImpressionDedup
 import com.zion830.threedollars.ui.home.data.HomeListCardFavorite
 import com.zion830.threedollars.ui.home.data.HomeListFavoriteRequestGate
+import com.zion830.threedollars.ui.home.data.HomeNewsSectionRequestGate
 import com.zion830.threedollars.ui.home.data.PendingSectionImpression
 import com.zion830.threedollars.ui.home.data.storePreviewStoreIdOrNull
 import com.zion830.threedollars.ui.home.data.toFallbackStorePreviewScreen
@@ -154,6 +155,9 @@ class HomeViewModel @Inject constructor(
     private val curationCategoryJobs = mutableMapOf<String, Job>()
     private val curationSectionImpression = PendingSectionImpression<SDLogModel>()
     private val homeListSectionImpression = PendingSectionImpression<SDImpressionLogModel>()
+    private var newsSectionJob: Job? = null
+    private val newsSectionRequestGate = HomeNewsSectionRequestGate()
+    private val newsSectionImpression = PendingSectionImpression<SDLogModel>()
     private val curationCardImpressionDedup = HomeCurationCardImpressionDedup()
     private var curationRequestSerial = 0L
     private var curationQuery: HomeCurationQuerySnapshot? = null
@@ -309,6 +313,7 @@ class HomeViewModel @Inject constructor(
         _mapQuery.value = curationQuery
         fetchHomeListSection(state = state, cursor = null, append = false, landingStoreId = landingStoreId)
         requestHomeCurationSection(forceRefresh = refreshCuration)
+        requestHomeNewsSection()
     }
 
     /**
@@ -378,6 +383,7 @@ class HomeViewModel @Inject constructor(
         SDLogSender.sendClick(tab.clickLog)
         _curationState.update { HomeCurationStateReducer.selectTab(it, tab.tabId) }
         requestHomeCurationSection()
+        requestHomeNewsSection()
         flushSectionImpressions()
     }
 
@@ -421,6 +427,32 @@ class HomeViewModel @Inject constructor(
                 throw cancelled
             } catch (_: Exception) {
                 _curationState.update { HomeCurationStateReducer.failSection(it, "", requestId) }
+            }
+        }
+    }
+
+    private fun requestHomeNewsSection() {
+        val revision = curationQuery?.revision ?: return
+        val current = _curationState.value
+        val tab = current.tabs.firstOrNull { it.tabId == current.selectedTabId && it.viewType == SDHomeBottomSheetViewType.NEWS } ?: return
+        if (!newsSectionRequestGate.tryStart(revision, tab.tabId)) return
+
+        newsSectionJob?.cancel()
+        newsSectionImpression.clear()
+        newsSectionJob = viewModelScope.launch {
+            try {
+                screenRepository.getHomeNewsSection(newsTabId = tab.tabId).collect { response ->
+                    val section = response.data
+                    if (response.ok && section != null) {
+                        SDLogSender.sendImpression(newsSectionImpression.offer(section.impressionLog, _curationState.value.isNewsTabSelected))
+                    } else {
+                        newsSectionRequestGate.fail(revision, tab.tabId)
+                    }
+                }
+            } catch (cancelled: CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                newsSectionRequestGate.fail(revision, tab.tabId)
             }
         }
     }
@@ -484,6 +516,7 @@ class HomeViewModel @Inject constructor(
     private fun flushSectionImpressions() {
         val state = _curationState.value
         SDLogSender.sendImpression(curationSectionImpression.flush(isVisible = state.isCurationTabSelected))
+        SDLogSender.sendImpression(newsSectionImpression.flush(isVisible = state.isNewsTabSelected))
         homeListSectionImpression.flush(isVisible = state.isStoreListVisible)?.let { SDClickLogger.send(it) }
     }
 
@@ -577,7 +610,6 @@ class HomeViewModel @Inject constructor(
                                 ?.let { updateStorePreviewFromCard(previousSelectedStoreId, it) }
                         }
                     }
-                    sendHomeListImpressionLogs(section.cards)
                     homeListSectionImpression.offer(section.impressionLog, isVisible = _curationState.value.isStoreListVisible)
                         ?.let { SDClickLogger.send(it) }
                 } else {
@@ -843,14 +875,12 @@ class HomeViewModel @Inject constructor(
         card.clickLog?.let { SDClickLogger.send(it) }
     }
 
-    private fun sendHomeListImpressionLogs(cards: List<HomeListCardModel>) {
-        cards.forEach { card ->
-            when (card) {
-                is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
-                is HomeListCardModel.AdCard -> SDLogSender.sendImpression(card.card.impressionLog)
-            }
+    fun onHomeListCardVisible(card: HomeListCardModel) {
+        when (card) {
+            is HomeListCardModel.BasicCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.AdMobCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.EmptyCard -> card.impressionLog?.let { SDClickLogger.send(it) }
+            is HomeListCardModel.AdCard -> SDLogSender.sendImpression(card.card.impressionLog)
         }
     }
 
@@ -977,6 +1007,7 @@ class HomeViewModel @Inject constructor(
         val tabs = screen.bottomSheetTabs()
         _curationState.update { HomeCurationStateReducer.updateTabs(it, tabs, resetSelection) }
         requestHomeCurationSection()
+        requestHomeNewsSection()
         if (resetSelection) flushSectionImpressions()
     }
 

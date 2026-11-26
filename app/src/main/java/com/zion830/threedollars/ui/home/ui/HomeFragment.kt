@@ -427,6 +427,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     onLoadNextPage = viewModel::fetchNextHomeListSection,
                     onAdMobClick = viewModel::sendClickAdMobCard,
                     onAdCardClick = viewModel::openAdCard,
+                    onHomeListCardVisible = viewModel::onHomeListCardVisible,
                     onStorePreviewClick = { viewModel.setStoreDetailExpanded(true) },
                     fullListTopPx = homeBottomSheetFullListTopPx,
                     onFullListBackgroundVisibleChange = { isVisible ->
@@ -599,7 +600,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                 launch {
                     viewModel.curationState.map { it.isNewsTabSelected }.distinctUntilChanged().collect { selected ->
                         feedListViewModel.dispatch(FeedListUiIntent.OnTabSelectionChanged(selected))
-                        if (selected) sendFeedListPageView()
                     }
                 }
                 launch {
@@ -1139,10 +1139,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         isFirstLoad = false
     }
 
-    private fun sendFeedListPageView() {
-        LogManager.sendPageView(ScreenName.FEED_LIST, FEED_LIST_PAGE_VIEW_CLASS_NAME)
-    }
-
     override fun sendPageView(screen: ScreenName, extraParameters: Map<ParameterName, Any>) {
         viewModel.sendPageView()
     }
@@ -1156,5 +1152,3 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
         locationPermissionDialog = null
     }
 }
-
-private const val FEED_LIST_PAGE_VIEW_CLASS_NAME = "FeedListScreen"

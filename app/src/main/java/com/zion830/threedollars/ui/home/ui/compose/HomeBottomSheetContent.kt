@@ -125,6 +125,7 @@ import com.zion830.threedollars.ui.ads.SduiAdMobSlot
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.ui.FeedListScreen
+import com.zion830.threedollars.ui.home.data.HomeListVisibleCardTracker
 import com.zion830.threedollars.ui.home.ui.HomeSheetLayout
 import com.zion830.threedollars.ui.home.data.HomeCurationUiState
 import com.zion830.threedollars.ui.home.data.HomeCurationAdPolicy
@@ -184,6 +185,7 @@ fun HomeBottomSheetContent(
     onCardFavoriteClick: (HomeListCardModel.BasicCard) -> Unit = {},
     onAdMobClick: (HomeListCardModel.AdMobCard) -> Unit = {},
     onAdCardClick: (SDAdCardModel) -> Unit = {},
+    onHomeListCardVisible: (HomeListCardModel) -> Unit = {},
     onStorePreviewClick: () -> Unit = {},
     fullListTopPx: Int,
     collapsedPeekHeight: Dp = HomeSheetLayout.COLLAPSED_PEEK_HEIGHT_DP.dp,
@@ -244,6 +246,7 @@ fun HomeBottomSheetContent(
         }
         val coroutineScope = rememberCoroutineScope()
         val nearbyListState = rememberLazyListState()
+        val nearbyVisibleCardTracker = remember(nearbyListResetRevision) { HomeListVisibleCardTracker() }
         var consumedNearbyListResetRevision by rememberSaveable { mutableLongStateOf(nearbyListResetRevision) }
         LaunchedEffect(nearbyListResetRevision) {
             if (nearbyListResetRevision != consumedNearbyListResetRevision) {
@@ -664,6 +667,8 @@ fun HomeBottomSheetContent(
                                 onAdCardClick = onAdCardClick,
                                 modifier = Modifier.fillMaxSize(),
                                 onCardFavoriteClick = onCardFavoriteClick,
+                                onCardVisible = onHomeListCardVisible,
+                                visibleCardTracker = nearbyVisibleCardTracker,
                             )
                         },
                         newsContent = {
@@ -825,8 +830,26 @@ private fun HomeListContent(
     onAdCardClick: (SDAdCardModel) -> Unit,
     modifier: Modifier = Modifier,
     onCardFavoriteClick: (HomeListCardModel.BasicCard) -> Unit = {},
+    onCardVisible: (HomeListCardModel) -> Unit = {},
+    visibleCardTracker: HomeListVisibleCardTracker = remember { HomeListVisibleCardTracker() },
 ) {
     val cards = homeListSection.cards
+    val currentCards by rememberUpdatedState(cards)
+    val currentOnCardVisible by rememberUpdatedState(onCardVisible)
+
+    LaunchedEffect(listState, visibleCardTracker) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val viewportHeight = layoutInfo.viewportSize.height
+            val visibleCards = currentCards
+            layoutInfo.visibleItemsInfo
+                .filter { it.offset < viewportHeight && it.offset + it.size > 0 }
+                .mapNotNull { item -> visibleCards.getOrNull(item.index)?.takeIf { it.cardId == item.key } }
+        }.collect { visibleCards ->
+            val entered = visibleCardTracker.update(visibleCards.map { it.cardId }).toSet()
+            visibleCards.filter { it.cardId in entered }.forEach { currentOnCardVisible(it) }
+        }
+    }
 
     LaunchedEffect(listState, homeListSection.cursor?.nextCursor, cards.size) {
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0 }

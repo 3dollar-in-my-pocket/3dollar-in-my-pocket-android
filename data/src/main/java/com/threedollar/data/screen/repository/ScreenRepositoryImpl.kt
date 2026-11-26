@@ -7,9 +7,11 @@ import com.threedollar.common.serverdriven.model.SDScreenModel
 import com.threedollar.common.serverdriven.model.SDSectionModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
 import com.threedollar.data.screen.asCardsSectionModel
 import com.threedollar.data.screen.asCurationCardsModel
 import com.threedollar.data.screen.asCurationModel
+import com.threedollar.data.screen.asNewsModel
 import com.threedollar.data.screen.asModel
 import com.threedollar.data.screen.datasource.ScreenRemoteDataSource
 import com.threedollar.domain.screen.repository.ScreenRepository
@@ -100,6 +102,17 @@ class ScreenRepositoryImpl @Inject constructor(
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asCurationModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<SDHomeNewsSectionModel>> =
+        screenRemoteDataSource.getHomeNewsSection(newsTabId).map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asNewsModel(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,

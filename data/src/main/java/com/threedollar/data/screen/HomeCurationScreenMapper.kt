@@ -23,6 +23,7 @@ import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
 import com.threedollar.common.sdui.model.section.home.SDHomeTabAppearanceModel
 import com.threedollar.network.data.screen.HomeBottomSheetTabAppearanceResponse
 import com.threedollar.network.data.screen.HomeBottomSheetTabResponse
@@ -31,6 +32,7 @@ import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationCategoryFilterResponse
 import com.threedollar.network.data.screen.HomeCurationItemResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
+import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import com.threedollar.network.data.screen.SDButtonResponse
 import com.threedollar.network.data.screen.SDChipResponse
 import com.threedollar.network.data.screen.SDClickLogResponse
@@ -43,6 +45,10 @@ import com.threedollar.network.data.screen.SDTextResponse
 
 fun HomeCurationSectionResponse.asCurationModel(): SDHomeCurationSectionModel = SDHomeCurationSectionModel(
     items = items.orEmpty().map { it.asCurationItemModel() },
+    impressionLog = impressionLog?.asSduiLogModel(),
+)
+
+fun HomeNewsSectionResponse.asNewsModel(): SDHomeNewsSectionModel = SDHomeNewsSectionModel(
     impressionLog = impressionLog?.asSduiLogModel(),
 )
 

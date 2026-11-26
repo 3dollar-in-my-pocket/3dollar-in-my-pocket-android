@@ -5,6 +5,7 @@ import com.threedollar.network.api.ServerApi
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
+import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import com.threedollar.network.data.screen.HomeListSectionResponse
 import com.threedollar.network.data.screen.StoreContributorHistoriesResponse
 import com.threedollar.network.data.screen.StoreContributorScreenResponse
@@ -68,6 +69,10 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>> = flow {
         emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
+    }
+
+    override fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>> = flow {
+        emit(apiResult(serverApi.getHomeNewsSection(newsTabId)))
     }
 
     override fun getHomeCurationCards(
