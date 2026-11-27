@@ -23,6 +23,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.data.screen.BottomNavigationResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
@@ -219,6 +220,9 @@ interface ServerApi {
         @Query("visitHistoriesCount") visitHistoriesCount: Int?,
         @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
+
+    @GET("/api/v1/screen/bottom-navigation")
+    suspend fun getBottomNavigation(): Response<BaseResponse<BottomNavigationResponse>>
 
     @GET("/api/v1/screen/home")
     suspend fun getHomeFilterScreen(

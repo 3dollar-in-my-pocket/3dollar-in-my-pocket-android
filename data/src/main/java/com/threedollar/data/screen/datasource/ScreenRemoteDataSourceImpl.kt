@@ -2,6 +2,7 @@ package com.threedollar.data.screen.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.screen.BottomNavigationResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
@@ -86,5 +87,9 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationCardsResponse>> = flow {
         emit(apiResult(serverApi.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
+    }
+
+    override fun getBottomNavigation(): Flow<BaseResponse<BottomNavigationResponse>> = flow {
+        emit(apiResult(serverApi.getBottomNavigation()))
     }
 }

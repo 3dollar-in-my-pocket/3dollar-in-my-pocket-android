@@ -1,6 +1,7 @@
 package com.threedollar.data.screen.repository
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.common.serverdriven.model.BottomNavigationTabModel
 import com.threedollar.common.serverdriven.model.HomeFilterScreenModel
 import com.threedollar.common.serverdriven.model.HomeListSectionModel
 import com.threedollar.common.serverdriven.model.SDScreenModel
@@ -9,6 +10,7 @@ import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
 import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
 import com.threedollar.data.screen.asCardsSectionModel
+import com.threedollar.data.screen.asTabModels
 import com.threedollar.data.screen.asCurationCardsModel
 import com.threedollar.data.screen.asCurationModel
 import com.threedollar.data.screen.asNewsModel
@@ -133,6 +135,17 @@ class ScreenRepositoryImpl @Inject constructor(
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asCurationCardsModel(),
+                message = it.message,
+                resultCode = it.resultCode,
+                error = it.error,
+            )
+        }
+
+    override fun getBottomNavigation(): Flow<BaseResponse<List<BottomNavigationTabModel>>> =
+        screenRemoteDataSource.getBottomNavigation().map {
+            BaseResponse(
+                ok = it.ok,
+                data = it.data?.asTabModels(),
                 message = it.message,
                 resultCode = it.resultCode,
                 error = it.error,
