@@ -28,6 +28,9 @@ data class MainTab(
     val destination: MainTabDestination,
     val clickLog: SDClickLogModel?,
 ) {
+    /** BottomNavigationView 메뉴 id. 탭 id 로 정해 화면 복원 때도 같은 탭을 가리킨다(대소문자 무시). */
+    val menuItemId: Int get() = id.lowercase().hashCode().takeIf { it != NO_MENU_ID } ?: 1
+
     /** 딥링크 탭은 탭을 선택하지 않고 링크 화면만 띄운다. */
     val isSelectable: Boolean get() = destination !is MainTabDestination.Deeplink
 
@@ -46,6 +49,9 @@ data class MainTab(
         const val ID_STORE_CREATE = "store_create"
         const val ID_COMMUNITY = "community"
         const val ID_MY = "my"
+
+        /** `Menu.NONE` 과 같은 값. 메뉴 id 로 쓸 수 없다. */
+        private const val NO_MENU_ID = 0
 
         /** 서버 응답이 없거나 쓸 수 없을 때의 기존 하드코딩 탭(홈/제보/커뮤니티/마이). */
         val defaults: List<MainTab> = listOf(

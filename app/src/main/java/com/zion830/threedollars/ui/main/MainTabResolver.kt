@@ -9,7 +9,7 @@ import com.threedollar.common.serverdriven.model.SDLinkModel
  * - `APP_DEFINED`: 앱이 id 로 기존 화면에 매핑, 앱에 없는 id 는 제외
  * - `DYNAMIC`: link WEB → 웹뷰 탭, APP_SCHEME → 딥링크 탭
  * - type 없음(구 응답): 아는 id 면 기존 화면, 아니면 WEB 링크만 웹뷰 탭
- * - 모르는 type 제외, 같은 화면·같은 id 는 첫 번째만, 최대 [MAX_TAB_COUNT]개
+ * - 모르는 type 제외, 같은 화면·같은 id(대소문자 무시)는 첫 번째만, 최대 [MAX_TAB_COUNT]개
  * - 응답이 없거나 홈 탭이 없으면 [MainTab.defaults]
  */
 object MainTabResolver {
@@ -25,12 +25,11 @@ object MainTabResolver {
     fun resolve(tabs: List<BottomNavigationTabModel>?, webBaseUrl: String): List<MainTab> {
         if (tabs.isNullOrEmpty()) return MainTab.defaults
 
-        val usedIds = mutableSetOf<String>()
+        val usedMenuIds = mutableSetOf<Int>()
         val usedAppDestinations = mutableSetOf<MainTabDestination>()
         val resolved = tabs.mapNotNull { tab ->
             val destination = destinationOf(tab, webBaseUrl) ?: return@mapNotNull null
             if (destination.isAppScreen && !usedAppDestinations.add(destination)) return@mapNotNull null
-            if (!usedIds.add(tab.id)) return@mapNotNull null
             MainTab(
                 id = tab.id,
                 label = tab.label,
@@ -38,7 +37,7 @@ object MainTabResolver {
                 selectedTintColor = tab.selectedTintColor,
                 destination = destination,
                 clickLog = tab.clickLog,
-            )
+            ).takeIf { usedMenuIds.add(it.menuItemId) }
         }.take(MAX_TAB_COUNT)
 
         return if (resolved.any { it.destination == MainTabDestination.Home }) resolved else MainTab.defaults

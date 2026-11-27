@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -35,6 +36,7 @@ class WebTabFragment : Fragment() {
             settings.domStorageEnabled = true
             settings.loadWithOverviewMode = true
             settings.useWideViewPort = true
+            webChromeClient = WebChromeClient()
         }
         this.webView = webView
         return FrameLayout(requireContext()).apply {
@@ -77,8 +79,21 @@ class WebTabFragment : Fragment() {
         webView.loadUrl(url, request.headers)
     }
 
+    override fun onResume() {
+        super.onResume()
+        webView?.onResume()
+    }
+
+    override fun onPause() {
+        webView?.onPause()
+        super.onPause()
+    }
+
     override fun onDestroyView() {
-        webView?.destroy()
+        webView?.let { view ->
+            (view.parent as? ViewGroup)?.removeView(view)
+            view.destroy()
+        }
         webView = null
         super.onDestroyView()
     }

@@ -265,13 +265,13 @@ class MainTabResolverTest {
 
     // TH-1650 TC8
     @Test
-    fun `TH1650_TC8_같은화면과_같은id는_첫번째만_남고_최대5개다`() {
+    fun `TH1650_TC8_같은화면과_대소문자만다른_같은id는_첫번째만_남고_최대5개다`() {
         // Given
         val response = listOf(
             tab("home"),
             tab("HOME"),
             tab("event", type = "DYNAMIC", link = SDLinkModel("WEB", "/events/point")),
-            tab("event", type = "DYNAMIC", link = SDLinkModel("WEB", "/events/other")),
+            tab("EVENT", type = "DYNAMIC", link = SDLinkModel("WEB", "/events/other")),
             tab("store_create"),
             tab("community"),
             tab("my"),
@@ -285,6 +285,7 @@ class MainTabResolverTest {
         assertEquals(MainTabResolver.MAX_TAB_COUNT, tabs.size)
         assertEquals(listOf("home", "event", "store_create", "community", "my"), tabs.map { it.id })
         assertEquals(MainTabDestination.Web("https://echo.dev.threedollars.co.kr/events/point"), tabs[1].destination)
+        assertEquals(tabs.size, tabs.map { it.menuItemId }.toSet().size)
     }
 
     // TH-1650 TC8

@@ -12,7 +12,6 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.login.data.AccessCheckModel
 import com.threedollar.domain.login.repository.LoginRepository
-import com.threedollar.domain.screen.repository.ScreenRepository
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.AppStatusRepository
 import com.zion830.threedollars.datasource.model.AppUpdateDialog
@@ -33,7 +32,6 @@ class SplashViewModel @Inject constructor(
     private val loginRepository: LoginRepository,
     private val homeRepository: HomeRepository,
     private val appStatusRepository: AppStatusRepository,
-    private val screenRepository: ScreenRepository,
     private val mainTabStore: MainTabStore,
 ) : BaseViewModel() {
 
@@ -57,9 +55,7 @@ class SplashViewModel @Inject constructor(
 
     /** 하단 탭 목록. 앱 상태·유저 조회와 병렬로 시작해 메인 진입 전까지 받아 둔다(TH-1650). */
     private val bottomNavigationJob: Job = viewModelScope.launch(coroutineExceptionHandler) {
-        screenRepository.getBottomNavigation().collect { response ->
-            if (response.ok) response.data?.let(mainTabStore::update)
-        }
+        mainTabStore.load()
     }
 
     init {

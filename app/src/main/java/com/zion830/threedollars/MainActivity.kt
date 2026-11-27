@@ -91,6 +91,9 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
     /** 화면 복원이 아닌 첫 생성인지. 첫 생성일 때만 기본 탭을 고른다. */
     private var isFirstCreate = false
 
+    /** 탭 응답을 받기 전에 들어온 탭 선택 딥링크의 탭 id. 응답을 받아 메뉴를 다시 만든 뒤 고른다. */
+    private var pendingTabId: String? = null
+
     override fun initView() {
         setDarkSystemBars()
         // 정상적으로 메인에 진입했으므로 다음 세션 만료를 다시 감지할 수 있도록 초기화한다.
@@ -115,6 +118,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         binding.navView.itemIconTintList = null
         mainTabs = MainTabResolver.resolve(mainTabStore.tabs, WebTabUrl.baseUrl(BuildConfig.DEBUG))
         buildTabMenu()
+        if (mainTabStore.tabs == null) loadTabsWithoutSplash(navController)
 
         viewModel.msgTextId.observe(this) {
             binding.container.showSnack(it, color = DesignSystemR.color.color_main_red)
@@ -148,6 +152,30 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
                 }
             }
         }
+    }
+
+    /**
+     * 스플래시를 거치지 않고 들어온 경우(외부 링크로 콜드 스타트, 프로세스 재시작 복원) 탭 응답을 직접 받는다.
+     * 받으면 메뉴를 다시 만들고, 지금 화면의 탭과 기다리던 탭 딥링크를 반영한다. 실패하면 기본 탭을 유지한다.
+     */
+    private fun loadTabsWithoutSplash(navController: NavController) {
+        lifecycleScope.launch {
+            if (!mainTabStore.load()) return@launch
+            mainTabs = MainTabResolver.resolve(mainTabStore.tabs, WebTabUrl.baseUrl(BuildConfig.DEBUG))
+            buildTabMenu()
+            navController.currentBackStackEntry?.let { entry ->
+                tabShownAt(entry.destination.id, entry.arguments)?.let(::checkTab)
+            }
+            pendingTabId?.let { tabId ->
+                pendingTabId = null
+                selectTabById(tabId)
+            }
+        }
+    }
+
+    /** 화면 이동 없이 선택 표시만 바꾼다. */
+    private fun checkTab(tab: MainTab) {
+        binding.navView.menu.findItem(tab.menuItemId)?.isChecked = true
     }
 
     /** 응답 순서대로 탭 메뉴를 만든다. 메뉴 id 는 탭 id 로 정해 화면 복원 때도 같은 탭을 가리킨다. */
@@ -188,9 +216,6 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         selectedTintColor?.let { runCatching { Color.parseColor(it) }.getOrNull() }
             ?: ContextCompat.getColor(this@MainActivity, DesignSystemR.color.red)
 
-    private val MainTab.menuItemId: Int
-        get() = id.hashCode().takeIf { it != Menu.NONE } ?: 1
-
     private val MainTab.defaultLabelRes: Int?
         get() = when (destination) {
             MainTabDestination.Home -> CommonR.string.title_home
@@ -218,10 +243,24 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
             openTab(tab)
         }
         // 이미 선택된 탭을 다시 눌렀을 때는 setOnItemSelectedListener 가 호출되지 않으므로 따로 받는다.
-        binding.navView.setOnItemReselectedListener { item -> tabOf(item.itemId)?.let(::sendTabClickLog) }
+        binding.navView.setOnItemReselectedListener { item ->
+            val tab = tabOf(item.itemId) ?: return@setOnItemReselectedListener
+            sendTabClickLog(tab)
+            if (isShowingOtherTabScreen(tab)) openTab(tab)
+        }
         // 딥링크 탭 이동보다 먼저 실행되도록 딥링크 처리 전에 예약한다.
         if (isFirstCreate) binding.navView.post { selectInitialTab() }
         navigateToMedalPageWithDeepLink(intent)
+    }
+
+    /**
+     * 선택 표시는 [tab]인데 화면은 다른 탭 화면인지. 탭 없이 화면만 연 경우(서버가 뺀 탭의 딥링크)나
+     * 복원된 웹 탭이 목록에 없는 경우 다시 눌러도 이동하지 않던 문제를 막는다. 탭 하위 화면(리스트뷰 등)은 그대로 둔다.
+     */
+    private fun isShowingOtherTabScreen(tab: MainTab): Boolean {
+        val entry = binding.navHostFragment.findNavController().currentBackStackEntry ?: return false
+        if (entry.destination.id !in TAB_DESTINATION_IDS) return false
+        return tabShownAt(entry.destination.id, entry.arguments)?.id != tab.id
     }
 
     /** 탭 화면을 연다. 딥링크 탭은 탭을 선택하지 않고 링크 화면만 띄우므로 false 를 돌려준다. */
@@ -285,9 +324,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
         }
     }
 
-    /** 탭 선택 딥링크(`tab?id=`). 없는 id 면 아무 일도 하지 않는다. */
+    /** 탭 선택 딥링크(`tab?id=`). 없는 id 면 아무 일도 하지 않는다. 탭 응답을 아직 못 받았으면 받은 뒤에 고른다. */
     private fun selectTabById(tabId: String) {
-        mainTabs.firstOrNull { it.id == tabId }?.let(::selectTabWithoutClickLog)
+        val tab = mainTabs.firstOrNull { it.id.equals(tabId, ignoreCase = true) }
+        when {
+            tab != null -> selectTabWithoutClickLog(tab)
+            mainTabStore.tabs == null -> pendingTabId = tabId
+        }
     }
 
     /** 첫 탭을 기본 선택한다. 홈은 nav graph 시작 화면이라 따로 열지 않는다. */
@@ -319,9 +362,7 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
     private fun initNavController(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, arguments ->
-            tabShownAt(destination.id, arguments)?.let { tab ->
-                binding.navView.menu.findItem(tab.menuItemId)?.isChecked = true
-            }
+            tabShownAt(destination.id, arguments)?.let(::checkTab)
             binding.navView.itemBackgroundResource = if (destination.id == R.id.navigation_mypage) {
                 DesignSystemR.color.gray100
             } else {
@@ -463,6 +504,13 @@ class MainActivity : BaseActivity<ActivityHomeBinding, UserInfoViewModel>({ Acti
 
         private const val EXTRA_RESUME_LINK = "extra_resume_link"
         private const val TAB_ICON_SIZE_DP = 24
+        private val TAB_DESTINATION_IDS = setOf(
+            R.id.navigation_home,
+            R.id.navigation_write,
+            R.id.navigation_vote,
+            R.id.navigation_mypage,
+            R.id.navigation_web_tab,
+        )
 
         /** [resumeLink]: 로그인 전에 열려던 딥링크. 메인을 띄운 뒤 그 위에서 이어서 연다(TH-1070). */
         fun getIntent(context: Context, resumeLink: String? = null): Intent =
