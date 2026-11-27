@@ -12,11 +12,15 @@ import com.threedollar.domain.home.data.advertisement.AdvertisementModelV2
 import com.threedollar.domain.home.repository.HomeRepository
 import com.threedollar.domain.login.data.AccessCheckModel
 import com.threedollar.domain.login.repository.LoginRepository
+import com.threedollar.domain.screen.repository.ScreenRepository
 import com.zion830.threedollars.GlobalApplication
 import com.zion830.threedollars.datasource.AppStatusRepository
 import com.zion830.threedollars.datasource.model.AppUpdateDialog
+import com.zion830.threedollars.ui.main.MainTabStore
+import com.zion830.threedollars.ui.main.joinWithin
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -28,7 +32,9 @@ class SplashViewModel @Inject constructor(
     private val sharedPrefUtils: SharedPrefUtils,
     private val loginRepository: LoginRepository,
     private val homeRepository: HomeRepository,
-    private val appStatusRepository: AppStatusRepository
+    private val appStatusRepository: AppStatusRepository,
+    private val screenRepository: ScreenRepository,
+    private val mainTabStore: MainTabStore,
 ) : BaseViewModel() {
 
     override val screenName: ScreenName = ScreenName.SPLASH
@@ -47,6 +53,13 @@ class SplashViewModel @Inject constructor(
             .getPackageInfo(GlobalApplication.instance.packageName, 0)
             .versionName
             .orEmpty()
+    }
+
+    /** 하단 탭 목록. 앱 상태·유저 조회와 병렬로 시작해 메인 진입 전까지 받아 둔다(TH-1650). */
+    private val bottomNavigationJob: Job = viewModelScope.launch(coroutineExceptionHandler) {
+        screenRepository.getBottomNavigation().collect { response ->
+            if (response.ok) response.data?.let(mainTabStore::update)
+        }
     }
 
     init {
@@ -125,5 +138,10 @@ class SplashViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    /** 하단 탭 응답을 최대 [MainTabStore.SPLASH_WAIT_MILLIS]만 기다린다. 늦으면 메인은 기본 탭으로 뜬다. */
+    suspend fun awaitBottomNavigation() {
+        bottomNavigationJob.joinWithin(MainTabStore.SPLASH_WAIT_MILLIS)
     }
 }
