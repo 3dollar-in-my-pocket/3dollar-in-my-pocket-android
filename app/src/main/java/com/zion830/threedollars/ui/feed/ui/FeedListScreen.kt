@@ -31,11 +31,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -90,13 +87,6 @@ internal fun FeedListScreen(
         onLoadNextPage = { onIntent(FeedListUiIntent.OnLoadNextPage) },
     )
     FeedVisibleCardTracker(listState = listState, onCardVisible = { onIntent(FeedListUiIntent.OnCardVisible(it)) })
-    var scrolledListRevision by rememberSaveable { mutableStateOf(state.listRevision) }
-    LaunchedEffect(state.listRevision) {
-        if (state.listRevision == scrolledListRevision) return@LaunchedEffect
-        listState.scrollToItem(0)
-        scrolledListRevision = state.listRevision
-    }
-    var failedAdCardIds by remember { mutableStateOf<Set<String>>(emptySet()) }
 
     LazyColumn(
         state = listState,
@@ -114,11 +104,7 @@ internal fun FeedListScreen(
             }
             state.isEmpty -> item(key = EMPTY_ITEM_KEY) { FeedEmptyContent() }
             else -> {
-                feedItems(
-                    items = state.items.filterNot { it is SDHomeNewsItemModel.AdMob && it.cardId in failedAdCardIds },
-                    onIntent = onIntent,
-                    onAdLoadFailed = { failedAdCardIds = failedAdCardIds + it },
-                )
+                feedItems(items = state.visibleItems, onIntent = onIntent)
                 if (state.isLoading) {
                     item(key = LOADING_ITEM_KEY) {
                         Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
@@ -134,7 +120,6 @@ internal fun FeedListScreen(
 private fun LazyListScope.feedItems(
     items: List<SDHomeNewsItemModel>,
     onIntent: (FeedListUiIntent) -> Unit,
-    onAdLoadFailed: (String) -> Unit,
 ) {
     items(
         items = items,
@@ -152,7 +137,7 @@ private fun LazyListScope.feedItems(
             is SDHomeNewsItemModel.AdMob -> FeedAdMobCard(
                 card = item.card,
                 onClick = { onIntent(FeedListUiIntent.OnAdMobClick(item.cardId)) },
-                onLoadFailed = { onAdLoadFailed(item.cardId) },
+                onLoadFailed = { onIntent(FeedListUiIntent.OnAdMobLoadFailed(item.cardId)) },
             )
         }
     }

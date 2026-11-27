@@ -8,6 +8,7 @@ import com.zion830.threedollars.ui.feed.model.FeedCardImpressionDedup
 import com.zion830.threedollars.ui.feed.model.FeedImageViewerRequest
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.model.FeedLocation
+import com.zion830.threedollars.ui.feed.model.FeedSectionImpressionGate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -162,5 +163,87 @@ class FeedNewsSectionStateTest {
         assertFalse(state.isEmpty)
         assertTrue(empty.isEmpty)
         assertFalse(empty.isFailed)
+    }
+
+    // TH-1614 TC2
+    @Test
+    fun `TH1614_TC2_소식탭의tabId가바뀌면_같은조회여도_다시불러온다`() {
+        // Given
+        val loaded = loading().appendPage(pageOf(listOf(newsCard("a")), nextCursor = null))
+
+        // When
+        val sameTab = loaded.selectTab(true, newsTabId = "NEWS")
+        val changedTab = loaded.selectTab(true, newsTabId = "NEWS_V2")
+
+        // Then
+        assertFalse(sameTab.needsReload)
+        assertTrue(changedTab.needsReload)
+        assertEquals("NEWS_V2", changedTab.startReload().listNewsTabId)
+        assertFalse(changedTab.startReload().needsReload)
+    }
+
+    // TH-1559 TC3
+    @Test
+    fun `TH1559_TC3_끝내못불러온광고카드는_자리를접고_다시불러오면_다시그린다`() {
+        // Given
+        val loaded = loading().appendPage(pageOf(listOf(adMobCard(), newsCard("a")), nextCursor = null))
+
+        // When
+        val hidden = loaded.hideAdCard("ADMOB:00f3ad1c")
+        val reloaded = hidden.changeLocation(FeedLocation.of(map = 37.5 to 127.0, device = null), 2L).startReload()
+
+        // Then
+        assertEquals(listOf("NEWS:a"), hidden.visibleItems.map { it.cardId })
+        assertEquals(2, hidden.items.size)
+        assertTrue(reloaded.hiddenAdCardIds.isEmpty())
+    }
+
+    // TH-1559 TC7
+    @Test
+    fun `TH1559_TC7_탭이보이는동안_첫페이지를받으면_섹션노출을_바로한번보낸다`() {
+        // Given
+        val gate = FeedSectionImpressionGate<String>()
+
+        // When
+        val sent = gate.onFirstPage("home_news", isTabSelected = true)
+        val reselected = gate.onTabSelected(willReload = false)
+
+        // Then
+        assertEquals("home_news", sent)
+        assertNull(reselected)
+    }
+
+    // TH-1559 TC7
+    @Test
+    fun `TH1559_TC7_응답전에_다른탭으로가면_보류했다가_돌아올때_한번보낸다`() {
+        // Given
+        val gate = FeedSectionImpressionGate<String>()
+
+        // When
+        val whileAway = gate.onFirstPage("home_news", isTabSelected = false)
+        val back = gate.onTabSelected(willReload = false)
+        val backAgain = gate.onTabSelected(willReload = false)
+
+        // Then
+        assertNull(whileAway)
+        assertEquals("home_news", back)
+        assertNull(backAgain)
+    }
+
+    // TH-1559 TC7
+    @Test
+    fun `TH1559_TC7_보류중에_지도를옮겨_다시불러오면_보류분은_버리고_새응답것만보낸다`() {
+        // Given
+        val gate = FeedSectionImpressionGate<String>()
+        gate.onFirstPage("old", isTabSelected = false)
+
+        // When
+        val onReturn = gate.onTabSelected(willReload = true)
+        gate.reset()
+        val fresh = gate.onFirstPage("new", isTabSelected = true)
+
+        // Then
+        assertNull(onReturn)
+        assertEquals("new", fresh)
     }
 }

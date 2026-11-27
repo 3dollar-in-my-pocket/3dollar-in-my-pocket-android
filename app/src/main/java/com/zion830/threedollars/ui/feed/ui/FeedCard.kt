@@ -71,7 +71,7 @@ internal fun FeedCard(
     ) {
         FeedCardTopRow(card)
         card.summary?.let {
-            Spacer(modifier = Modifier.height(16.dp))
+            if (card.badge?.text != null || card.trailingText != null) Spacer(modifier = Modifier.height(16.dp))
             FeedSummary(it)
         }
         card.bodyBlocks.forEachIndexed { blockIndex, block ->
@@ -83,6 +83,7 @@ internal fun FeedCard(
 
 @Composable
 private fun FeedCardTopRow(card: SDHomeNewsItemModel.ContentCard) {
+    if (card.badge?.text == null && card.trailingText == null) return
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -90,9 +91,9 @@ private fun FeedCardTopRow(card: SDHomeNewsItemModel.ContentCard) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        card.badge?.let { badge ->
-            FeedBadge(badge = badge, modifier = Modifier.weight(1f, fill = false))
-        }
+        card.badge?.takeIf { it.text != null }?.let {
+            FeedBadge(badge = it, modifier = Modifier.weight(1f, fill = false))
+        } ?: Spacer(modifier = Modifier.weight(1f))
         card.trailingText?.let {
             FeedText(
                 model = it,

@@ -23,9 +23,15 @@ data class FeedListUiState(
     val listRevision: Long? = null,
     val isTabSelected: Boolean = false,
     val newsTabId: String? = null,
+    val listNewsTabId: String? = null,
+    val hiddenAdCardIds: Set<String> = emptySet(),
     val latestFeedId: String? = null,
     val lastSeenFeedId: String? = null,
 ) {
+    /** 그릴 카드. 끝내 못 불러온 광고 카드는 자리를 접는다. */
+    val visibleItems: List<SDHomeNewsItemModel>
+        get() = if (hiddenAdCardIds.isEmpty()) items else items.filterNot { it is SDHomeNewsItemModel.AdMob && it.cardId in hiddenAdCardIds }
+
     val canLoadMore: Boolean
         get() = nextCursor != null && !isLoading && !isFailed
 
@@ -37,7 +43,7 @@ data class FeedListUiState(
         get() = isLoading && !hasLoaded
 
     val needsReload: Boolean
-        get() = location != null && (listRevision != locationRevision || isFailed)
+        get() = location != null && (listRevision != locationRevision || listNewsTabId != newsTabId || isFailed)
 
     val showsNewBadge: Boolean
         get() = FeedNewBadgePolicy.isVisible(isTabSelected, latestFeedId, lastSeenFeedId)
@@ -55,6 +61,8 @@ data class FeedListUiState(
         isLoading = true,
         isFailed = false,
         listRevision = locationRevision,
+        listNewsTabId = newsTabId,
+        hiddenAdCardIds = emptySet(),
     )
 
     /** 서버 순서를 지키고, 이미 받은 cardId 는 다시 붙이지 않는다. */
@@ -76,6 +84,8 @@ data class FeedListUiState(
     } else {
         copy(isLoading = false, isFailed = true)
     }
+
+    fun hideAdCard(cardId: String): FeedListUiState = copy(hiddenAdCardIds = hiddenAdCardIds + cardId)
 
     fun contentCard(cardId: String): SDHomeNewsItemModel.ContentCard? =
         items.firstOrNull { it.cardId == cardId } as? SDHomeNewsItemModel.ContentCard
@@ -116,6 +126,7 @@ sealed interface FeedListUiIntent {
     data class OnContentCardClick(val cardId: String) : FeedListUiIntent
     data class OnImageClick(val cardId: String, val blockIndex: Int, val imageIndex: Int) : FeedListUiIntent
     data class OnAdMobClick(val cardId: String) : FeedListUiIntent
+    data class OnAdMobLoadFailed(val cardId: String) : FeedListUiIntent
 }
 
 @Immutable
@@ -130,6 +141,33 @@ object FeedImageViewerRequest {
         val urls = card.bodyBlocks.getOrNull(blockIndex)?.images?.mapNotNull { it.url?.takeIf(String::isNotBlank) }
         if (urls.isNullOrEmpty() || imageIndex !in urls.indices) return null
         return FeedListUiEffect.ShowImages(imageUrls = urls, startIndex = imageIndex)
+    }
+}
+
+/**
+ * 섹션 노출 로그는 동네 소식 탭이 보일 때만 보낸다. 응답 전에 탭을 떠나면 보류했다가 돌아올 때 한 번 보내고,
+ * 그 사이 목록을 새로 불러오게 되면 보류분은 버리고 새 응답 것을 보낸다.
+ */
+class FeedSectionImpressionGate<T : Any> {
+    private var pending: T? = null
+
+    fun reset() {
+        pending = null
+    }
+
+    fun onFirstPage(log: T?, isTabSelected: Boolean): T? {
+        if (isTabSelected) {
+            pending = null
+            return log
+        }
+        pending = log
+        return null
+    }
+
+    fun onTabSelected(willReload: Boolean): T? {
+        val log = pending
+        pending = null
+        return log.takeUnless { willReload }
     }
 }
 

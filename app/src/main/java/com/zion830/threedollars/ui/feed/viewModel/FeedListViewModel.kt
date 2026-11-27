@@ -12,8 +12,9 @@ import com.zion830.threedollars.ui.feed.model.FeedImageViewerRequest
 import com.zion830.threedollars.ui.feed.model.FeedListUiEffect
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
+import kotlinx.coroutines.CancellationException
 import com.zion830.threedollars.ui.feed.model.FeedLocation
-import com.zion830.threedollars.ui.home.data.PendingSectionImpression
+import com.zion830.threedollars.ui.feed.model.FeedSectionImpressionGate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -42,10 +43,9 @@ class FeedListViewModel @Inject constructor(
     private var listJob: Job? = null
     private var latestJob: Job? = null
     private var listLocation: FeedLocation? = null
-    private var listNewsTabId: String? = null
     private var failedPageCursor: String? = null
     private val cardImpressionDedup = FeedCardImpressionDedup()
-    private val sectionImpression = PendingSectionImpression<SDLogModel>()
+    private val sectionImpression = FeedSectionImpressionGate<SDLogModel>()
 
     private val stateStore = MutableStateFlow(FeedListUiState(lastSeenFeedId = sharedPrefUtils.getLastSeenLocalNewsFeedId()))
     override val state: StateFlow<FeedListUiState> = stateStore.asStateFlow()
@@ -66,6 +66,7 @@ class FeedListViewModel @Inject constructor(
             is FeedListUiIntent.OnContentCardClick -> onContentCardClick(intent.cardId)
             is FeedListUiIntent.OnImageClick -> onImageClick(intent)
             is FeedListUiIntent.OnAdMobClick -> SDLogSender.sendClick(stateStore.value.adMobCard(intent.cardId)?.card?.clickLog)
+            is FeedListUiIntent.OnAdMobLoadFailed -> updateState { it.hideAdCard(intent.cardId) }
         }
     }
 
@@ -82,11 +83,9 @@ class FeedListViewModel @Inject constructor(
         if (current.isTabSelected == selected && (newsTabId == null || newsTabId == current.newsTabId)) return
         updateState { it.selectTab(selected, newsTabId) }
         if (!selected) return
-        if (stateStore.value.needsReload) {
-            reload()
-        } else {
-            SDLogSender.sendImpression(sectionImpression.flush(isVisible = true))
-        }
+        val willReload = stateStore.value.needsReload
+        SDLogSender.sendImpression(sectionImpression.onTabSelected(willReload))
+        if (willReload) reload()
     }
 
     private fun reload() {
@@ -96,9 +95,8 @@ class FeedListViewModel @Inject constructor(
         listJob?.cancel()
         failedPageCursor = null
         listLocation = location
-        listNewsTabId = newsTabId
         cardImpressionDedup.reset()
-        sectionImpression.clear()
+        sectionImpression.reset()
         updateState { it.startReload() }
         val revision = stateStore.value.listRevision
         fetchLatestFeedId()
@@ -108,7 +106,7 @@ class FeedListViewModel @Inject constructor(
             result
                 .onSuccess { page ->
                     updateState { it.appendPage(page) }
-                    SDLogSender.sendImpression(sectionImpression.offer(page.impressionLog, stateStore.value.isTabSelected))
+                    SDLogSender.sendImpression(sectionImpression.onFirstPage(page.impressionLog, stateStore.value.isTabSelected))
                 }
                 .onFailure { updateState { it.failPage() } }
         }
@@ -117,7 +115,7 @@ class FeedListViewModel @Inject constructor(
     private fun loadNextPage() {
         val current = stateStore.value
         val location = listLocation ?: return
-        val newsTabId = listNewsTabId ?: return
+        val newsTabId = current.listNewsTabId ?: return
         val cursor = current.nextCursor ?: return
         if (!current.canLoadMore || cursor == failedPageCursor) return
         val revision = current.listRevision
@@ -174,8 +172,8 @@ class FeedListViewModel @Inject constructor(
     private suspend fun fetchPage(newsTabId: String, location: FeedLocation, cursor: String?): Result<SDHomeNewsSectionModel> {
         val mapLatitude = location.mapLatitude ?: return Result.failure(IllegalStateException(MISSING_MAP_LOCATION))
         val mapLongitude = location.mapLongitude ?: return Result.failure(IllegalStateException(MISSING_MAP_LOCATION))
-        return runCatching {
-            screenRepository.getHomeNewsSection(
+        return try {
+            val response = screenRepository.getHomeNewsSection(
                 newsTabId = newsTabId,
                 mapLatitude = mapLatitude,
                 mapLongitude = mapLongitude,
@@ -184,10 +182,12 @@ class FeedListViewModel @Inject constructor(
                 deviceLatitude = location.deviceLatitude,
                 deviceLongitude = location.deviceLongitude,
             ).first()
-        }.mapCatching { response ->
             val section = response.data
-            check(response.ok && section != null) { response.message.orEmpty() }
-            section
+            if (response.ok && section != null) Result.success(section) else Result.failure(IllegalStateException(response.message.orEmpty()))
+        } catch (cancelled: CancellationException) {
+            throw cancelled
+        } catch (error: Exception) {
+            Result.failure(error)
         }
     }
 
