@@ -251,6 +251,12 @@ interface ServerApi {
     @GET("/api/v1/screen/home/section/news/{newsTabId}")
     suspend fun getHomeNewsSection(
         @Path("newsTabId") newsTabId: String,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("maxDistanceM") maxDistanceM: Double? = null,
+        @Query("cursor") cursor: String? = null,
+        @Header("X-Device-Latitude") deviceLatitude: Double? = null,
+        @Header("X-Device-Longitude") deviceLongitude: Double? = null,
     ): Response<BaseResponse<HomeNewsSectionResponse>>
 
     @GET("/api/v1/screen/home/section/list")

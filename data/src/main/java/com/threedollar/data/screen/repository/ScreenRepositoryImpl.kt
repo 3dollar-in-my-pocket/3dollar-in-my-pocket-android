@@ -108,8 +108,24 @@ class ScreenRepositoryImpl @Inject constructor(
             )
         }
 
-    override fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<SDHomeNewsSectionModel>> =
-        screenRemoteDataSource.getHomeNewsSection(newsTabId).map {
+    override fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double?,
+        cursor: String?,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<SDHomeNewsSectionModel>> =
+        screenRemoteDataSource.getHomeNewsSection(
+            newsTabId = newsTabId,
+            mapLatitude = mapLatitude,
+            mapLongitude = mapLongitude,
+            maxDistanceM = maxDistanceM,
+            cursor = cursor,
+            deviceLatitude = deviceLatitude,
+            deviceLongitude = deviceLongitude,
+        ).map {
             BaseResponse(
                 ok = it.ok,
                 data = it.data?.asNewsModel(),
