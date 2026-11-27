@@ -659,15 +659,8 @@
     <string name="store_detail_text_copied">복사했어요</string>
     <string name="feed_list_empty_title">아직 동네 가게 소식이 없어요.</string>
     <string name="feed_list_empty_description">가게 등록, 리뷰 작성으로 가게 소식을 직접 등록해보세요!</string>
-    <string name="feed_list_header_title">우리 동네 가게 소식</string>
-    <string name="feed_list_header_description">내 주변 가게들의 소식을 확인해요.</string>
     <string name="feed_list_error_title">소식을 불러오지 못했어요</string>
     <string name="feed_list_error_retry">다시 시도</string>
-    <string name="feed_time_just_now">방금 전</string>
-    <string name="feed_time_minutes">%d분 전</string>
-    <string name="feed_time_hours">%d시간 전</string>
-    <string name="feed_time_days">%d일 전</string>
-    <string name="feed_time_date_format" translatable="false">yyyy년MM월dd일</string>
     <string name="my_coupon_section_title">쿠폰</string>
     <string name="my_coupon_section_bottom_title">아 맞다! 쿠폰 안쓰고 지나갈 뻔</string>
     <string name="my_coupon_section_count_more">%d+개</string>

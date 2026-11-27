@@ -256,6 +256,13 @@ fun HomeBottomSheetContent(
         }
         val curationListState = rememberLazyListState()
         val newsListState = rememberLazyListState()
+        var consumedNewsListRevision by rememberSaveable { mutableStateOf(feedState.listRevision) }
+        LaunchedEffect(feedState.listRevision) {
+            if (feedState.listRevision != consumedNewsListRevision) {
+                consumedNewsListRevision = feedState.listRevision
+                newsListState.requestScrollToItem(0)
+            }
+        }
         val curationViewportWidthDp = maxWidth.value.toInt()
         val curationCarouselWidthDp = (maxWidth - SDHomeCurationDefaults.HorizontalPadding * 2).value.toInt()
         val curationAds = curationState.section?.items.orEmpty().flatMap { item ->

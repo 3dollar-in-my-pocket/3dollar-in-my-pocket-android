@@ -10,8 +10,54 @@ data class HomeCurationSectionResponse(
 )
 
 data class HomeNewsSectionResponse(
-    @SerializedName("impressionLog")
-    val impressionLog: SDImpressionLogResponse? = null,
+    @SerializedName("header") val header: SDHeaderResponse? = null,
+    @SerializedName("items") val items: List<HomeNewsItemResponse>? = emptyList(),
+    @SerializedName("cursor") val cursor: HomeNewsCursorResponse? = null,
+    @SerializedName("impressionLog") val impressionLog: SDImpressionLogResponse? = null,
+)
+
+data class HomeNewsCursorResponse(
+    @SerializedName("nextCursor") val nextCursor: String? = null,
+    @SerializedName("hasMore") val hasMore: Boolean? = false,
+)
+
+data class HomeNewsItemResponse(
+    @SerializedName("type") val type: String? = null,
+    @SerializedName("cardId") val cardId: String? = null,
+    @SerializedName("header") val header: HomeNewsCardHeaderResponse? = null,
+    @SerializedName("bodyBlocks") val bodyBlocks: List<HomeNewsBodyBlockResponse>? = emptyList(),
+    @SerializedName("link") val link: SDLinkResponse? = null,
+    @SerializedName("height") val height: Int? = null,
+    @SerializedName("adUnitId") val adUnitId: String? = null,
+    @SerializedName("clickLog") val clickLog: SDClickLogResponse? = null,
+    @SerializedName("impressionLog") val impressionLog: SDImpressionLogResponse? = null,
+)
+
+data class HomeNewsCardHeaderResponse(
+    @SerializedName("badge") val badge: SDChipResponse? = null,
+    @SerializedName("trailingText") val trailingText: SDTextResponse? = null,
+    @SerializedName("summary") val summary: HomeNewsCardSummaryResponse? = null,
+)
+
+data class HomeNewsCardSummaryResponse(
+    @SerializedName("leadingImage") val leadingImage: SDImageResponse? = null,
+    @SerializedName("overline") val overline: SDTextResponse? = null,
+    @SerializedName("title") val title: SDTextResponse? = null,
+    @SerializedName("metadata") val metadata: List<SDChipResponse>? = emptyList(),
+)
+
+data class HomeNewsBodyBlockResponse(
+    @SerializedName("heading") val heading: HomeNewsBodyHeadingResponse? = null,
+    @SerializedName("images") val images: List<SDImageResponse>? = emptyList(),
+    @SerializedName("textLeadingImage") val textLeadingImage: SDImageResponse? = null,
+    @SerializedName("text") val text: SDTextResponse? = null,
+    @SerializedName("style") val style: SDSurfaceStyleResponse? = null,
+)
+
+data class HomeNewsBodyHeadingResponse(
+    @SerializedName("leadingImage") val leadingImage: SDImageResponse? = null,
+    @SerializedName("title") val title: SDTextResponse? = null,
+    @SerializedName("trailingImages") val trailingImages: List<SDImageResponse>? = emptyList(),
 )
 
 data class HomeCurationItemResponse(
