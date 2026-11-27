@@ -1,14 +1,19 @@
 package com.zion830.threedollars.ui.feed.viewModel
 
+import com.threedollar.common.analytics.SDLogSender
 import com.threedollar.common.base.UdfViewModel
-import com.threedollar.common.utils.AdvertisementsPosition
+import com.threedollar.common.sdui.model.element.SDLogModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
 import com.threedollar.common.utils.SharedPrefUtils
-import com.threedollar.domain.community.repository.CommunityRepository
 import com.threedollar.domain.feed.repository.FeedRepository
+import com.threedollar.domain.screen.repository.ScreenRepository
+import com.zion830.threedollars.ui.feed.model.FeedCardImpressionDedup
+import com.zion830.threedollars.ui.feed.model.FeedImageViewerRequest
 import com.zion830.threedollars.ui.feed.model.FeedListUiEffect
 import com.zion830.threedollars.ui.feed.model.FeedListUiIntent
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.model.FeedLocation
+import com.zion830.threedollars.ui.home.data.PendingSectionImpression
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.BufferOverflow
@@ -17,24 +22,30 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
+/**
+ * 홈 바텀시트 동네 소식 탭. 목록은 서버 소식 섹션(SDUI)을 그대로 그리고,
+ * 새 소식 점은 기존처럼 피드 API 최신 1건의 feedId 로 판단한다.
+ */
 @HiltViewModel
 class FeedListViewModel @Inject constructor(
+    private val screenRepository: ScreenRepository,
     private val feedRepository: FeedRepository,
-    private val communityRepository: CommunityRepository,
     private val sharedPrefUtils: SharedPrefUtils,
 ) : UdfViewModel<FeedListUiIntent, FeedListUiState, FeedListUiEffect>() {
 
     private var listJob: Job? = null
     private var latestJob: Job? = null
     private var listLocation: FeedLocation? = null
+    private var listNewsTabId: String? = null
     private var failedPageCursor: String? = null
-    private var hasRequestedAdvertisement = false
+    private val cardImpressionDedup = FeedCardImpressionDedup()
+    private val sectionImpression = PendingSectionImpression<SDLogModel>()
 
     private val stateStore = MutableStateFlow(FeedListUiState(lastSeenFeedId = sharedPrefUtils.getLastSeenLocalNewsFeedId()))
     override val state: StateFlow<FeedListUiState> = stateStore.asStateFlow()
@@ -48,11 +59,13 @@ class FeedListViewModel @Inject constructor(
     override fun dispatch(intent: FeedListUiIntent) {
         when (intent) {
             is FeedListUiIntent.OnLocationChanged -> onLocationChanged(intent.location, intent.revision)
-            is FeedListUiIntent.OnTabSelectionChanged -> onTabSelectionChanged(intent.selected)
+            is FeedListUiIntent.OnTabSelectionChanged -> onTabSelectionChanged(intent.selected, intent.newsTabId)
             FeedListUiIntent.OnLoadNextPage -> loadNextPage()
             FeedListUiIntent.OnRetry -> reload()
-            is FeedListUiIntent.OnFeedClick -> intent.feed.link?.let { _effect.trySend(FeedListUiEffect.OpenLink(it)) }
-            is FeedListUiIntent.OnAdvertisementClick -> _effect.trySend(FeedListUiEffect.OpenAdvertisement(intent.advertisement))
+            is FeedListUiIntent.OnCardVisible -> onCardVisible(intent.cardId)
+            is FeedListUiIntent.OnContentCardClick -> onContentCardClick(intent.cardId)
+            is FeedListUiIntent.OnImageClick -> onImageClick(intent)
+            is FeedListUiIntent.OnAdMobClick -> SDLogSender.sendClick(stateStore.value.adMobCard(intent.cardId)?.card?.clickLog)
         }
     }
 
@@ -64,25 +77,39 @@ class FeedListViewModel @Inject constructor(
         if (changed.isTabSelected) reload() else fetchLatestFeedId()
     }
 
-    private fun onTabSelectionChanged(selected: Boolean) {
-        if (stateStore.value.isTabSelected == selected) return
-        updateState { it.selectTab(selected) }
-        if (selected && stateStore.value.needsReload) reload()
+    private fun onTabSelectionChanged(selected: Boolean, newsTabId: String?) {
+        val current = stateStore.value
+        if (current.isTabSelected == selected && (newsTabId == null || newsTabId == current.newsTabId)) return
+        updateState { it.selectTab(selected, newsTabId) }
+        if (!selected) return
+        if (stateStore.value.needsReload) {
+            reload()
+        } else {
+            SDLogSender.sendImpression(sectionImpression.flush(isVisible = true))
+        }
     }
 
     private fun reload() {
-        val location = stateStore.value.location ?: return
+        val current = stateStore.value
+        val location = current.location ?: return
+        val newsTabId = current.newsTabId ?: return
         listJob?.cancel()
         failedPageCursor = null
         listLocation = location
+        listNewsTabId = newsTabId
+        cardImpressionDedup.reset()
+        sectionImpression.clear()
         updateState { it.startReload() }
         val revision = stateStore.value.listRevision
-        fetchAdvertisement(location)
+        fetchLatestFeedId()
         listJob = launch {
-            val result = fetchPage(location, cursor = null)
+            val result = fetchPage(newsTabId, location, cursor = null)
             if (!isActive || stateStore.value.listRevision != revision) return@launch
             result
-                .onSuccess { page -> updateState { it.appendPage(page) } }
+                .onSuccess { page ->
+                    updateState { it.appendPage(page) }
+                    SDLogSender.sendImpression(sectionImpression.offer(page.impressionLog, stateStore.value.isTabSelected))
+                }
                 .onFailure { updateState { it.failPage() } }
         }
     }
@@ -90,12 +117,13 @@ class FeedListViewModel @Inject constructor(
     private fun loadNextPage() {
         val current = stateStore.value
         val location = listLocation ?: return
+        val newsTabId = listNewsTabId ?: return
         val cursor = current.nextCursor ?: return
         if (!current.canLoadMore || cursor == failedPageCursor) return
         val revision = current.listRevision
         updateState { it.copy(isLoading = true) }
         listJob = launch {
-            val result = fetchPage(location, cursor)
+            val result = fetchPage(newsTabId, location, cursor)
             if (!isActive || stateStore.value.listRevision != revision) return@launch
             result
                 .onSuccess { page -> updateState { it.appendPage(page) } }
@@ -106,51 +134,61 @@ class FeedListViewModel @Inject constructor(
         }
     }
 
+    private fun onCardVisible(cardId: String) {
+        val impressionLog = stateStore.value.items.firstOrNull { it.cardId == cardId }?.impressionLog ?: return
+        if (!cardImpressionDedup.shouldSend(cardId)) return
+        SDLogSender.sendImpression(impressionLog)
+    }
+
+    private fun onContentCardClick(cardId: String) {
+        val card = stateStore.value.contentCard(cardId) ?: return
+        SDLogSender.sendClick(card.clickLog)
+        card.link?.let { _effect.trySend(FeedListUiEffect.OpenLink(it)) }
+    }
+
+    private fun onImageClick(intent: FeedListUiIntent.OnImageClick) {
+        val card = stateStore.value.contentCard(intent.cardId) ?: return
+        FeedImageViewerRequest.of(card, intent.blockIndex, intent.imageIndex)?.let { _effect.trySend(it) }
+    }
+
     private fun fetchLatestFeedId() {
         val current = stateStore.value
         val location = current.location ?: return
         val revision = current.locationRevision
         latestJob?.cancel()
         latestJob = launch {
-            val result = fetchPage(location, cursor = null, size = LATEST_FEED_SIZE)
+            val result = feedRepository.getLocalNewsFeeds(
+                cursor = null,
+                mapLatitude = location.mapLatitude,
+                mapLongitude = location.mapLongitude,
+                maxDistanceM = location.maxDistanceM,
+                deviceLatitude = location.deviceLatitude,
+                deviceLongitude = location.deviceLongitude,
+                size = LATEST_FEED_SIZE,
+            )
             if (!isActive || stateStore.value.locationRevision != revision) return@launch
             result.onSuccess { page -> updateState { it.applyLatestFeedId(page.feeds.firstOrNull()?.feedId) } }
         }
     }
 
-    private suspend fun fetchPage(
-        location: FeedLocation,
-        cursor: String?,
-        size: Int = FeedRepository.DEFAULT_PAGE_SIZE,
-    ) = feedRepository.getLocalNewsFeeds(
-        cursor = cursor,
-        mapLatitude = location.mapLatitude,
-        mapLongitude = location.mapLongitude,
-        maxDistanceM = location.maxDistanceM,
-        deviceLatitude = location.deviceLatitude,
-        deviceLongitude = location.deviceLongitude,
-        size = size,
-    )
-
-    /** 서버 광고가 없거나 실패하면 AdMob 배너로 대신하므로 에러를 알리지 않는다. */
-    private fun fetchAdvertisement(location: FeedLocation) {
-        if (hasRequestedAdvertisement) return
-        val latitude = location.deviceLatitude ?: return
-        val longitude = location.deviceLongitude ?: return
-        hasRequestedAdvertisement = true
-        launch {
-            val response = communityRepository.getAdvertisements(
-                position = AdvertisementsPosition.LOCAL_NEWS_FEED,
-                deviceLatitude = latitude,
-                deviceLongitude = longitude,
-            ).firstOrNull()
-            if (response == null || !response.ok) {
-                hasRequestedAdvertisement = false
-                return@launch
-            }
-            val advertisement = response.data?.firstOrNull()
-            stateStore.update { it.copy(advertisement = advertisement) }
-        }.invokeOnCompletion { cause -> if (cause != null) hasRequestedAdvertisement = false }
+    private suspend fun fetchPage(newsTabId: String, location: FeedLocation, cursor: String?): Result<SDHomeNewsSectionModel> {
+        val mapLatitude = location.mapLatitude ?: return Result.failure(IllegalStateException(MISSING_MAP_LOCATION))
+        val mapLongitude = location.mapLongitude ?: return Result.failure(IllegalStateException(MISSING_MAP_LOCATION))
+        return runCatching {
+            screenRepository.getHomeNewsSection(
+                newsTabId = newsTabId,
+                mapLatitude = mapLatitude,
+                mapLongitude = mapLongitude,
+                maxDistanceM = location.maxDistanceM,
+                cursor = cursor,
+                deviceLatitude = location.deviceLatitude,
+                deviceLongitude = location.deviceLongitude,
+            ).first()
+        }.mapCatching { response ->
+            val section = response.data
+            check(response.ok && section != null) { response.message.orEmpty() }
+            section
+        }
     }
 
     private fun updateState(transform: (FeedListUiState) -> FeedListUiState) {
@@ -162,5 +200,6 @@ class FeedListViewModel @Inject constructor(
 
     private companion object {
         const val LATEST_FEED_SIZE = 1
+        const val MISSING_MAP_LOCATION = "map location is required"
     }
 }

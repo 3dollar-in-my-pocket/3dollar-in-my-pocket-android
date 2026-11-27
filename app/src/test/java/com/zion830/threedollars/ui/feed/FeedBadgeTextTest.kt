@@ -48,4 +48,22 @@ class FeedBadgeTextTest {
         results.forEach { assertNull(it.leadingEmoji) }
         assertEquals(listOf(plain, html, emojiOnly), results.map { it.text })
     }
+
+    // TH-1559 TC2
+    @Test
+    fun `TH1559_TC2_서버배지가_span으로감싼_HTML이어도_앞의_이모지를_뗀다`() {
+        // Given
+        val badge = text("<span style=\"font-size:12px; font-weight:700; color:#FFFFFF\">❤️ 새로운 리뷰가 올라왔어요!</span>", isHtml = true)
+        val noEmoji = text("<span style=\"color:#FFFFFF\">새 소식</span>", isHtml = true)
+        val emojiOnly = text("<span>📢</span>", isHtml = true)
+
+        // When
+        val parts = FeedBadgeText.split(badge)
+
+        // Then
+        assertEquals("❤️", parts.leadingEmoji)
+        assertEquals("<span style=\"font-size:12px; font-weight:700; color:#FFFFFF\">새로운 리뷰가 올라왔어요!</span>", parts.text.text)
+        assertNull(FeedBadgeText.split(noEmoji).leadingEmoji)
+        assertNull(FeedBadgeText.split(emojiOnly).leadingEmoji)
+    }
 }
