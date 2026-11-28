@@ -46,7 +46,7 @@ class HomeCurationScreenMapperTest {
         assertEquals("home", log.screenName)
         assertEquals("section", log.objectType)
         assertEquals("home_news", log.objectId)
-        assertEquals(mapOf("tabId" to "NEWS"), log.extraParameters)
+        assertEquals(mapOf("tabId" to "NEWS", "ad_card_count" to "1"), log.extraParameters)
     }
 
     // TH-1614 TC1

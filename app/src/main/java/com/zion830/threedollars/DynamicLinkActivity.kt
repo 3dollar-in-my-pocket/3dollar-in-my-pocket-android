@@ -46,6 +46,9 @@ class DynamicLinkActivity : AppCompatActivity() {
         const val STORE_CONTRIBUTORS = "store-contributors"
         const val STORE_IMAGES = "images"
 
+        /** 하단 탭 선택 딥링크 `{scheme}://tab?id={탭 id}` (TH-1650). MainActivity 로 넘기는 extra 키이기도 하다. */
+        const val TAB = "tab"
+
         private const val LINK = "link"
         private const val EXTRA_IN_APP = "extra_in_app"
         private const val EXTRA_EXTERNAL = "extra_external"
@@ -225,6 +228,14 @@ class DynamicLinkActivity : AppCompatActivity() {
             }
 
             MY_COUPONS -> startActivity(MyCouponsActivity.getIntent(this))
+
+            TAB -> {
+                val tabId = deeplink.getQueryParameter(ID)
+                startActivity(MainActivity.getIntent(this).apply {
+                    if (!tabId.isNullOrBlank()) putExtra(TAB, tabId)
+                    flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                })
+            }
 
             BROWSER -> {
                 val url = deeplink.getQueryParameter(URL).toStringDefault()

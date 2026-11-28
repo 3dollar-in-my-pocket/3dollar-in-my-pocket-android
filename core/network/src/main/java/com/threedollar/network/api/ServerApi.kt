@@ -23,6 +23,7 @@ import com.threedollar.network.data.poll.response.PollCategoryApiResponse
 import com.threedollar.network.data.poll.response.PollCommentCreateApiResponse
 import com.threedollar.network.data.poll.response.PollCreateApiResponse
 import com.threedollar.network.data.poll.response.PollPolicyApiResponse
+import com.threedollar.network.data.screen.BottomNavigationResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
@@ -220,6 +221,9 @@ interface ServerApi {
         @Query("filterVisitStartDate") filterVisitStartDate: String,
     ): Response<BaseResponse<UserStoreResponse>>
 
+    @GET("/api/v1/screen/bottom-navigation")
+    suspend fun getBottomNavigation(): Response<BaseResponse<BottomNavigationResponse>>
+
     @GET("/api/v1/screen/home")
     suspend fun getHomeFilterScreen(
         @Query("preset") preset: String? = null,
@@ -251,6 +255,12 @@ interface ServerApi {
     @GET("/api/v1/screen/home/section/news/{newsTabId}")
     suspend fun getHomeNewsSection(
         @Path("newsTabId") newsTabId: String,
+        @Query("mapLatitude") mapLatitude: Double,
+        @Query("mapLongitude") mapLongitude: Double,
+        @Query("maxDistanceM") maxDistanceM: Double? = null,
+        @Query("cursor") cursor: String? = null,
+        @Header("X-Device-Latitude") deviceLatitude: Double? = null,
+        @Header("X-Device-Longitude") deviceLongitude: Double? = null,
     ): Response<BaseResponse<HomeNewsSectionResponse>>
 
     @GET("/api/v1/screen/home/section/list")

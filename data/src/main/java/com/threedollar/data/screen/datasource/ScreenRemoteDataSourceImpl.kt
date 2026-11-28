@@ -2,6 +2,7 @@ package com.threedollar.data.screen.datasource
 
 import com.threedollar.common.base.BaseResponse
 import com.threedollar.network.api.ServerApi
+import com.threedollar.network.data.screen.BottomNavigationResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
@@ -71,8 +72,28 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
     }
 
-    override fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>> = flow {
-        emit(apiResult(serverApi.getHomeNewsSection(newsTabId)))
+    override fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double?,
+        cursor: String?,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeNewsSectionResponse>> = flow {
+        emit(
+            apiResult(
+                serverApi.getHomeNewsSection(
+                    newsTabId = newsTabId,
+                    mapLatitude = mapLatitude,
+                    mapLongitude = mapLongitude,
+                    maxDistanceM = maxDistanceM,
+                    cursor = cursor,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                ),
+            ),
+        )
     }
 
     override fun getHomeCurationCards(
@@ -86,5 +107,9 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationCardsResponse>> = flow {
         emit(apiResult(serverApi.getHomeCurationCards(tabId, carouselId, categoryId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
+    }
+
+    override fun getBottomNavigation(): Flow<BaseResponse<BottomNavigationResponse>> = flow {
+        emit(apiResult(serverApi.getBottomNavigation()))
     }
 }

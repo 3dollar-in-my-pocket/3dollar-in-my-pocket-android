@@ -1,30 +1,16 @@
 package com.zion830.threedollars.ui.feed
 
-import com.threedollar.domain.feed.model.FeedModel
-import com.threedollar.domain.feed.model.FeedPageModel
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.model.FeedLocation
-import com.zion830.threedollars.ui.feed.model.FeedTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import java.time.LocalDate
-import java.time.LocalDateTime
 
 class FeedListStateTest {
 
-    private fun feed(id: String) = FeedModel(
-        feedId = id,
-        category = null,
-        header = null,
-        body = null,
-        link = null,
-        updatedAt = "2026-09-27T15:05:04",
-    )
-
-    private fun page(ids: IntRange, nextCursor: String?) = FeedPageModel(ids.map { feed(it.toString()) }, nextCursor)
+    private fun page(ids: IntRange, nextCursor: String?) = FeedNewsFixtures.pageOf(ids, nextCursor)
 
     // TH-646 TC6
     @Test
@@ -37,7 +23,7 @@ class FeedListStateTest {
 
         // Then
         assertTrue(first.canLoadMore)
-        assertEquals(25, last.feeds.size)
+        assertEquals(25, last.items.size)
         assertFalse(last.canLoadMore)
     }
 
@@ -68,35 +54,6 @@ class FeedListStateTest {
         assertFalse(initial.isEmpty)
         assertTrue(empty.isEmpty)
         assertFalse(loaded.isEmpty)
-    }
-
-    // TH-646 TC13
-    @Test
-    fun `TH646_TC13_경과시간에_따라_방금전_분_시간_일_날짜로_나눈다`() {
-        // Given
-        val now = LocalDateTime.of(2026, 9, 27, 15, 0, 0)
-        fun ago(dateTime: LocalDateTime) = FeedTime.of(dateTime.toString(), now)
-
-        // When
-        val results = listOf(
-            ago(now.minusSeconds(30)),
-            ago(now.minusMinutes(5)),
-            ago(now.minusHours(3)),
-            ago(now.minusDays(2)),
-            ago(now.minusDays(3)),
-        )
-
-        // Then
-        assertEquals(
-            listOf(
-                FeedTime.JustNow,
-                FeedTime.Minutes(5),
-                FeedTime.Hours(3),
-                FeedTime.Days(2),
-                FeedTime.Date(LocalDate.of(2026, 9, 24)),
-            ),
-            results,
-        )
     }
 
     // TH-646 TC14

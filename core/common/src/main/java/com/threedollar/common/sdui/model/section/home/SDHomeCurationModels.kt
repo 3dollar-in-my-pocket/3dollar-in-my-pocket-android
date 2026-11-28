@@ -34,10 +34,6 @@ data class SDHomeTabAppearanceModel(
     val style: SDSurfaceStyleModel?
 )
 
-data class SDHomeNewsSectionModel(
-    val impressionLog: SDLogModel? = null
-)
-
 data class SDHomeCurationSectionModel(
     val items: List<SDHomeCurationItemModel> = emptyList(),
     val impressionLog: SDLogModel? = null

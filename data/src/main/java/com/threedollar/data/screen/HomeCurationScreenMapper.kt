@@ -23,7 +23,11 @@ import com.threedollar.common.sdui.model.section.home.SDHomeCurationCardsModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationCategoryFilterModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeCurationSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsBodyBlockModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsBodyHeadingModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsItemModel
 import com.threedollar.common.sdui.model.section.home.SDHomeNewsSectionModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSummaryModel
 import com.threedollar.common.sdui.model.section.home.SDHomeTabAppearanceModel
 import com.threedollar.network.data.screen.HomeBottomSheetTabAppearanceResponse
 import com.threedollar.network.data.screen.HomeBottomSheetTabResponse
@@ -32,6 +36,8 @@ import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationCategoryFilterResponse
 import com.threedollar.network.data.screen.HomeCurationItemResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
+import com.threedollar.network.data.screen.HomeNewsBodyBlockResponse
+import com.threedollar.network.data.screen.HomeNewsItemResponse
 import com.threedollar.network.data.screen.HomeNewsSectionResponse
 import com.threedollar.network.data.screen.SDButtonResponse
 import com.threedollar.network.data.screen.SDChipResponse
@@ -48,9 +54,65 @@ fun HomeCurationSectionResponse.asCurationModel(): SDHomeCurationSectionModel = 
     impressionLog = impressionLog?.asSduiLogModel(),
 )
 
+/** 모르는 `type` 이나 `cardId` 가 없는 항목은 그릴 수 없으므로 뺀다. */
 fun HomeNewsSectionResponse.asNewsModel(): SDHomeNewsSectionModel = SDHomeNewsSectionModel(
+    header = header?.asSduiModel(),
+    items = items.orEmpty().mapNotNull { it.asNewsItemModelOrNull() },
+    nextCursor = cursor?.nextCursor,
+    hasMore = cursor?.hasMore ?: false,
     impressionLog = impressionLog?.asSduiLogModel(),
 )
+
+private fun HomeNewsItemResponse.asNewsItemModelOrNull(): SDHomeNewsItemModel? {
+    val id = cardId?.takeIf { it.isNotBlank() } ?: return null
+    return when (type) {
+        "CONTENT_CARD" -> SDHomeNewsItemModel.ContentCard(
+            cardId = id,
+            badge = header?.badge?.asSduiModel(),
+            trailingText = header?.trailingText?.asSduiModel(),
+            summary = header?.summary?.let { summary ->
+                SDHomeNewsSummaryModel(
+                    leadingImage = summary.leadingImage?.asSduiImageOrNull(),
+                    overline = summary.overline?.asSduiModel(),
+                    title = summary.title?.asSduiModel(),
+                    metadata = summary.metadata.orEmpty().map { it.asSduiModel() },
+                )
+            },
+            bodyBlocks = bodyBlocks.orEmpty().map { it.asNewsBodyBlockModel() },
+            link = link?.takeIf { !it.link.isNullOrBlank() }?.asSduiModel(),
+            clickLog = clickLog?.asSduiLogModel(),
+            impressionLog = impressionLog?.asSduiLogModel(),
+        )
+
+        "ADMOB_CARD" -> SDHomeNewsItemModel.AdMob(
+            card = SDAdMobCardModel(
+                cardId = id,
+                height = height ?: 0,
+                adUnitId = adUnitId,
+                clickLog = clickLog?.asSduiLogModel(),
+                impressionLog = impressionLog?.asSduiLogModel(),
+            ),
+        )
+
+        else -> null
+    }
+}
+
+private fun HomeNewsBodyBlockResponse.asNewsBodyBlockModel(): SDHomeNewsBodyBlockModel = SDHomeNewsBodyBlockModel(
+    heading = heading?.let { heading ->
+        SDHomeNewsBodyHeadingModel(
+            leadingImage = heading.leadingImage?.asSduiImageOrNull(),
+            title = heading.title?.asSduiModel(),
+            trailingImages = heading.trailingImages.orEmpty().mapNotNull { it.asSduiImageOrNull() },
+        )
+    },
+    images = images.orEmpty().mapNotNull { it.asSduiImageOrNull() },
+    textLeadingImage = textLeadingImage?.asSduiImageOrNull(),
+    text = text?.asSduiModel(),
+    style = style?.asSduiModel(),
+)
+
+private fun SDImageResponse.asSduiImageOrNull(): SDImageModel? = takeIf { !it.url.isNullOrBlank() }?.asSduiModel()
 
 fun HomeCurationCardsResponse.asCurationCardsModel(): SDHomeCurationCardsModel = SDHomeCurationCardsModel(
     cards = cards.orEmpty().mapNotNull { it.asCurationCardModelOrNull() },
