@@ -42,7 +42,15 @@ interface ScreenRemoteDataSource {
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>>
 
-    fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>>
+    fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double?,
+        cursor: String?,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeNewsSectionResponse>>
 
     fun getHomeCurationCards(
         tabId: String,

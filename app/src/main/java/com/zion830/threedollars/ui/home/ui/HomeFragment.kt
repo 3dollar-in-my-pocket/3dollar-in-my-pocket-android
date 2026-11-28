@@ -49,6 +49,7 @@ import com.threedollar.common.listener.OnSnapPositionChangeListener
 import com.threedollar.common.listener.SnapOnScrollListener
 import com.threedollar.common.serverdriven.model.HomeListCardModel
 import com.threedollar.common.sdui.model.element.SDLinkType
+import com.threedollar.common.sdui.model.section.home.SDHomeBottomSheetViewType
 import com.threedollar.common.serverdriven.model.SDLinkModel
 import com.threedollar.common.serverdriven.model.SDLocationBoundsModel
 import com.threedollar.common.utils.Constants
@@ -598,9 +599,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     }
                 }
                 launch {
-                    viewModel.curationState.map { it.isNewsTabSelected }.distinctUntilChanged().collect { selected ->
-                        feedListViewModel.dispatch(FeedListUiIntent.OnTabSelectionChanged(selected))
-                    }
+                    viewModel.curationState
+                        .map { state ->
+                            val newsTabId = state.tabs.firstOrNull { it.viewType == SDHomeBottomSheetViewType.NEWS }?.tabId
+                            state.isNewsTabSelected to newsTabId
+                        }
+                        .distinctUntilChanged()
+                        .collect { (selected, newsTabId) ->
+                            feedListViewModel.dispatch(FeedListUiIntent.OnTabSelectionChanged(selected, newsTabId))
+                        }
                 }
                 launch {
                     feedListViewModel.effect.collect(::handleFeedEffect)
@@ -776,14 +783,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding, HomeViewModel>() {
                     DynamicLinkActivity.launch(requireContext(), url)
                 }
             }
-            is FeedListUiEffect.OpenAdvertisement -> {
-                val url = effect.advertisement.link.url.takeIf { it.isNotBlank() } ?: return
-                if (effect.advertisement.link.type == SDLinkType.APP_SCHEME.name) {
-                    DynamicLinkActivity.launch(requireContext(), url)
-                } else {
-                    startActivitySafely(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-                }
-            }
+            is FeedListUiEffect.ShowImages -> showStorePreviewImages(effect.imageUrls, effect.startIndex)
         }
     }
 

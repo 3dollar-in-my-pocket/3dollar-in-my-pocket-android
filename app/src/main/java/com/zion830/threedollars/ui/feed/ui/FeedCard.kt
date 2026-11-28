@@ -4,17 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -26,44 +26,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import base.compose.AppRating
-import base.compose.AppRatingStyle
 import base.compose.ColorWhite
 import base.compose.Gray10
 import base.compose.Gray100
 import base.compose.Gray20
 import base.compose.Gray40
-import base.compose.Gray70
-import base.compose.Gray95
-import base.compose.Pink
-import base.compose.PretendardFontFamily
 import base.compose.dpToSp
-import coil3.compose.AsyncImage
-import com.threedollar.common.R as CommonR
 import com.threedollar.common.compose.utils.toColor
+import com.threedollar.common.sdui.model.element.SDChipModel
+import com.threedollar.common.sdui.model.element.SDImageModel
 import com.threedollar.common.sdui.model.element.SDTextModel
-import com.threedollar.domain.feed.model.FeedBodyModel
-import com.threedollar.domain.feed.model.FeedBodyType
-import com.threedollar.domain.feed.model.FeedCategoryModel
-import com.threedollar.domain.feed.model.FeedHeaderModel
-import com.threedollar.domain.feed.model.FeedImageModel
-import com.threedollar.domain.feed.model.FeedModel
-import com.threedollar.domain.feed.model.FeedRatingModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsBodyBlockModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsBodyHeadingModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsItemModel
+import com.threedollar.common.sdui.model.section.home.SDHomeNewsSummaryModel
 import com.zion830.threedollars.core.ui.component.compose.components.noRippleClickable
+import com.zion830.threedollars.core.ui.sdui.element.SDChip
+import com.zion830.threedollars.core.ui.sdui.element.SDImage
 import com.zion830.threedollars.core.ui.sdui.element.SDText
 import com.zion830.threedollars.ui.feed.model.FeedBadgeText
-import com.zion830.threedollars.ui.feed.model.FeedTime
-import java.time.format.DateTimeFormatter
-import kotlin.math.roundToInt
 
-/** 서버 드리븐 피드 카드. 카테고리 → 헤더 → 본문 순서로 그리고, 탭하면 서버 `link` 로 이동한다. */
+/**
+ * 동네 소식 카드(`CONTENT_CARD`). 배지·경과 시간 → 가게 요약 → 본문 블록 순서로 서버 값을 그대로 그린다.
+ * 카드를 누르면 [onClick], 본문 사진을 누르면 [onImageClick](블록 위치, 사진 위치)을 부른다.
+ */
 @Composable
 internal fun FeedCard(
-    feed: FeedModel,
+    card: SDHomeNewsItemModel.ContentCard,
     onClick: () -> Unit,
+    onImageClick: (blockIndex: Int, imageIndex: Int) -> Unit,
 ) {
     val shape = RoundedCornerShape(20.dp)
     Column(
@@ -75,20 +69,21 @@ internal fun FeedCard(
             .noRippleClickable(onClick = onClick)
             .padding(16.dp),
     ) {
-        FeedCategoryRow(category = feed.category, updatedAt = feed.updatedAt)
-        feed.header?.let {
-            Spacer(modifier = Modifier.height(16.dp))
-            FeedHeader(header = it)
+        FeedCardTopRow(card)
+        card.summary?.let {
+            if (card.badge?.text != null || card.trailingText != null) Spacer(modifier = Modifier.height(16.dp))
+            FeedSummary(it)
         }
-        feed.body?.let {
+        card.bodyBlocks.forEachIndexed { blockIndex, block ->
             Spacer(modifier = Modifier.height(12.dp))
-            FeedBody(body = it)
+            FeedBodyBlock(block = block, onImageClick = { imageIndex -> onImageClick(blockIndex, imageIndex) })
         }
     }
 }
 
 @Composable
-private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
+private fun FeedCardTopRow(card: SDHomeNewsItemModel.ContentCard) {
+    if (card.badge?.text == null && card.trailingText == null) return
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -96,32 +91,30 @@ private fun FeedCategoryRow(category: FeedCategoryModel?, updatedAt: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (category != null) {
-            FeedCategoryBadge(category = category)
+        card.badge?.takeIf { it.text != null }?.let {
+            FeedBadge(badge = it, modifier = Modifier.weight(1f, fill = false))
+        } ?: Spacer(modifier = Modifier.weight(1f))
+        card.trailingText?.let {
+            FeedText(
+                model = it,
+                modifier = Modifier.padding(start = 12.dp),
+                fontSize = 12,
+                fallbackColor = Gray40,
+            )
         }
-        Text(
-            text = feedTimeText(updatedAt),
-            modifier = Modifier
-                .weight(1f, fill = false)
-                .padding(start = 12.dp),
-            color = Gray40,
-            fontFamily = PretendardFontFamily,
-            fontWeight = FontWeight.Medium,
-            fontSize = dpToSp(12),
-            maxLines = 1,
-        )
     }
 }
 
 /** 이모지는 문구와 떼어 따로 그려야 기기 이모지 폰트와 상관없이 글자가 배지 가운데에 온다 ([FeedBadgeText]). */
 @Composable
-private fun FeedCategoryBadge(category: FeedCategoryModel, modifier: Modifier = Modifier) {
-    val parts = remember(category.name) { FeedBadgeText.split(category.name) }
+private fun FeedBadge(badge: SDChipModel, modifier: Modifier = Modifier) {
+    val text = badge.text ?: return
+    val parts = remember(text) { FeedBadgeText.split(text) }
     Row(
         modifier = modifier
             .fillMaxHeight()
             .clip(CircleShape)
-            .background(category.style?.backgroundColor.toColor(fallback = Gray10))
+            .background(badge.style?.backgroundColor.toColor(fallback = Gray10))
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -129,90 +122,45 @@ private fun FeedCategoryBadge(category: FeedCategoryModel, modifier: Modifier = 
             Text(text = emoji, fontSize = dpToSp(12), maxLines = 1)
             Spacer(modifier = Modifier.width(4.dp))
         }
-        SDText(
-            model = parts.text,
-            fontSize = dpToSp(12),
-            fontWeight = FontWeight.Bold,
-            maxLines = 1,
-        )
+        FeedText(model = parts.text, fontSize = 12, maxLines = 1, fontWeight = FontWeight.Bold, fallbackColor = ColorWhite)
     }
 }
 
 @Composable
-private fun FeedHeader(header: FeedHeaderModel) {
+private fun FeedSummary(summary: SDHomeNewsSummaryModel) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(64.dp),
+            .heightIn(min = 64.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        AsyncImage(
-            model = header.imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Fit,
-            modifier = Modifier.size(60.dp),
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-        Column(modifier = Modifier.weight(1f)) {
-            header.top?.let {
-                SDText(
-                    model = it,
-                    fontSize = dpToSp(12),
-                    fontWeight = FontWeight.Medium,
-                    lineHeight = dpToSp(18),
-                    maxLines = 1,
-                    color = it.fontColor.toColor(fallback = Gray40),
-                )
-            }
-            header.content?.let {
-                SDText(
-                    model = it,
-                    fontSize = dpToSp(16),
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = dpToSp(24),
-                    maxLines = 1,
-                    color = it.fontColor.toColor(fallback = Gray100),
-                )
-            }
-            if (header.metadata.isNotEmpty()) {
-                FeedHeaderMetadataRow(header)
-            }
+        summary.leadingImage?.let {
+            SDImage(model = it, contentScale = ContentScale.Fit)
+            Spacer(modifier = Modifier.width(8.dp))
         }
-    }
-}
-
-@Composable
-private fun FeedHeaderMetadataRow(header: FeedHeaderModel) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        header.metadata.forEachIndexed { index, metadata ->
-            if (index > 0) {
-                Box(
-                    modifier = Modifier
-                        .width(1.dp)
-                        .height(8.dp)
-                        .background(Gray20),
-                )
+        Column(modifier = Modifier.weight(1f)) {
+            summary.overline?.takeUnless { it.text.isNullOrBlank() }?.let {
+                FeedText(model = it, fontSize = 12, lineHeight = 18, maxLines = 1, fallbackColor = Gray40)
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                AsyncImage(
-                    model = metadata.iconUrl,
-                    contentDescription = null,
-                    modifier = Modifier.size(12.dp),
-                )
-                metadata.content?.let {
-                    SDText(
-                        model = it,
-                        fontSize = dpToSp(12),
-                        fontWeight = FontWeight.Medium,
-                        maxLines = 1,
-                        color = it.fontColor.toColor(fallback = Gray40),
-                    )
+            summary.title?.let {
+                FeedText(model = it, fontSize = 16, lineHeight = 24, maxLines = 1, fontWeight = FontWeight.Bold)
+            }
+            if (summary.metadata.isNotEmpty()) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    summary.metadata.forEachIndexed { index, chip ->
+                        if (index > 0) {
+                            Box(
+                                modifier = Modifier
+                                    .width(1.dp)
+                                    .height(8.dp)
+                                    .background(Gray20),
+                            )
+                        }
+                        SDChip(model = chip)
+                    }
                 }
             }
         }
@@ -220,147 +168,84 @@ private fun FeedHeaderMetadataRow(header: FeedHeaderModel) {
 }
 
 @Composable
-private fun FeedBody(body: FeedBodyModel) {
+private fun FeedBodyBlock(block: SDHomeNewsBodyBlockModel, onImageClick: (Int) -> Unit) {
     val shape = RoundedCornerShape(12.dp)
-    val modifier = Modifier
-        .fillMaxWidth()
-        .clip(shape)
-        .background(body.style?.backgroundColor.toColor(fallback = Gray10), shape)
-    when (body.type) {
-        FeedBodyType.CONTENT_ONLY -> FeedContentOnlyBody(body, modifier)
-        FeedBodyType.CONTENT_WITH_TITLE -> FeedContentWithTitleBody(body, modifier, withImages = false)
-        FeedBodyType.CONTENT_WITH_TITLE_AND_IMAGES -> FeedContentWithTitleBody(body, modifier, withImages = true)
-        FeedBodyType.CONTENT_WITH_IMAGES -> FeedContentWithImagesBody(body, modifier)
-    }
-}
-
-@Composable
-private fun FeedContentOnlyBody(body: FeedBodyModel, modifier: Modifier) {
-    Row(
-        modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        body.contentLeadingImageUrl?.let {
-            AsyncImage(
-                model = it,
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(top = 2.dp)
-                    .size(16.dp),
-            )
-        }
-        body.content?.let { FeedBodyText(it) }
-    }
-}
-
-@Composable
-private fun FeedContentWithTitleBody(body: FeedBodyModel, modifier: Modifier, withImages: Boolean) {
     Column(
-        modifier = modifier.padding(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(block.style?.backgroundColor.toColor(fallback = Gray10), shape)
+            .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            body.title?.let {
-                SDText(
-                    model = it,
-                    modifier = Modifier.weight(1f),
-                    fontSize = dpToSp(12),
-                    fontWeight = FontWeight.Bold,
-                    maxLines = 1,
-                )
-            } ?: Spacer(modifier = Modifier.weight(1f))
-            body.rating?.let { FeedRatingStars(it) }
+        block.heading?.let { FeedBodyHeading(it) }
+        if (block.images.isNotEmpty()) {
+            FeedBodyImages(images = block.images, onImageClick = onImageClick)
         }
-        if (withImages && body.images.isNotEmpty()) {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(body.images) { image ->
-                    AsyncImage(
-                        model = image.imageUrl,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .size(56.dp)
-                            .clip(RoundedCornerShape(10.dp)),
-                    )
+        block.text?.takeUnless { it.text.isNullOrBlank() }?.let { text ->
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                block.textLeadingImage?.let {
+                    SDImage(model = it, modifier = Modifier.padding(top = 2.dp))
                 }
+                FeedText(model = text, fontSize = 14, lineHeight = 20, maxLines = BODY_MAX_LINES)
             }
-        }
-        body.content?.let { FeedBodyText(it, maxLines = TITLE_BODY_MAX_LINES) }
-    }
-}
-
-@Composable
-private fun FeedContentWithImagesBody(body: FeedBodyModel, modifier: Modifier) {
-    Column(
-        modifier = modifier.padding(vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        if (body.images.isNotEmpty()) {
-            LazyRow(
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                items(body.images) { image -> FeedRatioImage(image) }
-            }
-        }
-        body.content?.let {
-            FeedBodyText(it, modifier = Modifier.padding(horizontal = 16.dp), fallbackColor = Gray95)
         }
     }
 }
 
 @Composable
-private fun FeedRatioImage(image: FeedImageModel) {
-    AsyncImage(
-        model = image.imageUrl,
-        contentDescription = null,
-        contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .height(IMAGES_BODY_IMAGE_HEIGHT_DP.dp)
-            .width((IMAGES_BODY_IMAGE_HEIGHT_DP * image.ratio).dp)
-            .clip(RoundedCornerShape(8.dp)),
-    )
+private fun FeedBodyHeading(heading: SDHomeNewsBodyHeadingModel) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        heading.leadingImage?.let {
+            SDImage(model = it)
+            Spacer(modifier = Modifier.width(4.dp))
+        }
+        heading.title?.let {
+            FeedText(model = it, modifier = Modifier.weight(1f), fontSize = 12, maxLines = 1, fontWeight = FontWeight.Bold)
+        } ?: Spacer(modifier = Modifier.weight(1f))
+        if (heading.trailingImages.isNotEmpty()) {
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                heading.trailingImages.forEach { SDImage(model = it) }
+            }
+        }
+    }
+}
+
+/** 사진은 서버 `style` 크기대로 그려서 한 번에 보이는 개수가 사진 크기에 따라 정해진다. */
+@Composable
+private fun FeedBodyImages(images: List<SDImageModel>, onImageClick: (Int) -> Unit) {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        itemsIndexed(images) { index, image ->
+            SDImage(
+                model = image,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(10.dp))
+                    .noRippleClickable { onImageClick(index) },
+            )
+        }
+    }
 }
 
 @Composable
-private fun FeedBodyText(
+private fun FeedText(
     model: SDTextModel,
+    fontSize: Int,
     modifier: Modifier = Modifier,
+    lineHeight: Int? = null,
     maxLines: Int = Int.MAX_VALUE,
+    fontWeight: FontWeight = FontWeight.Normal,
     fallbackColor: Color = Gray100,
 ) {
     SDText(
         model = model,
         modifier = modifier,
-        fontSize = dpToSp(14),
-        fontWeight = FontWeight.Normal,
-        lineHeight = dpToSp(20),
+        fontSize = dpToSp(fontSize),
+        fontWeight = fontWeight,
+        lineHeight = lineHeight?.let { dpToSp(it) } ?: TextUnit.Unspecified,
         maxLines = maxLines,
         color = model.fontColor.toColor(fallback = fallbackColor),
     )
 }
 
-@Composable
-private fun FeedRatingStars(rating: FeedRatingModel) {
-    AppRating(
-        value = rating.starRating.roundToInt(),
-        style = AppRatingStyle.None,
-        filledColor = rating.filledColor.toColor(fallback = Pink),
-        emptyColor = rating.emptyColor.toColor(fallback = Gray70),
-        maxValue = rating.maxRating,
-    )
-}
-
-@Composable
-private fun feedTimeText(updatedAt: String): String = when (val time = FeedTime.of(updatedAt)) {
-    FeedTime.JustNow -> stringResource(CommonR.string.feed_time_just_now)
-    is FeedTime.Minutes -> stringResource(CommonR.string.feed_time_minutes, time.value.toInt())
-    is FeedTime.Hours -> stringResource(CommonR.string.feed_time_hours, time.value.toInt())
-    is FeedTime.Days -> stringResource(CommonR.string.feed_time_days, time.value.toInt())
-    is FeedTime.Date -> time.date.format(DateTimeFormatter.ofPattern(stringResource(CommonR.string.feed_time_date_format)))
-    null -> ""
-}
-
 private val CARD_SHADOW = Color.Black.copy(alpha = 0.06f)
-private const val TITLE_BODY_MAX_LINES = 5
-private const val IMAGES_BODY_IMAGE_HEIGHT_DP = 124
+private const val BODY_MAX_LINES = 5

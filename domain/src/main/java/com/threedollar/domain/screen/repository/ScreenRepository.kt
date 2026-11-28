@@ -42,7 +42,16 @@ interface ScreenRepository {
         deviceLongitude: Double? = null,
     ): Flow<BaseResponse<SDHomeCurationSectionModel>>
 
-    fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<SDHomeNewsSectionModel>>
+    /** 홈 동네 소식 섹션. 서버가 지도 좌표 없이는 400 을 주므로 좌표는 필수다. 첫 페이지는 [cursor] 를 생략한다. */
+    fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double? = null,
+        cursor: String? = null,
+        deviceLatitude: Double? = null,
+        deviceLongitude: Double? = null,
+    ): Flow<BaseResponse<SDHomeNewsSectionModel>>
 
     fun getHomeCurationCards(
         tabId: String,

@@ -1,7 +1,5 @@
 package com.zion830.threedollars.ui.feed
 
-import com.threedollar.domain.feed.model.FeedModel
-import com.threedollar.domain.feed.model.FeedPageModel
 import com.zion830.threedollars.ui.feed.model.FeedListUiState
 import com.zion830.threedollars.ui.feed.model.FeedLocation
 import com.zion830.threedollars.ui.feed.model.FeedNewBadgePolicy
@@ -16,18 +14,9 @@ class FeedNewsTabStateTest {
     private val seoul = FeedLocation.of(map = 37.5665 to 126.9780, device = 37.5665 to 126.9780)
     private val gangnam = FeedLocation.of(map = 37.4979 to 127.0276, device = 37.5665 to 126.9780)
 
-    private fun feed(id: String) = FeedModel(
-        feedId = id,
-        category = null,
-        header = null,
-        body = null,
-        link = null,
-        updatedAt = "2026-10-31T15:05:04",
-    )
+    private fun page(vararg ids: String, nextCursor: String? = null) = FeedNewsFixtures.page(*ids, nextCursor = nextCursor)
 
-    private fun page(vararg ids: String, nextCursor: String? = null) = FeedPageModel(ids.map(::feed), nextCursor)
-
-    private fun pageOf(range: IntRange, nextCursor: String?) = FeedPageModel(range.map { feed("%024d".format(it)) }, nextCursor)
+    private fun pageOf(range: IntRange, nextCursor: String?) = FeedNewsFixtures.pageOf(range, nextCursor)
 
     private fun loadedAt(location: FeedLocation, revision: Long, vararg ids: String): FeedListUiState =
         FeedListUiState().changeLocation(location, revision).startReload().appendPage(page(*ids))
@@ -39,7 +28,7 @@ class FeedNewsTabStateTest {
         val state = FeedListUiState().changeLocation(seoul, revision = 1L)
 
         // When
-        val selected = state.selectTab(true)
+        val selected = state.selectTab(true, newsTabId = "NEWS")
         val loading = selected.startReload()
 
         // Then
@@ -60,7 +49,7 @@ class FeedNewsTabStateTest {
 
         // Then
         assertTrue(first.canLoadMore)
-        assertEquals(40, next.feeds.size)
+        assertEquals(40, next.items.size)
         assertFalse(next.canLoadMore)
     }
 
@@ -68,7 +57,7 @@ class FeedNewsTabStateTest {
     @Test
     fun `TH1427_TC4_지도를_옮겨_재검색하면_새좌표로_목록을_비우고_다시_불러온다`() {
         // Given
-        val loaded = loadedAt(seoul, 1L, "b", "a").selectTab(true)
+        val loaded = loadedAt(seoul, 1L, "b", "a").selectTab(true, newsTabId = "NEWS")
 
         // When
         val moved = loaded.changeLocation(gangnam, revision = 2L)
@@ -76,7 +65,7 @@ class FeedNewsTabStateTest {
 
         // Then
         assertTrue(moved.needsReload)
-        assertTrue(reloading.feeds.isEmpty())
+        assertTrue(reloading.items.isEmpty())
         assertTrue(reloading.showsSkeleton)
         assertEquals(2L, reloading.listRevision)
         assertEquals(37.4979, reloading.location?.mapLatitude!!, 0.0)
@@ -141,7 +130,7 @@ class FeedNewsTabStateTest {
 
         // Then
         assertFalse(failed.isFailed)
-        assertEquals(20, failed.feeds.size)
+        assertEquals(20, failed.items.size)
         assertFalse(failed.isLoading)
     }
 
@@ -196,7 +185,7 @@ class FeedNewsTabStateTest {
         val opened = FeedListUiState(lastSeenFeedId = "a").selectTab(true)
 
         // When
-        val reloaded = opened.changeLocation(gangnam, 2L).startReload().appendPage(page("c", "b"))
+        val reloaded = opened.changeLocation(gangnam, 2L).startReload().applyLatestFeedId("c")
 
         // Then
         assertFalse(reloaded.showsNewBadge)

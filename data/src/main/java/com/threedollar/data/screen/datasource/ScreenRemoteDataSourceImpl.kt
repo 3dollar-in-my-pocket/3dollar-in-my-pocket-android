@@ -72,8 +72,28 @@ class ScreenRemoteDataSourceImpl @Inject constructor(
         emit(apiResult(serverApi.getHomeCurationSection(tabId, mapLatitude, mapLongitude, maxDistanceM, deviceLatitude, deviceLongitude)))
     }
 
-    override fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>> = flow {
-        emit(apiResult(serverApi.getHomeNewsSection(newsTabId)))
+    override fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double?,
+        cursor: String?,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeNewsSectionResponse>> = flow {
+        emit(
+            apiResult(
+                serverApi.getHomeNewsSection(
+                    newsTabId = newsTabId,
+                    mapLatitude = mapLatitude,
+                    mapLongitude = mapLongitude,
+                    maxDistanceM = maxDistanceM,
+                    cursor = cursor,
+                    deviceLatitude = deviceLatitude,
+                    deviceLongitude = deviceLongitude,
+                ),
+            ),
+        )
     }
 
     override fun getHomeCurationCards(
