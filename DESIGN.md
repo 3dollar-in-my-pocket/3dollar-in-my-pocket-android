@@ -72,7 +72,7 @@ Pretendard Regular · Medium · SemiBold · Bold 네 굵기가 `res/font`와 `Pr
   - 피그마 이름이 이미 다른 모양에 쓰이는 것: `ic_close`(원 안의 X = `delete_x` 모양, 피그마 `close` 모양은 `ic_store_preview_close`), `ic_star_line`(원 안의 별), `ic_badge`(색 있는 메달 = 일러스트 Medal), `ic_write`(빨간 +), `ic_share`(옛 선 스타일, 피그마 `share` 모양은 `ic_store_preview_share`). 옛 이름을 다른 그림에 다시 쓰면 그 이름을 참조하던 코드가 에러 없이 다른 그림을 띄우므로 따로 정리합니다. 같은 이유로 돋보기 `ic_reading_glasses` → `ic_search`도 후속입니다.
   - 일러스트 `bungeoppang_crying`(ㅠ 말풍선 붕어빵)은 `ic_empty` · `ic_list_view_empty` · `ic_no_store` 세 벌이 조금씩 다릅니다.
   - `:common`과 `:core:designsystem`에 같은 이름이 있는 것(`ic_kakao` · `ic_apple` · `ic_setting` · `ic_no_store` 등)은 `:common`이 먼저 선언돼 `:common` 쪽이 화면에 나옵니다. 중복을 지울 때 어느 그림을 남길지 정합니다.
-- 하단 탭 아이콘은 tint가 아니라 벡터 `fillColor`에 색이 들어 있습니다(`ic_*` 선택, `ic_*_off` 비선택). 그래서 `itemIconTintList = null`이 필요합니다.
+- 하단 탭 아이콘은 서버(`GET /v1/screen/bottom-navigation`)가 내려준 단색 PNG를 선택 시 `selectedTintColor`, 비선택 시 gray40으로 칠합니다(`MainActivity.tabIconDrawable`, TH-1650). 응답이 없거나 아이콘을 받기 전에는 벡터 `fillColor`에 색이 들어 있는 기본 아이콘(`selector_*` = `ic_*` 선택 · `ic_*_off` 비선택)을 씁니다. 두 경우 모두 아이콘에 상태별 색이 들어 있어 `itemIconTintList = null`이 필요합니다.
 
 ## 컴포넌트
 

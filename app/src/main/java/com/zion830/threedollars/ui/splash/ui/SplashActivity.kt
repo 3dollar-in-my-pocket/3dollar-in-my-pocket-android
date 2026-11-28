@@ -159,6 +159,8 @@ class SplashActivity :
                 launch {
                     viewModel.accessCheckModel.collect { accessCheckModel ->
                         accessCheckModel?.let {
+                            // 로그인 화면을 거쳐 메인에 갈 때도 같은 탭 응답을 쓰도록 두 경로 모두 기다린다.
+                            viewModel.awaitBottomNavigation()
                             if (accessCheckModel.ok) {
                                 tryLogin()
                             } else {

@@ -34,6 +34,17 @@
         android:label="@string/title_mypage" />
 
     <fragment
+        android:id="@+id/navigation_web_tab"
+        android:name="com.zion830.threedollars.ui.main.WebTabFragment">
+        <argument
+            android:name="tabId"
+            app:argType="string" />
+        <argument
+            android:name="url"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/navigation_popup"
         android:name="com.zion830.threedollars.ui.popup.PopupFragment"
         android:label="@string/popup"
