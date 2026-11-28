@@ -22,21 +22,6 @@ class PendingSectionImpression<T : Any> {
     }
 }
 
-class HomeNewsSectionRequestGate {
-    private var requested: Pair<Long, String>? = null
-
-    fun tryStart(revision: Long, tabId: String): Boolean {
-        val key = revision to tabId
-        if (requested == key) return false
-        requested = key
-        return true
-    }
-
-    fun fail(revision: Long, tabId: String) {
-        if (requested == revision to tabId) requested = null
-    }
-}
-
 class HomeCurationCardImpressionDedup {
     private val sentKeys = mutableSetOf<String>()
 

@@ -1,6 +1,7 @@
 package com.threedollar.data.screen.datasource
 
 import com.threedollar.common.base.BaseResponse
+import com.threedollar.network.data.screen.BottomNavigationResponse
 import com.threedollar.network.data.screen.HomeFilterScreenResponse
 import com.threedollar.network.data.screen.HomeCurationCardsResponse
 import com.threedollar.network.data.screen.HomeCurationSectionResponse
@@ -41,7 +42,15 @@ interface ScreenRemoteDataSource {
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationSectionResponse>>
 
-    fun getHomeNewsSection(newsTabId: String): Flow<BaseResponse<HomeNewsSectionResponse>>
+    fun getHomeNewsSection(
+        newsTabId: String,
+        mapLatitude: Double,
+        mapLongitude: Double,
+        maxDistanceM: Double?,
+        cursor: String?,
+        deviceLatitude: Double?,
+        deviceLongitude: Double?,
+    ): Flow<BaseResponse<HomeNewsSectionResponse>>
 
     fun getHomeCurationCards(
         tabId: String,
@@ -53,4 +62,6 @@ interface ScreenRemoteDataSource {
         deviceLatitude: Double?,
         deviceLongitude: Double?,
     ): Flow<BaseResponse<HomeCurationCardsResponse>>
+
+    fun getBottomNavigation(): Flow<BaseResponse<BottomNavigationResponse>>
 }
